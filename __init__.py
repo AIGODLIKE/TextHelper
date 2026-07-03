@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Text Helper",
     "author": "ACGGIT",
-    "version": (1, 7, 2),
+    "version": (1, 8, 0),
     "blender": (5, 2, 0),
     "location": "View3D > Sidebar > Text Helper",
     "description": "Easy text input & font management",
@@ -20,7 +20,7 @@ from . import i18n, ops, panels, preferences, props, runtime, sync
 
 
 def register():
-    i18n.register()
+    i18n.register(ADDON_PACKAGE)
     preferences.register()
     props.register()
     sync.register()
@@ -51,4 +51,10 @@ def unregister():
     from .utils.font_preview import release_font_previews
 
     release_font_previews()
+    try:
+        from .utils.font_blf import clear_font_failure_cache
+
+        clear_font_failure_cache()
+    except Exception:
+        pass
     i18n.unregister()

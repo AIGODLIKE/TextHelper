@@ -16,7 +16,9 @@ from ..utils.font_glyph import (
     register_blf_unload_hook,
     unregister_blf_unload_hook,
 )
-from ..utils.font_loader import ensure_font_catalog, is_current_font, load_font_file, queue_font_catalog
+from ..utils.font_blf import blf_load, blf_unload, font_path_usable
+from ..utils.font_loader import ensure_font_catalog, is_current_font, queue_font_catalog
+from ..utils.font_family import family_weight_counts, group_catalog_items
 from ..utils.view3d_context import run_active_font_op
 from ..utils.font_language import (
     catalog_item_passes_language,
@@ -120,7 +122,7 @@ def _font_supports_preview(item, preview, point_size):
 def _release_picker_blf():
     for key in list(_PICKER_BLF_LOADED.keys()):
         try:
-            blf.unload(key)
+            blf_unload(key)
         except Exception:
             pass
     _PICKER_BLF_LOADED.clear()
@@ -129,6 +131,8 @@ def _release_picker_blf():
 def _acquire_picker_blf(filepath):
     abs_path = bpy.path.abspath(filepath)
     if not os.path.isfile(abs_path):
+        return -1
+    if not font_path_usable(abs_path):
         return -1
     key = os.path.normcase(abs_path)
     cached = _PICKER_BLF_LOADED.get(key)
@@ -139,16 +143,11 @@ def _acquire_picker_blf(filepath):
     while len(_PICKER_BLF_LOADED) >= _PICKER_BLF_MAX:
         evict_key, _ = _PICKER_BLF_LOADED.popitem(last=False)
         try:
-            blf.unload(evict_key)
+            blf_unload(evict_key)
         except Exception:
             pass
 
-    try:
-        load_font_file(filepath)
-    except (FileNotFoundError, OSError):
-        return -1
-
-    font_id = blf.load(abs_path)
+    font_id = blf_load(abs_path)
     if font_id == -1:
         return -1
     _PICKER_BLF_LOADED[key] = font_id
@@ -173,11 +172,7 @@ def _picker_position(context, panel_w, panel_h, scale):
 
 
 def _panel_width(scale):
-    font_rect = layout_mod.get_hud_item_rect("font")
-    base = 360.0 * scale
-    if font_rect is not None:
-        base = max(base, font_rect.w * 2.8)
-    return min(base, 480.0 * scale)
+    return min(480.0 * scale, max(360.0 * scale, layout_mod.FONT_DROPDOWN_WIDTH * 2.8 * scale))
 
 
 def _filtered_items(wm, context=None):
@@ -189,9 +184,10 @@ def _filtered_items(wm, context=None):
     lang = get_language_filter(wm)
     state = getattr(wm, "th_state", None)
     hide_unsupported = bool(state and getattr(state, "th_font_picker_hide_unsupported", True))
+    multi_weight_only = bool(state and getattr(state, "th_font_picker_multi_weight_only", False))
     preview = _preview_text(context) if context is not None else ""
     point_size = _preview_point_size(context, _ui_scale(context)) if context is not None else 24.0
-    items = []
+    indexed = []
     try:
         for i, item in enumerate(catalog):
             if not catalog_item_passes_name(item, filt):
@@ -201,12 +197,22 @@ def _filtered_items(wm, context=None):
             item_preview = _preview_text(context, item.display_name) if context is not None else preview
             if hide_unsupported and item_preview and not _font_supports_preview(item, item_preview, point_size):
                 continue
-            items.append((i, item))
+            indexed.append((i, item))
     finally:
         _release_picker_blf()
+    groups = group_catalog_items(indexed)
+    if multi_weight_only:
+        counts = family_weight_counts(catalog)
+        groups = [group for group in groups if counts.get(group.family_key, 0) > 1]
     reverse = sort_mode == "NAME_ZA"
-    items.sort(key=lambda pair: pair[1].display_name.lower(), reverse=reverse)
-    return items
+    groups.sort(key=lambda group: group.display_name.lower(), reverse=reverse)
+    return groups
+
+
+def _group_is_active(text_data, group):
+    if text_data is None or text_data.font is None:
+        return False
+    return any(is_current_font(text_data, variant.filepath) for variant in group.variants)
 
 
 def _on_external_blf_unload(abs_path):
@@ -401,7 +407,9 @@ def layout_picker(context):
     pad = 12.0 * scale
     header_h = 40.0 * scale
     search_h = 30.0 * scale
-    filter_h = 28.0 * scale
+    filter_row_h = 28.0 * scale
+    filter_row_gap = 4.0 * scale
+    filter_h = filter_row_h * 2 + filter_row_gap
     row_h = 52.0 * scale
     footer_h = 22.0 * scale
     scrollbar_w = 8.0 * scale
@@ -426,6 +434,13 @@ def layout_picker(context):
     list_x = px + pad
     list_w = panel_w - pad * 2 - scrollbar_w - 4.0 * scale
     scrollbar_x = px + panel_w - pad - scrollbar_w
+    chip_inset = 4.0 * scale
+    chip_h = filter_row_h - 8.0 * scale
+    filter_row1_y = filter_y + chip_inset
+    filter_row2_y = filter_y + filter_row_h + filter_row_gap + chip_inset
+    hide_chip_w = 118.0 * scale
+    multi_chip_w = 132.0 * scale
+    chip_gap = 6.0 * scale
 
     hits = []
     hits.append(PickerHit("panel", px, py, panel_w, panel_h))
@@ -447,18 +462,27 @@ def layout_picker(context):
         PickerHit(
             "filter_toggle",
             list_x,
-            filter_y + 4.0 * scale,
-            118.0 * scale,
-            filter_h - 8.0 * scale,
+            filter_row1_y,
+            hide_chip_w,
+            chip_h,
+        )
+    )
+    hits.append(
+        PickerHit(
+            "multi_weight_toggle",
+            list_x + hide_chip_w + chip_gap,
+            filter_row1_y,
+            multi_chip_w,
+            chip_h,
         )
     )
     hits.append(
         PickerHit(
             "language_menu",
-            list_x + 124.0 * scale,
-            filter_y + 4.0 * scale,
-            panel_w - pad * 2 - 124.0 * scale,
-            filter_h - 8.0 * scale,
+            list_x,
+            filter_row2_y,
+            panel_w - pad * 2,
+            chip_h,
         )
     )
 
@@ -467,7 +491,8 @@ def layout_picker(context):
         idx = scroll + row
         if idx >= len(items):
             break
-        catalog_index, _item = items[idx]
+        group = items[idx]
+        catalog_index = group.representative_index
         ry = list_top - (row + 1) * row_h + 2.0 * scale
         rect = PickerHit("row", list_x, ry, list_w, row_h - 4.0 * scale, catalog_index)
         row_hits.append(rect)
@@ -505,6 +530,7 @@ def layout_picker(context):
         "search_y": search_y,
         "filter_h": filter_h,
         "filter_y": filter_y,
+        "filter_row_h": filter_row_h,
         "row_h": row_h,
         "footer_h": footer_h,
         "list_x": list_x,
@@ -730,6 +756,17 @@ def draw_font_picker(context):
         blf.position(_UI_FONT, filter_hit.x + 8.0 * scale, filter_hit.y + filter_hit.h * 0.5 - 5.0 * scale, 0)
         blf.draw(_UI_FONT, chip_label)
 
+    multi_weight_hit = next((h for h in layout["hits"] if h.kind == "multi_weight_toggle"), None)
+    if multi_weight_hit:
+        multi_weight_only = bool(state and getattr(state, "th_font_picker_multi_weight_only", False))
+        chip_bg = theme["row_active"] if multi_weight_only else theme["field_bg"]
+        draw_rounded_rect(shader, multi_weight_hit.x, multi_weight_hit.y, multi_weight_hit.w, multi_weight_hit.h, chip_bg, 5.0 * scale)
+        chip_label = _("Multi-weight only") if multi_weight_only else _("All font families")
+        blf.size(_UI_FONT, int(9 * scale))
+        blf.color(_UI_FONT, *(theme["text"] if multi_weight_only else theme["muted"]))
+        blf.position(_UI_FONT, multi_weight_hit.x + 8.0 * scale, multi_weight_hit.y + multi_weight_hit.h * 0.5 - 5.0 * scale, 0)
+        blf.draw(_UI_FONT, chip_label)
+
     language_hit = next((h for h in layout["hits"] if h.kind == "language_menu"), None)
     if language_hit:
         lang_code = get_language_filter(wm)
@@ -760,9 +797,10 @@ def draw_font_picker(context):
             idx = scroll + row
             if idx >= len(items):
                 break
-            catalog_index, item = items[idx]
-            active = is_current_font(text_data, item.filepath)
-            hovered = catalog_index == hover_index
+            group = items[idx]
+            item = wm.th_state.font_catalog[group.representative_index]
+            active = _group_is_active(text_data, group)
+            hovered = group.representative_index == hover_index
             if active:
                 bg = theme["row_active"]
             elif hovered:
@@ -771,11 +809,13 @@ def draw_font_picker(context):
                 bg = theme["row_bg"]
             draw_rounded_rect(shader, hit.x, hit.y, hit.w, hit.h, bg, 5.0 * scale)
 
-            name = item.display_name
+            name = group.display_name
             if active:
                 name = "✓ " + name
-            if len(name) > 22:
-                name = name[:19] + "…"
+            if group.variant_count > 1:
+                name = f"{name}  · {group.variant_count}"
+            if len(name) > 26:
+                name = name[:23] + "…"
             blf.size(_UI_FONT, int(9 * scale))
             blf.color(_UI_FONT, *theme["muted"])
             blf.position(_UI_FONT, hit.x + 8.0 * scale, hit.y + hit.h - 14.0 * scale, 0)
@@ -811,9 +851,9 @@ def draw_font_picker(context):
     blf.color(_UI_FONT, *theme["muted"])
     hide_unsupported = bool(state and getattr(state, "th_font_picker_hide_unsupported", True))
     if hide_unsupported:
-        count_text = _("{:d} supported · □ = missing").format(len(items))
+        count_text = _("{:d} families · □ = missing").format(len(items))
     else:
-        count_text = _("{:d} fonts · □ = missing").format(len(items))
+        count_text = _("{:d} families · □ = missing").format(len(items))
     blf.position(_UI_FONT, px + pad, footer_y, 0)
     blf.draw(_UI_FONT, count_text)
 
@@ -846,6 +886,7 @@ def _scroll_from_thumb_y(layout, thumb_y):
 
 
 def handle_picker_click(context, hit, mx=0.0, my=0.0):
+    global _HOVER_APPLY_INDEX
     state = _state(context)
     if state is None or hit is None:
         return False
@@ -862,6 +903,12 @@ def handle_picker_click(context, hit, mx=0.0, my=0.0):
         state.th_font_picker_search_focus = False
         _stop_caret_timer()
         invalidate_glyph_cache()
+        return True
+    if hit.kind == "multi_weight_toggle":
+        state.th_font_picker_multi_weight_only = not getattr(state, "th_font_picker_multi_weight_only", False)
+        state.th_font_picker_scroll = 0
+        state.th_font_picker_search_focus = False
+        _stop_caret_timer()
         return True
     if hit.kind == "language_menu":
         state.th_font_picker_search_focus = False
@@ -883,7 +930,6 @@ def handle_picker_click(context, hit, mx=0.0, my=0.0):
         if hit.index < len(wm.th_state.font_catalog):
             item = wm.th_state.font_catalog[hit.index]
             _invoke_apply_system_font(context, item.filepath, hit.index, keep_picker_open=False)
-            global _HOVER_APPLY_INDEX
             _HOVER_APPLY_INDEX = hit.index
         close_picker(context)
         return True

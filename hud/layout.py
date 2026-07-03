@@ -8,6 +8,11 @@ from ..i18n import _
 
 SPACING_SLIDER_IDS = frozenset({"font_size", "char_spacing", "word_spacing", "line_height", "shear", "strike_position"})
 
+FONT_DROPDOWN_WIDTH = 156.0
+FONT_WEIGHT_DROPDOWN_WIDTH = 72.0
+_FONT_DROPDOWN_TEXT_PAD = 8.0
+_FONT_DROPDOWN_CHEVRON_PAD = 20.0
+
 _ROW_GAP = 4.0
 _STRIKE_PANEL_GAP = 6.0
 _STRIKE_PANEL_WIDTH = 132.0
@@ -57,7 +62,15 @@ def build_tool_row_items():
             op="font.texthelper_toggle_preset_picker",
             tip_key="Open style preset picker",
         ),
-        HudItem("font", "dropdown", _("Font"), width=108.0, op="font.texthelper_toggle_font_picker", tip_key="Open font picker"),
+        HudItem("font", "dropdown", _("Font"), width=FONT_DROPDOWN_WIDTH, op="font.texthelper_toggle_font_picker", tip_key="Open font picker"),
+        HudItem(
+            "font_weight",
+            "dropdown",
+            _("Weight"),
+            width=FONT_WEIGHT_DROPDOWN_WIDTH,
+            op="font.texthelper_toggle_weight_picker",
+            tip_key="Switch font weight",
+        ),
         HudItem("sep1", "separator", width=8.0),
         HudItem(
             "bold",
@@ -234,7 +247,13 @@ def build_row2_items():
     return build_tool_row_items()
 
 
-def _update_item_labels(items, text_data):
+def _visible_row_items(items):
+    return [item for item in items if item.kind != "hidden" and item.width > 0]
+
+
+def _update_item_labels(items, text_data, context=None):
+    from ..utils.font_family import short_weight_label, toolbar_weight_label
+    from ..utils.font_loader import disk_font_path, queue_font_catalog, resolve_font_filepath
     from ..utils.text_format import (
         STYLE_PRESETS,
         format_size_display,
@@ -249,10 +268,29 @@ def _update_item_labels(items, text_data):
             preset = STYLE_PRESETS.get(text_data.text_helper.th_preset, STYLE_PRESETS["BODY"])
             item.label = _(preset["label"])
         if item.id == "font" and text_data is not None and text_data.font:
-            name = text_data.font.name
-            item.label = name[:9] + "…" if len(name) > 9 else name
+            from ..utils.font_loader import font_hud_label
+
+            item.label = font_hud_label(text_data.font)
+            item.width = FONT_DROPDOWN_WIDTH
         elif item.id == "font":
             item.label = _("Font")
+            item.width = FONT_DROPDOWN_WIDTH
+        if item.id == "font_weight":
+            item.kind = "dropdown"
+            label = "Regular"
+            if text_data is not None and text_data.font and context is not None:
+                wm = context.window_manager
+                if wm is not None and getattr(wm, "th_state", None) is not None:
+                    from ..utils.font_family import toolbar_weight_label
+                    from ..utils.font_loader import queue_font_catalog
+
+                    queue_font_catalog(wm)
+                    catalog = wm.th_state.font_catalog
+                    path = resolve_font_filepath(text_data.font)
+                    if path and len(catalog) > 0:
+                        label = toolbar_weight_label(catalog, path)
+            item.label = short_weight_label(label)
+            item.width = FONT_WEIGHT_DROPDOWN_WIDTH
         if item.id == "font_size" and text_data is not None:
             item.label = format_size_display(text_data.size)
         if item.id == "char_spacing" and text_data is not None:
@@ -272,16 +310,17 @@ def slider_row_height(scale):
 def _layout_items_row(items, anchor_x, y, scale):
     height = slider_row_height(scale)
     gap = 2.0 * scale
+    visible = _visible_row_items(items)
     total_w = 0.0
-    for i, item in enumerate(items):
+    for i, item in enumerate(visible):
         w = item.width * scale
         total_w += w
-        if item.kind != "separator" and i + 1 < len(items):
+        if item.kind != "separator" and i + 1 < len(visible):
             total_w += gap
 
     x = anchor_x - total_w * 0.5
     rects = []
-    for item in items:
+    for item in visible:
         w = item.width * scale
         if item.kind == "separator":
             sep_h = height - 10 * scale
@@ -305,11 +344,11 @@ def row_bounds(rects, pad=4.0):
     return x0, y0, x1 - x0, y1 - y0
 
 
-def layout_toolbar(anchor_x, anchor_y, scale, text_data):
+def layout_toolbar(anchor_x, anchor_y, scale, text_data, context=None):
     """Compute screen rects for a two-row HUD (sliders on top, tools below)."""
     slider_items = build_slider_row_items()
     tool_items = build_tool_row_items()
-    _update_item_labels(slider_items + tool_items, text_data)
+    _update_item_labels(slider_items + tool_items, text_data, context)
 
     row_gap = _ROW_GAP * scale
     row1_rects, row1_w, row_h = _layout_items_row(slider_items, anchor_x, anchor_y, scale)

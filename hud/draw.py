@@ -25,10 +25,13 @@ from .layout import (
     spacing_slider_t,
 )
 from .font_picker import draw_font_picker, picker_open as font_picker_open
+from .weight_picker import draw_weight_picker, picker_open as weight_picker_open
 from .preset_picker import draw_preset_picker, picker_open as preset_picker_open
 from .language_picker import draw_language_picker, picker_open as language_picker_open
 from .blf_layout import (
     draw_centered_glyph,
+    dropdown_text_max_width,
+    fit_dropdown_label,
     text_visual_center_y,
     toolbar_baseline_y,
     toolbar_font_size,
@@ -272,7 +275,7 @@ def draw_hud():
         return
 
     scale = _ui_scale(context)
-    layout = layout_toolbar(anchor[0], anchor[1], scale, text_data)
+    layout = layout_toolbar(anchor[0], anchor[1], scale, text_data, context)
     rects = layout["rects"]
     row1_rects = layout["row1_rects"]
     row2_rects = layout["row2_rects"]
@@ -342,8 +345,10 @@ def draw_hud():
             baseline_y = toolbar_baseline_y(rect, _FONT_ID, font_size)
             blf.size(_FONT_ID, font_size)
             blf.color(_FONT_ID, *text_col)
+            text_max_w = dropdown_text_max_width(rect.w, scale)
+            display_label = fit_dropdown_label(_FONT_ID, item.label, font_size, text_max_w)
             blf.position(_FONT_ID, rect.x + 8 * scale, baseline_y, 0)
-            blf.draw(_FONT_ID, item.label)
+            blf.draw(_FONT_ID, display_label)
             chevron_w, _ = blf.dimensions(_FONT_ID, "▼")
             _draw_chevron(
                 rect.x + rect.w - 8 * scale - chevron_w,
@@ -416,6 +421,8 @@ def draw_hud():
 
     if font_picker_open(context):
         draw_font_picker(context)
+    if weight_picker_open(context):
+        draw_weight_picker(context)
     if preset_picker_open(context):
         draw_preset_picker(context)
     if language_picker_open(context):

@@ -1,19 +1,14 @@
 """Draw font preview strings the same way TextCurve sees them (no fallback mixing)."""
 
-import bpy
 import blf
 
+from .font_blf import blf_load
 from .font_glyph import char_renders_without_fallback
-from .font_loader import load_font_file
 
 
 def blf_load_for_preview(filepath):
-    """Load a font for blf preview after ensuring the VectorFont data-block exists."""
-    try:
-        load_font_file(filepath)
-    except (FileNotFoundError, OSError):
-        return -1
-    return blf.load(bpy.path.abspath(filepath))
+    """Load a font for blf preview (validated; skips known-bad files)."""
+    return blf_load(filepath)
 
 
 def char_has_glyph(font_id, char, point_size):

@@ -267,8 +267,10 @@ class TH_OT_toggle_font_picker(ActiveFontDataPollMixin, Operator):
             return {"FINISHED"}
 
         from ..hud.preset_picker import close_picker as close_preset_picker
+        from ..hud.weight_picker import close_picker as close_weight_picker
 
         close_preset_picker(context)
+        close_weight_picker(context)
         state.th_hud_open_menu = ""
         from ..ops.hud_modal import _dismiss_popup_menus
 
@@ -289,6 +291,59 @@ class TH_OT_toggle_font_picker(ActiveFontDataPollMixin, Operator):
         focus_search_field(context)
         bpy.ops.wm.texthelper_hud_ensure_modal()
 
+        tag_redraw()
+        return {"FINISHED"}
+
+
+class TH_OT_toggle_weight_picker(ActiveFontDataPollMixin, Operator):
+    bl_idname = "font.texthelper_toggle_weight_picker"
+    bl_label = "Font Weight Picker"
+    bl_description = "Open or close the viewport font weight picker"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        text_data = get_active_text_data(context)
+        if text_data is None:
+            self.report({"WARNING"}, _("Select a text object first"))
+            return {"CANCELLED"}
+
+        wm = context.window_manager
+        state = getattr(wm, "th_state", None)
+        if state is None:
+            return {"CANCELLED"}
+
+        from ..hud.weight_picker import close_picker as close_weight_picker, seed_picker_hover_apply, variants_for_text
+        from ..utils.font_loader import ensure_font_catalog, refresh_font_catalog
+
+        try:
+            ensure_font_catalog(wm)
+            if len(wm.th_state.font_catalog) == 0:
+                refresh_font_catalog(wm, force=True)
+        except Exception:
+            pass
+
+        opening = not getattr(state, "th_weight_picker_open", False)
+
+        if not opening:
+            close_weight_picker(context)
+            tag_redraw()
+            return {"FINISHED"}
+
+        from ..hud.font_picker import close_picker as close_font_picker
+        from ..hud.preset_picker import close_picker as close_preset_picker
+        from ..ops.hud_modal import _dismiss_popup_menus
+
+        close_font_picker(context)
+        close_preset_picker(context)
+        state.th_hud_open_menu = ""
+        _dismiss_popup_menus(context)
+        state.th_weight_picker_open = True
+        if not variants_for_text(context, text_data):
+            state.th_weight_picker_open = False
+            self.report({"WARNING"}, _("No font weight information available"))
+            return {"CANCELLED"}
+        seed_picker_hover_apply(context)
+        bpy.ops.wm.texthelper_hud_ensure_modal()
         tag_redraw()
         return {"FINISHED"}
 
@@ -326,6 +381,9 @@ class TH_OT_apply_system_font(ActiveFontDataPollMixin, Operator):
 
             tag_redraw()
         else:
+            from ..hud.weight_picker import close_picker as close_weight_picker
+
+            close_weight_picker(context)
             self.report({"INFO"}, _("Font: {}").format(font.name))
         return {"FINISHED"}
 
@@ -335,6 +393,7 @@ classes = (
     TH_OT_refresh_system_fonts,
     TH_OT_regenerate_font_previews,
     TH_OT_toggle_font_picker,
+    TH_OT_toggle_weight_picker,
     TH_OT_apply_system_font,
 )
 

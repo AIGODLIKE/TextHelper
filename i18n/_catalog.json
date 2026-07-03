@@ -1,0 +1,1792 @@
+[
+  {
+    "context": "*",
+    "msgid": "Text Helper",
+    "zh_HANS": "文字助手"
+  },
+  {
+    "context": "*",
+    "msgid": "Text",
+    "zh_HANS": "文本"
+  },
+  {
+    "context": "*",
+    "msgid": "Content",
+    "zh_HANS": "文本内容"
+  },
+  {
+    "context": "*",
+    "msgid": "Quick Toolbar",
+    "zh_HANS": "快捷工具栏"
+  },
+  {
+    "context": "*",
+    "msgid": "About",
+    "zh_HANS": "关于"
+  },
+  {
+    "context": "*",
+    "msgid": "Easy text input & font management",
+    "zh_HANS": "轻松文本输入&字体管理"
+  },
+  {
+    "context": "*",
+    "msgid": "Easy text input & font management with a viewport floating toolbar.",
+    "zh_HANS": "轻松文本输入与字体管理，含视口浮动工具栏。"
+  },
+  {
+    "context": "*",
+    "msgid": "Viewport",
+    "zh_HANS": "视口"
+  },
+  {
+    "context": "*",
+    "msgid": "Sidebar",
+    "zh_HANS": "侧栏"
+  },
+  {
+    "context": "*",
+    "msgid": "Format",
+    "zh_HANS": "格式"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Direction",
+    "zh_HANS": "文字方向"
+  },
+  {
+    "context": "*",
+    "msgid": "Horizontal",
+    "zh_HANS": "横向"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical",
+    "zh_HANS": "竖向"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Text Orientation",
+    "zh_HANS": "设置文字方向"
+  },
+  {
+    "context": "*",
+    "msgid": "Horizontal text input",
+    "zh_HANS": "横向输入文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical text input",
+    "zh_HANS": "竖向输入文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Edit text in horizontal rows",
+    "zh_HANS": "按横向行编辑文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Edit text in vertical columns",
+    "zh_HANS": "按竖向列编辑文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Column Order",
+    "zh_HANS": "列顺序"
+  },
+  {
+    "context": "*",
+    "msgid": "Right to Left",
+    "zh_HANS": "从右到左"
+  },
+  {
+    "context": "*",
+    "msgid": "Left to Right",
+    "zh_HANS": "从左到右"
+  },
+  {
+    "context": "*",
+    "msgid": "New columns grow from right to left",
+    "zh_HANS": "新列从右向左排列"
+  },
+  {
+    "context": "*",
+    "msgid": "New columns grow from left to right",
+    "zh_HANS": "新列从左向右排列"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Insert Column Break",
+    "zh_HANS": "插入换列"
+  },
+  {
+    "context": "*",
+    "msgid": "New Column",
+    "zh_HANS": "换列"
+  },
+  {
+    "context": "*",
+    "msgid": "Type horizontally; press Enter to start a new column",
+    "zh_HANS": "横向输入，回车换列"
+  },
+  {
+    "context": "*",
+    "msgid": "Type horizontally · Enter = new column",
+    "zh_HANS": "横向输入 · 回车换列"
+  },
+  {
+    "context": "*",
+    "msgid": "Shorter columns are auto-padded to stay aligned",
+    "zh_HANS": "较短列会自动补全角空格以保持对齐"
+  },
+  {
+    "context": "*",
+    "msgid": "Right to Left: first line is the rightmost column; Enter adds leftward",
+    "zh_HANS": "从右到左：第一行在最右列，回车向左新增列"
+  },
+  {
+    "context": "*",
+    "msgid": "Left to Right: first line is the leftmost column; Enter adds rightward",
+    "zh_HANS": "从左到右：第一行在最左列，回车向右新增列"
+  },
+  {
+    "context": "*",
+    "msgid": "Non-monospaced font — columns may misalign",
+    "zh_HANS": "非等宽字体 — 竖列可能对不齐"
+  },
+  {
+    "context": "*",
+    "msgid": "Halfwidth characters: {}",
+    "zh_HANS": "半角字符：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "Fix",
+    "zh_HANS": "修复"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Fix Halfwidth Characters",
+    "zh_HANS": "修复半角字符"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Convert halfwidth characters to fullwidth for better CJK alignment",
+    "zh_HANS": "将半角字符转为全角，以改善中文排版对齐"
+  },
+  {
+    "context": "Operator",
+    "msgid": "No halfwidth characters to convert",
+    "zh_HANS": "没有可转换的半角字符"
+  },
+  {
+    "context": "*",
+    "msgid": "Fixed {:d} halfwidth character(s)",
+    "zh_HANS": "已修复 {:d} 个半角字符"
+  },
+  {
+    "context": "*",
+    "msgid": "New columns appear to the left",
+    "zh_HANS": "新列添加在左侧"
+  },
+  {
+    "context": "*",
+    "msgid": "New columns appear to the right",
+    "zh_HANS": "新列添加在右侧"
+  },
+  {
+    "context": "*",
+    "msgid": "Blank line between columns starts a new column",
+    "zh_HANS": "列与列之间的空行表示换列"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical: one character per line; blank line = new column",
+    "zh_HANS": "竖向：每行一字；空一行表示换列"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Column Order",
+    "zh_HANS": "设置列顺序"
+  },
+  {
+    "context": "*",
+    "msgid": "Layout Frame",
+    "zh_HANS": "排版框"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Frame",
+    "zh_HANS": "排版框"
+  },
+  {
+    "context": "*",
+    "msgid": "No layout frame — click Add Frame",
+    "zh_HANS": "尚无排版框 — 点击「添加框」"
+  },
+  {
+    "context": "*",
+    "msgid": "Auto Layout Frame",
+    "zh_HANS": "自动创建排版框"
+  },
+  {
+    "context": "*",
+    "msgid": "Create a layout frame automatically when adding new text",
+    "zh_HANS": "新建文字时自动创建排版框"
+  },
+  {
+    "context": "*",
+    "msgid": "Show Text Frame Bounds",
+    "zh_HANS": "显示排版框边界"
+  },
+  {
+    "context": "*",
+    "msgid": "Draw layout frame rectangles in the 3D viewport",
+    "zh_HANS": "在 3D 视口中绘制排版框矩形"
+  },
+  {
+    "context": "*",
+    "msgid": "Suggested height for the N-panel textbox (drag its bottom edge to resize)",
+    "zh_HANS": "N 面板文本框建议高度（可拖动底边调整大小）"
+  },
+  {
+    "context": "*",
+    "msgid": "N-Panel Textbox Lines",
+    "zh_HANS": "N 面板文本框行数"
+  },
+  {
+    "context": "*",
+    "msgid": "Select a text object to edit.",
+    "zh_HANS": "选择文字对象以开始编辑。"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open Text Helper add-on preferences",
+    "zh_HANS": "打开 Text Helper 插件偏好设置"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Floating Toolbar",
+    "zh_HANS": "切换浮动工具栏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Show or hide the floating toolbar in the 3D viewport",
+    "zh_HANS": "显示或隐藏 3D 视口中的浮动工具栏"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-line N-panel editor (Blender 5.2+)",
+    "zh_HANS": "多行 N 面板编辑器（需 Blender 5.2+）"
+  },
+  {
+    "context": "*",
+    "msgid": "Floating toolbar near selected text in the viewport",
+    "zh_HANS": "视口中选中文字下方的浮动工具栏"
+  },
+  {
+    "context": "*",
+    "msgid": "Style presets, alignment, and spacing controls",
+    "zh_HANS": "样式预设、对齐与间距控制"
+  },
+  {
+    "context": "*",
+    "msgid": "Select a text object or add a new one to start editing.",
+    "zh_HANS": "选择文字对象或新建一个开始编辑。"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-line textbox requires Blender 5.2+",
+    "zh_HANS": "多行文本框需要 Blender 5.2+"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} chars · {:d} words",
+    "zh_HANS": "{:d} 字 · {:d} 词"
+  },
+  {
+    "context": "*",
+    "msgid": "Frame {:d}",
+    "zh_HANS": "框 {:d}"
+  },
+  {
+    "context": "*",
+    "msgid": "Floating Toolbar",
+    "zh_HANS": "浮动工具栏"
+  },
+  {
+    "context": "*",
+    "msgid": "Shows below selected text in the 3D viewport",
+    "zh_HANS": "显示在 3D 视口中选中文字的下方"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Show Toolbar",
+    "zh_HANS": "显示工具栏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Show Floating Toolbar",
+    "zh_HANS": "显示浮动工具栏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Display the floating text toolbar below the selected text in the 3D viewport",
+    "zh_HANS": "在 3D 视口中于选中文字下方显示浮动工具栏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Floating toolbar shown — look below the text in the 3D viewport",
+    "zh_HANS": "浮动工具栏已显示 — 请在 3D 视口中文字下方查看"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Enable Floating Toolbar in add-on preferences",
+    "zh_HANS": "请在插件偏好设置中开启「浮动工具栏」"
+  },
+  {
+    "context": "*",
+    "msgid": "Toolbar Offset",
+    "zh_HANS": "工具栏偏移"
+  },
+  {
+    "context": "*",
+    "msgid": "Distance from the top of the 3D viewport to the floating toolbar (pixels)",
+    "zh_HANS": "浮动工具栏距 3D 视口顶部的距离（像素）"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Scale",
+    "zh_HANS": "HUD 缩放"
+  },
+  {
+    "context": "*",
+    "msgid": "Viewport HUD display scale",
+    "zh_HANS": "视口 HUD 显示缩放"
+  },
+  {
+    "context": "*",
+    "msgid": "Accent Color",
+    "zh_HANS": "强调色"
+  },
+  {
+    "context": "*",
+    "msgid": "Accent color for the viewport HUD and pickers",
+    "zh_HANS": "视口 HUD 与选择面板的强调色"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom Accent",
+    "zh_HANS": "自定义强调色"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom HUD accent color",
+    "zh_HANS": "自定义 HUD 强调色"
+  },
+  {
+    "context": "*",
+    "msgid": "Green",
+    "zh_HANS": "绿色"
+  },
+  {
+    "context": "*",
+    "msgid": "Default green accent",
+    "zh_HANS": "默认绿色强调"
+  },
+  {
+    "context": "*",
+    "msgid": "Blue",
+    "zh_HANS": "蓝色"
+  },
+  {
+    "context": "*",
+    "msgid": "Blue accent",
+    "zh_HANS": "蓝色强调"
+  },
+  {
+    "context": "*",
+    "msgid": "Orange",
+    "zh_HANS": "橙色"
+  },
+  {
+    "context": "*",
+    "msgid": "Orange accent",
+    "zh_HANS": "橙色强调"
+  },
+  {
+    "context": "*",
+    "msgid": "Purple",
+    "zh_HANS": "紫色"
+  },
+  {
+    "context": "*",
+    "msgid": "Purple accent",
+    "zh_HANS": "紫色强调"
+  },
+  {
+    "context": "*",
+    "msgid": "Pink",
+    "zh_HANS": "粉色"
+  },
+  {
+    "context": "*",
+    "msgid": "Pink accent",
+    "zh_HANS": "粉色强调"
+  },
+  {
+    "context": "*",
+    "msgid": "Cyan",
+    "zh_HANS": "青色"
+  },
+  {
+    "context": "*",
+    "msgid": "Cyan accent",
+    "zh_HANS": "青色强调"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom",
+    "zh_HANS": "自定义"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the custom color below",
+    "zh_HANS": "使用下方自定义颜色"
+  },
+  {
+    "context": "*",
+    "msgid": "Style",
+    "zh_HANS": "样式"
+  },
+  {
+    "context": "*",
+    "msgid": "Body",
+    "zh_HANS": "正文"
+  },
+  {
+    "context": "*",
+    "msgid": "Heading",
+    "zh_HANS": "标题"
+  },
+  {
+    "context": "*",
+    "msgid": "Subheading",
+    "zh_HANS": "副标题"
+  },
+  {
+    "context": "*",
+    "msgid": "Caption",
+    "zh_HANS": "说明"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add Text",
+    "zh_HANS": "添加文字"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear Text",
+    "zh_HANS": "清空"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Paste into Text",
+    "zh_HANS": "粘贴"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Import Text File",
+    "zh_HANS": "导入文本"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Text Style",
+    "zh_HANS": "切换文字样式"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Text Alignment",
+    "zh_HANS": "设置对齐"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add Text Frame",
+    "zh_HANS": "添加文本框"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Could not add layout frame — select a text object with a 3D View open",
+    "zh_HANS": "无法添加排版框 — 请选中文字对象并确保已打开 3D 视口"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Text Overflow",
+    "zh_HANS": "切换溢出模式"
+  },
+  {
+    "context": "*",
+    "msgid": "Bold",
+    "zh_HANS": "粗体"
+  },
+  {
+    "context": "*",
+    "msgid": "Italic",
+    "zh_HANS": "斜体"
+  },
+  {
+    "context": "*",
+    "msgid": "Underline",
+    "zh_HANS": "下划线"
+  },
+  {
+    "context": "*",
+    "msgid": "Strikethrough",
+    "zh_HANS": "删除线"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Text Case",
+    "zh_HANS": "设置字母大小写"
+  },
+  {
+    "context": "*",
+    "msgid": "Default case",
+    "zh_HANS": "默认大小写"
+  },
+  {
+    "context": "*",
+    "msgid": "Uppercase",
+    "zh_HANS": "全部大写"
+  },
+  {
+    "context": "*",
+    "msgid": "Lowercase",
+    "zh_HANS": "全部小写"
+  },
+  {
+    "context": "*",
+    "msgid": "Left",
+    "zh_HANS": "左"
+  },
+  {
+    "context": "*",
+    "msgid": "Center",
+    "zh_HANS": "中"
+  },
+  {
+    "context": "*",
+    "msgid": "Right",
+    "zh_HANS": "右"
+  },
+  {
+    "context": "*",
+    "msgid": "Justify",
+    "zh_HANS": "两端"
+  },
+  {
+    "context": "*",
+    "msgid": "Paste",
+    "zh_HANS": "粘贴"
+  },
+  {
+    "context": "*",
+    "msgid": "Clear",
+    "zh_HANS": "清空"
+  },
+  {
+    "context": "*",
+    "msgid": "Import",
+    "zh_HANS": "导入"
+  },
+  {
+    "context": "*",
+    "msgid": "System fonts",
+    "zh_HANS": "系统字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Search fonts…",
+    "zh_HANS": "搜索字体…"
+  },
+  {
+    "context": "*",
+    "msgid": "Search Fonts",
+    "zh_HANS": "搜索字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Filter the system font list",
+    "zh_HANS": "筛选系统字体列表"
+  },
+  {
+    "context": "*",
+    "msgid": "Current: {}",
+    "zh_HANS": "当前：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "Browse other font file…",
+    "zh_HANS": "浏览其他字体文件…"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Refresh Font List",
+    "zh_HANS": "刷新字体列表"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Rescan system font folders",
+    "zh_HANS": "重新扫描系统字体文件夹"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Found {:d} fonts",
+    "zh_HANS": "找到 {:d} 个字体"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply Font",
+    "zh_HANS": "应用字体"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply this font to the selected text",
+    "zh_HANS": "将此字体应用到选中文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Click refresh to load system fonts",
+    "zh_HANS": "点击刷新按钮加载系统字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Type in search to narrow results…",
+    "zh_HANS": "继续在搜索框输入以缩小范围…"
+  },
+  {
+    "context": "*",
+    "msgid": "No fonts match filter",
+    "zh_HANS": "没有匹配的字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Language",
+    "zh_HANS": "语言"
+  },
+  {
+    "context": "*",
+    "msgid": "Language: {}",
+    "zh_HANS": "语言：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "All",
+    "zh_HANS": "全部"
+  },
+  {
+    "context": "*",
+    "msgid": "English",
+    "zh_HANS": "英语"
+  },
+  {
+    "context": "*",
+    "msgid": "Latin",
+    "zh_HANS": "拉丁"
+  },
+  {
+    "context": "*",
+    "msgid": "Chinese",
+    "zh_HANS": "中文"
+  },
+  {
+    "context": "*",
+    "msgid": "Japanese",
+    "zh_HANS": "日文"
+  },
+  {
+    "context": "*",
+    "msgid": "Korean",
+    "zh_HANS": "韩文"
+  },
+  {
+    "context": "*",
+    "msgid": "Russian",
+    "zh_HANS": "俄语"
+  },
+  {
+    "context": "*",
+    "msgid": "Arabic",
+    "zh_HANS": "阿拉伯"
+  },
+  {
+    "context": "*",
+    "msgid": "Greek",
+    "zh_HANS": "希腊"
+  },
+  {
+    "context": "*",
+    "msgid": "Hebrew",
+    "zh_HANS": "希伯来"
+  },
+  {
+    "context": "*",
+    "msgid": "Thai",
+    "zh_HANS": "泰文"
+  },
+  {
+    "context": "*",
+    "msgid": "Filter fonts by supported writing system",
+    "zh_HANS": "按字体支持的书写系统筛选"
+  },
+  {
+    "context": "*",
+    "msgid": "Enter preview text…",
+    "zh_HANS": "请输入预览文字…"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Sort",
+    "zh_HANS": "字体排序"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort order for the system font list",
+    "zh_HANS": "系统字体列表的排序方式"
+  },
+  {
+    "context": "*",
+    "msgid": "Name A-Z",
+    "zh_HANS": "名称 A-Z"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort fonts by name ascending",
+    "zh_HANS": "按名称升序排列"
+  },
+  {
+    "context": "*",
+    "msgid": "Name Z-A",
+    "zh_HANS": "名称 Z-A"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort fonts by name descending",
+    "zh_HANS": "按名称降序排列"
+  },
+  {
+    "context": "*",
+    "msgid": "List Preview Scale",
+    "zh_HANS": "列表预览缩放"
+  },
+  {
+    "context": "*",
+    "msgid": "How large each font preview appears in the sidebar list",
+    "zh_HANS": "侧边栏列表中每条字体预览的显示大小"
+  },
+  {
+    "context": "*",
+    "msgid": "Maximum point size used when rendering the thumbnail image",
+    "zh_HANS": "渲染缩略图时使用的最大字号"
+  },
+  {
+    "context": "*",
+    "msgid": "Font preview cache cleared — reopen the font list to rebuild",
+    "zh_HANS": "字体预览缓存已清除 — 请重新打开字体列表以重建"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Preview Icons",
+    "zh_HANS": "字体预览缩略图"
+  },
+  {
+    "context": "*",
+    "msgid": "Show rendered font thumbnails beside each name in the font list",
+    "zh_HANS": "在字体列表名称旁显示渲染预览图"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview While Browsing",
+    "zh_HANS": "浏览时实时预览"
+  },
+  {
+    "context": "*",
+    "msgid": "Apply the highlighted list font to the text object while navigating the list",
+    "zh_HANS": "在列表中切换选中项时，将字体实时应用到文本对象"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview Text",
+    "zh_HANS": "预览文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Characters rendered inside each font thumbnail",
+    "zh_HANS": "渲染在缩略图里的字符"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview Content",
+    "zh_HANS": "预览内容"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Object",
+    "zh_HANS": "文本对象"
+  },
+  {
+    "context": "*",
+    "msgid": "Use characters from the active text object",
+    "zh_HANS": "使用当前文本对象中的文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom Text",
+    "zh_HANS": "自定义文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the preview text below",
+    "zh_HANS": "使用下方自定义预览文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Name",
+    "zh_HANS": "字体名称"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the font file display name",
+    "zh_HANS": "使用字体文件名"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview Font Size",
+    "zh_HANS": "预览字号"
+  },
+  {
+    "context": "*",
+    "msgid": "Point size used when rendering the thumbnail image",
+    "zh_HANS": "生成缩略图时使用的字号"
+  },
+  {
+    "context": "*",
+    "msgid": "Thumbnail Width",
+    "zh_HANS": "缩略图宽度"
+  },
+  {
+    "context": "*",
+    "msgid": "Generated preview image width in pixels",
+    "zh_HANS": "预览图宽度（像素）"
+  },
+  {
+    "context": "*",
+    "msgid": "Thumbnail Height",
+    "zh_HANS": "缩略图高度"
+  },
+  {
+    "context": "*",
+    "msgid": "Generated preview image height in pixels",
+    "zh_HANS": "预览图高度（像素）"
+  },
+  {
+    "context": "*",
+    "msgid": "List Icon Scale",
+    "zh_HANS": "列表图标缩放"
+  },
+  {
+    "context": "*",
+    "msgid": "How large previews appear in the sidebar font list",
+    "zh_HANS": "侧边栏字体列表中预览图的显示大小"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview Banner Scale",
+    "zh_HANS": "预览条缩放"
+  },
+  {
+    "context": "*",
+    "msgid": "How large the preview banner appears above the font list",
+    "zh_HANS": "字体列表上方预览条的显示大小"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview loading…",
+    "zh_HANS": "预览加载中…"
+  },
+  {
+    "context": "*",
+    "msgid": "Regenerate Font Previews",
+    "zh_HANS": "重新生成字体预览"
+  },
+  {
+    "context": "*",
+    "msgid": "Clear cached thumbnails and rebuild them with current preview settings",
+    "zh_HANS": "清除缓存并按当前设置重新生成缩略图"
+  },
+  {
+    "context": "*",
+    "msgid": "Font preview cache cleared",
+    "zh_HANS": "字体预览缓存已清除"
+  },
+  {
+    "context": "*",
+    "msgid": "Blender font browser…",
+    "zh_HANS": "Blender 字体浏览器…"
+  },
+  {
+    "context": "*",
+    "msgid": "Loaded fonts",
+    "zh_HANS": "已加载字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Style slots (bold / italic)",
+    "zh_HANS": "样式槽（粗体 / 斜体）"
+  },
+  {
+    "context": "*",
+    "msgid": "Bold Italic Font",
+    "zh_HANS": "粗斜体字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Font loaded: {}",
+    "zh_HANS": "已加载字体：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "Font file not found",
+    "zh_HANS": "找不到字体文件"
+  },
+  {
+    "context": "*",
+    "msgid": "No font data available",
+    "zh_HANS": "无可用字体数据"
+  },
+  {
+    "context": "*",
+    "msgid": "Open a 3D Viewport and try again",
+    "zh_HANS": "请打开 3D 视口后重试"
+  },
+  {
+    "context": "*",
+    "msgid": "Font browser cannot open in the current context",
+    "zh_HANS": "当前环境无法打开字体浏览器"
+  },
+  {
+    "context": "*",
+    "msgid": "Tip: set default folder in Edit → Preferences → File Paths → Data",
+    "zh_HANS": "提示：可在 编辑 → 偏好设置 → 文件路径 → 数据 中设置默认字体目录"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Browse Font File",
+    "zh_HANS": "浏览字体文件"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Load a .ttf/.otf font from disk (e.g. Windows Fonts folder) and assign it to the text",
+    "zh_HANS": "从磁盘加载 .ttf/.otf 字体（如 Windows 字体文件夹）并应用到文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Open Font Picker",
+    "zh_HANS": "打开字体选择器"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font Picker",
+    "zh_HANS": "字体选择器"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open or close the viewport GPU font picker",
+    "zh_HANS": "打开或关闭视口 GPU 字体选择器"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} fonts · scroll wheel",
+    "zh_HANS": "{:d} 个字体 · 滚轮滚动"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} fonts · □ = missing glyph",
+    "zh_HANS": "{:d} 个字体 · □ = 缺失字形"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} supported fonts · □ = missing glyph",
+    "zh_HANS": "{:d} 个支持字体 · □ = 缺失字形"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} fonts · □ = missing",
+    "zh_HANS": "{:d} 个字体 · □ = 缺字"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} supported · □ = missing",
+    "zh_HANS": "{:d} 个支持 · □ = 缺字"
+  },
+  {
+    "context": "*",
+    "msgid": "Missing {:d}",
+    "zh_HANS": "缺失 {:d}"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview: {}",
+    "zh_HANS": "预览：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "Hide unsupported",
+    "zh_HANS": "隐藏不支持"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-weight only",
+    "zh_HANS": "仅多字重"
+  },
+  {
+    "context": "*",
+    "msgid": "All font families",
+    "zh_HANS": "全部字族"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-Weight Fonts Only",
+    "zh_HANS": "仅多字重字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Only list font families that have more than one weight on disk",
+    "zh_HANS": "仅列出磁盘上有多种字重的字族"
+  },
+  {
+    "context": "*",
+    "msgid": "Weights",
+    "zh_HANS": "字重"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Weight",
+    "zh_HANS": "字体字重"
+  },
+  {
+    "context": "*",
+    "msgid": "Switch font weight",
+    "zh_HANS": "切换字体字重"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Weight Picker",
+    "zh_HANS": "字体字重选择器"
+  },
+  {
+    "context": "*",
+    "msgid": "Open or close the viewport font weight picker",
+    "zh_HANS": "打开或关闭视口字体字重选择器"
+  },
+  {
+    "context": "*",
+    "msgid": "No alternate weights found for this font",
+    "zh_HANS": "此字体没有其他字重"
+  },
+  {
+    "context": "*",
+    "msgid": "No font weight information available",
+    "zh_HANS": "无法获取字体字重信息"
+  },
+  {
+    "context": "*",
+    "msgid": "Weight",
+    "zh_HANS": "字重"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} families · □ = missing",
+    "zh_HANS": "{:d} 字族 · □ = 缺字"
+  },
+  {
+    "context": "*",
+    "msgid": "Show all fonts",
+    "zh_HANS": "显示全部字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Fonts",
+    "zh_HANS": "字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Font",
+    "zh_HANS": "字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Bold Font",
+    "zh_HANS": "粗体字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Italic Font",
+    "zh_HANS": "斜体字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Wrap",
+    "zh_HANS": "换行"
+  },
+  {
+    "context": "*",
+    "msgid": "Truncate",
+    "zh_HANS": "截断"
+  },
+  {
+    "context": "*",
+    "msgid": "Add Frame",
+    "zh_HANS": "添加框"
+  },
+  {
+    "context": "*",
+    "msgid": "Double-click text in the viewport to edit",
+    "zh_HANS": "在视口中双击文字即可编辑"
+  },
+  {
+    "context": "*",
+    "msgid": "Editing in viewport",
+    "zh_HANS": "视口内编辑中"
+  },
+  {
+    "context": "*",
+    "msgid": "Double-click empty space to exit edit mode",
+    "zh_HANS": "编辑模式下双击空白处退出"
+  },
+  {
+    "context": "*",
+    "msgid": "Show HUD",
+    "zh_HANS": "显示 HUD"
+  },
+  {
+    "context": "*",
+    "msgid": "Show the floating toolbar for this text object in the viewport",
+    "zh_HANS": "在视口中显示此文字对象的浮动工具栏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Hide Floating Toolbar",
+    "zh_HANS": "隐藏浮动工具栏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Hide the floating toolbar for this text object",
+    "zh_HANS": "隐藏此文字对象的浮动工具栏"
+  },
+  {
+    "context": "*",
+    "msgid": "Show Frame Bounds",
+    "zh_HANS": "显示排版框"
+  },
+  {
+    "context": "*",
+    "msgid": "Show the green layout frame overlay for this text object",
+    "zh_HANS": "显示此文字对象的绿色排版框叠加层"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Frame Bounds",
+    "zh_HANS": "切换排版框显示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Show or hide the green layout frame overlay",
+    "zh_HANS": "显示或隐藏绿色排版框叠加层"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD",
+    "zh_HANS": "HUD"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Edit Text",
+    "zh_HANS": "编辑文字"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Enter in-viewport text editing mode",
+    "zh_HANS": "进入视口内文字编辑模式"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Select a text object first",
+    "zh_HANS": "请先选择文字对象"
+  },
+  {
+    "context": "*",
+    "msgid": "Shear",
+    "zh_HANS": "切变"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust text shear (↺ resets to preset default)",
+    "zh_HANS": "调整切变（↺ 恢复为预设默认值）"
+  },
+  {
+    "context": "*",
+    "msgid": "Char Spacing",
+    "zh_HANS": "字距"
+  },
+  {
+    "context": "*",
+    "msgid": "Word Spacing",
+    "zh_HANS": "词距"
+  },
+  {
+    "context": "*",
+    "msgid": "Line Height",
+    "zh_HANS": "行高"
+  },
+  {
+    "context": "*",
+    "msgid": "Spacing",
+    "zh_HANS": "间距"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Size",
+    "zh_HANS": "字号"
+  },
+  {
+    "context": "*",
+    "msgid": "Strikethrough Position",
+    "zh_HANS": "删除线位置"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust strikethrough line position (↺ resets to default)",
+    "zh_HANS": "调整删除线位置（↺ 恢复默认）"
+  },
+  {
+    "context": "*",
+    "msgid": "Reset",
+    "zh_HANS": "重置"
+  },
+  {
+    "context": "*",
+    "msgid": "Drag to reposition the toolbar",
+    "zh_HANS": "拖动以移动工具栏位置"
+  },
+  {
+    "context": "*",
+    "msgid": "Show or hide layout frame bounds",
+    "zh_HANS": "显示或隐藏排版框边界"
+  },
+  {
+    "context": "*",
+    "msgid": "Style preset",
+    "zh_HANS": "样式预设"
+  },
+  {
+    "context": "*",
+    "msgid": "Open style preset picker",
+    "zh_HANS": "打开样式预设选择器"
+  },
+  {
+    "context": "*",
+    "msgid": "Style Preset",
+    "zh_HANS": "样式预设"
+  },
+  {
+    "context": "*",
+    "msgid": "Open font picker",
+    "zh_HANS": "打开字体选择器"
+  },
+  {
+    "context": "*",
+    "msgid": "Align left",
+    "zh_HANS": "左对齐"
+  },
+  {
+    "context": "*",
+    "msgid": "Align center",
+    "zh_HANS": "居中对齐"
+  },
+  {
+    "context": "*",
+    "msgid": "Align right",
+    "zh_HANS": "右对齐"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust font size (↺ resets to preset default)",
+    "zh_HANS": "调整字号（↺ 恢复为预设默认值）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust character spacing (↺ resets to preset default)",
+    "zh_HANS": "调整字距（↺ 恢复为预设默认值）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust word spacing (↺ resets to preset default)",
+    "zh_HANS": "调整词距（↺ 恢复为预设默认值）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust line height (↺ resets to preset default)",
+    "zh_HANS": "调整行高（↺ 恢复为预设默认值）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust paragraph spacing (↺ resets to preset default)",
+    "zh_HANS": "调整段落间距（↺ 恢复为预设默认值）"
+  },
+  {
+    "context": "*",
+    "msgid": "Hide floating toolbar",
+    "zh_HANS": "隐藏浮动工具栏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Hide floating toolbar",
+    "zh_HANS": "隐藏浮动工具栏"
+  },
+  {
+    "context": "*",
+    "msgid": "Strikethrough is not supported by Blender text objects",
+    "zh_HANS": "Blender 文字对象不支持删除线"
+  },
+  {
+    "context": "*",
+    "msgid": "Character Spacing",
+    "zh_HANS": "字距"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Strikethrough is not supported by Blender text objects",
+    "zh_HANS": "Blender 文字对象不支持删除线"
+  },
+  {
+    "context": "*",
+    "msgid": "Line Spacing",
+    "zh_HANS": "行距"
+  },
+  {
+    "context": "*",
+    "msgid": "Offset Y",
+    "zh_HANS": "Y 偏移"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Regenerate Font Previews",
+    "zh_HANS": "重新生成字体预览"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear cached thumbnails and rebuild them with current preview settings",
+    "zh_HANS": "清除缓存并按当前设置重新生成缩略图"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Adjust Spacing",
+    "zh_HANS": "调整间距"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply Text Preset",
+    "zh_HANS": "应用文字预设"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Ensure HUD Modal",
+    "zh_HANS": "确保 HUD 模态"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Reset Format Value",
+    "zh_HANS": "重置格式数值"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Reset font size or spacing to the current style preset default",
+    "zh_HANS": "将字号或间距重置为当前样式预设默认值"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Font Language Filter",
+    "zh_HANS": "设置字体语言筛选"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Spacing Value",
+    "zh_HANS": "设置间距数值"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Vertical Alignment",
+    "zh_HANS": "设置垂直对齐"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Style Preset Picker",
+    "zh_HANS": "样式预设选择器"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open or close the viewport GPU style preset picker",
+    "zh_HANS": "打开或关闭视口 GPU 样式预设选择器"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text Helper HUD",
+    "zh_HANS": "Text Helper HUD"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text Helper Preferences",
+    "zh_HANS": "Text Helper 偏好设置"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text Style Preset",
+    "zh_HANS": "文字样式预设"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Transform text to default, uppercase, or lowercase",
+    "zh_HANS": "将文字转换为默认、全大写或全小写"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Unlink Font",
+    "zh_HANS": "取消链接字体"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open Font (Blender)",
+    "zh_HANS": "打开字体（Blender）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Load a .ttf/.otf font from disk and assign it to the text",
+    "zh_HANS": "从磁盘加载 .ttf/.otf 字体并应用到文字"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font: {}",
+    "zh_HANS": "字体：{}"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Bold Font",
+    "zh_HANS": "粗体字体"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Italic Font",
+    "zh_HANS": "斜体字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Show the floating toolbar near selected text in the 3D viewport",
+    "zh_HANS": "在 3D 视口中于选中文字附近显示浮动工具栏"
+  },
+  {
+    "context": "*",
+    "msgid": "Apply the highlighted font while hovering or navigating the font list",
+    "zh_HANS": "在列表中悬停或浏览时将高亮字体实时应用到文字"
+  },
+  {
+    "context": "*",
+    "msgid": "What to render inside the thumbnail",
+    "zh_HANS": "缩略图内渲染的内容"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Offset X",
+    "zh_HANS": "HUD X 偏移"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Offset Y",
+    "zh_HANS": "HUD Y 偏移"
+  },
+  {
+    "context": "*",
+    "msgid": "User drag offset for the floating toolbar (screen pixels)",
+    "zh_HANS": "浮动工具栏的用户拖动偏移（屏幕像素）"
+  },
+  {
+    "context": "*",
+    "msgid": "Hide Unsupported Fonts",
+    "zh_HANS": "隐藏不支持的字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Only list fonts that contain every non-space character in the preview text",
+    "zh_HANS": "仅列出预览文字中每个非空格字符都有字形的字体"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Expand Panel",
+    "zh_HANS": "HUD 展开面板"
+  },
+  {
+    "context": "*",
+    "msgid": "Expanded slider row below the floating toolbar",
+    "zh_HANS": "浮动工具栏下方展开的滑块行"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Index",
+    "zh_HANS": "字体索引"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Picker Preview",
+    "zh_HANS": "字体选择器预览"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom preview phrase shown in the viewport font picker",
+    "zh_HANS": "视口字体选择器中显示的自定义预览文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Script Filter",
+    "zh_HANS": "书写系统筛选"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Case",
+    "zh_HANS": "字母大小写"
+  },
+  {
+    "context": "*",
+    "msgid": "Letter case transform for the text content",
+    "zh_HANS": "文字内容的字母大小写转换"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Case Snapshot",
+    "zh_HANS": "大小写快照"
+  },
+  {
+    "context": "*",
+    "msgid": "Stored original text before case transform",
+    "zh_HANS": "大小写转换前保存的原始文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Orientation",
+    "zh_HANS": "文字方向"
+  },
+  {
+    "context": "*",
+    "msgid": "Horizontal rows or vertical columns (transposed in body)",
+    "zh_HANS": "横向行或竖向列（在正文中转置存储）"
+  },
+  {
+    "context": "*",
+    "msgid": "Where the first typed column appears; Enter adds the next column",
+    "zh_HANS": "首列出现位置；回车添加下一列"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical Source",
+    "zh_HANS": "竖向源文本"
+  },
+  {
+    "context": "*",
+    "msgid": "Horizontal input in N-panel: each line is one vertical column",
+    "zh_HANS": "N 面板横向输入：每行对应一个竖列"
+  },
+  {
+    "context": "*",
+    "msgid": "Underline Enabled",
+    "zh_HANS": "下划线已启用"
+  },
+  {
+    "context": "*",
+    "msgid": "Logical underline toggle (mutually exclusive with strikethrough)",
+    "zh_HANS": "逻辑下划线开关（与删除线互斥）"
+  },
+  {
+    "context": "*",
+    "msgid": "Strikethrough Enabled",
+    "zh_HANS": "删除线已启用"
+  },
+  {
+    "context": "*",
+    "msgid": "Logical strikethrough toggle (mutually exclusive with underline)",
+    "zh_HANS": "逻辑删除线开关（与下划线互斥）"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical line position used when strikethrough is enabled",
+    "zh_HANS": "启用删除线时的线条垂直位置"
+  },
+  {
+    "context": "*",
+    "msgid": "Pre Bold Size",
+    "zh_HANS": "加粗前字号"
+  },
+  {
+    "context": "*",
+    "msgid": "Stored size before faux-bold enlargement",
+    "zh_HANS": "伪加粗放大前保存的字号"
+  },
+  {
+    "context": "*",
+    "msgid": "Name",
+    "zh_HANS": "名称"
+  },
+  {
+    "context": "*",
+    "msgid": "Path",
+    "zh_HANS": "路径"
+  },
+  {
+    "context": "*",
+    "msgid": "Original letter casing",
+    "zh_HANS": "保持原始大小写"
+  },
+  {
+    "context": "*",
+    "msgid": "All uppercase letters",
+    "zh_HANS": "全部大写字母"
+  },
+  {
+    "context": "*",
+    "msgid": "All lowercase letters",
+    "zh_HANS": "全部小写字母"
+  },
+  {
+    "context": "*",
+    "msgid": "First line is rightmost; Enter adds a column to the left",
+    "zh_HANS": "首行在最右列；回车向左新增列"
+  },
+  {
+    "context": "*",
+    "msgid": "First line is leftmost; Enter adds a column to the right",
+    "zh_HANS": "首行在最左列；回车向右新增列"
+  },
+  {
+    "context": "*",
+    "msgid": "Top",
+    "zh_HANS": "顶"
+  },
+  {
+    "context": "*",
+    "msgid": "Top Baseline",
+    "zh_HANS": "顶基线"
+  },
+  {
+    "context": "*",
+    "msgid": "Bottom Baseline",
+    "zh_HANS": "底基线"
+  },
+  {
+    "context": "*",
+    "msgid": "Bottom",
+    "zh_HANS": "底"
+  },
+  {
+    "context": "*",
+    "msgid": "Character",
+    "zh_HANS": "字符"
+  },
+  {
+    "context": "*",
+    "msgid": "Line",
+    "zh_HANS": "行"
+  },
+  {
+    "context": "*",
+    "msgid": "Paragraph",
+    "zh_HANS": "段落"
+  },
+  {
+    "context": "*",
+    "msgid": "Size",
+    "zh_HANS": "大小"
+  },
+  {
+    "context": "*",
+    "msgid": "All scripts",
+    "zh_HANS": "全部书写系统"
+  },
+  {
+    "context": "*",
+    "msgid": "All languages",
+    "zh_HANS": "全部语言"
+  },
+  {
+    "context": "*",
+    "msgid": "English (Latin script)",
+    "zh_HANS": "英语（拉丁字母）"
+  },
+  {
+    "context": "*",
+    "msgid": "Latin script",
+    "zh_HANS": "拉丁字母"
+  },
+  {
+    "context": "*",
+    "msgid": "Chinese (Han characters)",
+    "zh_HANS": "中文（汉字）"
+  },
+  {
+    "context": "*",
+    "msgid": "Japanese (kana and kanji)",
+    "zh_HANS": "日文（假名与汉字）"
+  },
+  {
+    "context": "*",
+    "msgid": "Korean (Hangul)",
+    "zh_HANS": "韩文（谚文）"
+  },
+  {
+    "context": "*",
+    "msgid": "Russian (Cyrillic script)",
+    "zh_HANS": "俄语（西里尔字母）"
+  },
+  {
+    "context": "*",
+    "msgid": "Arabic script",
+    "zh_HANS": "阿拉伯字母"
+  },
+  {
+    "context": "*",
+    "msgid": "Greek script",
+    "zh_HANS": "希腊字母"
+  },
+  {
+    "context": "*",
+    "msgid": "Hebrew script",
+    "zh_HANS": "希伯来字母"
+  },
+  {
+    "context": "*",
+    "msgid": "Thai script",
+    "zh_HANS": "泰文字母"
+  },
+  {
+    "context": "*",
+    "msgid": "Type or paste multi-line text…",
+    "zh_HANS": "输入或粘贴多行文字…"
+  },
+  {
+    "context": "*",
+    "msgid": "# Title\n**bold** *italic* `code`",
+    "zh_HANS": "# 标题\n**粗体** *斜体* `代码`"
+  },
+  {
+    "context": "*",
+    "msgid": "Loading fonts…",
+    "zh_HANS": "正在加载字体…"
+  }
+]

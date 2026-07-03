@@ -5,6 +5,9 @@ import os
 import blf
 import bpy
 
+from .font_blf import blf_load, blf_unload, font_path_usable
+from .font_loader import disk_font_path_from_string
+
 _COVERAGE_CACHE = {}
 _UNLOAD_HOOKS = []
 
@@ -96,14 +99,21 @@ def glyph_status_for_font_id(font_id, text, point_size):
 
 
 def font_glyph_status(filepath, text, point_size=24, font_id=None):
-    abs_path = os.path.normcase(bpy.path.abspath(filepath))
+    abs_path = disk_font_path_from_string(filepath)
+    if not abs_path:
+        abs_path = os.path.normcase(bpy.path.abspath(filepath))
     cache_key = (abs_path, text, int(round(point_size * 2)), 2)
     if cache_key in _COVERAGE_CACHE:
         return _COVERAGE_CACHE[cache_key]
 
+    if not font_path_usable(abs_path):
+        result = [False] * len(text)
+        _COVERAGE_CACHE[cache_key] = result
+        return result
+
     loaded_here = False
     if font_id is None or font_id == -1:
-        font_id = blf.load(abs_path)
+        font_id = blf_load(abs_path)
         loaded_here = font_id != -1
 
     if font_id == -1:
@@ -114,7 +124,7 @@ def font_glyph_status(filepath, text, point_size=24, font_id=None):
         finally:
             if loaded_here:
                 try:
-                    blf.unload(abs_path)
+                    blf_unload(abs_path)
                     _notify_blf_unload(abs_path)
                 except Exception:
                     pass

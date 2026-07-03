@@ -80,6 +80,7 @@ def shutdown():
     from .hud.draw import unregister as unregister_draw
     from .hud.font_picker import close_picker as close_font_picker
     from .hud.preset_picker import close_picker as close_preset_picker
+    from .hud.weight_picker import close_picker as close_weight_picker
     from .hud.language_picker import close_picker as close_language_picker
 
     if _ensure_timer is not None:
@@ -90,6 +91,7 @@ def shutdown():
         _ensure_timer = None
 
     close_font_picker(bpy.context)
+    close_weight_picker(bpy.context)
     close_preset_picker(bpy.context)
     close_language_picker(bpy.context)
 

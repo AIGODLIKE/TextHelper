@@ -47,6 +47,36 @@ def toolbar_font_size(scale):
     return max(int(round(11.0 * scale)), 9)
 
 
+def dropdown_text_max_width(box_width, scale, pad=None, chevron_pad=None):
+    text_pad = 8.0 * scale if pad is None else pad
+    chevron = 20.0 * scale if chevron_pad is None else chevron_pad
+    return max(8.0 * scale, box_width - text_pad - chevron)
+
+
+def fit_dropdown_label(font_id, label, font_size, max_width):
+    """Truncate label with ellipsis so dropdown buttons keep a stable width."""
+    text = label or ""
+    if max_width <= 0:
+        return text
+    blf.size(font_id, int(font_size))
+    tw, _ = blf.dimensions(font_id, text)
+    if tw <= max_width:
+        return text
+    ellipsis = "…"
+    blf.size(font_id, int(font_size))
+    ew, _ = blf.dimensions(font_id, ellipsis)
+    if ew >= max_width:
+        return ellipsis
+    trimmed = text
+    while trimmed:
+        trimmed = trimmed[:-1]
+        candidate = trimmed + ellipsis if trimmed else ellipsis
+        cw, _ = blf.dimensions(font_id, candidate)
+        if cw <= max_width:
+            return candidate
+    return ellipsis
+
+
 def text_visual_center_y(font_id, text, baseline_y):
     _, ymin, _, ymax = text_bounds(font_id, text or "A")
     if ymax != ymin:

@@ -4,8 +4,7 @@ from bpy.types import Operator
 from ..utils.operator_poll import ActiveFontDataPollMixin
 from ..utils.text_format import get_active_text_data
 from ..utils.text_frame import tag_view3d_redraw
-from ..utils.text_orientation import apply_column_order, apply_orientation, insert_column_break, is_vertical, set_vertical_source
-from ..utils.vertical_align_check import convert_text_to_fullwidth, has_convertible_chars
+from ..utils.text_orientation import apply_column_order, apply_orientation, insert_column_break
 
 
 class TH_OT_set_text_orientation(ActiveFontDataPollMixin, Operator):
@@ -68,24 +67,25 @@ class TH_OT_insert_column_break(ActiveFontDataPollMixin, Operator):
 class TH_OT_convert_vertical_fullwidth(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_convert_vertical_fullwidth"
     bl_label = "Fix Halfwidth Characters"
-    bl_description = "Convert halfwidth characters to fullwidth for vertical column alignment"
+    bl_description = "Convert halfwidth characters to fullwidth for better CJK alignment"
+    bl_translation_context = "Operator"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         from ..i18n import _
+        from ..utils.vertical_align_check import apply_fullwidth_fix
 
         text_data = get_active_text_data(context)
-        if text_data is None or not is_vertical(text_data):
+        if text_data is None:
             return {"CANCELLED"}
 
-        raw = getattr(text_data.text_helper, "th_vertical_source", "") or ""
-        if not has_convertible_chars(raw):
+        count = apply_fullwidth_fix(text_data)
+        if count <= 0:
             self.report({"INFO"}, _("No halfwidth characters to convert"))
             return {"CANCELLED"}
 
-        converted = convert_text_to_fullwidth(raw)
-        set_vertical_source(text_data, converted)
         tag_view3d_redraw(context)
+        self.report({"INFO"}, _("Fixed {:d} halfwidth character(s)").format(count))
         return {"FINISHED"}
 
 

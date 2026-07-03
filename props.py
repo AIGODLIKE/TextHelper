@@ -271,9 +271,16 @@ class TH_WindowManagerProps(PropertyGroup):
         description="Only list fonts that contain every non-space character in the preview text",
         default=True,
     )
+    th_font_picker_multi_weight_only: BoolProperty(
+        name="Multi-Weight Fonts Only",
+        description="Only list font families that have more than one weight on disk",
+        default=False,
+    )
     th_font_picker_scroll_drag: BoolProperty(default=False)
     th_font_picker_scroll_drag_y: FloatProperty(default=0.0)
     th_font_picker_scroll_drag_base: IntProperty(default=0)
+    th_weight_picker_open: BoolProperty(default=False)
+    th_weight_picker_hover: IntProperty(default=-1)
     th_preset_picker_open: BoolProperty(default=False)
     th_preset_picker_hover: StringProperty(default="")
     th_language_picker_open: BoolProperty(default=False)

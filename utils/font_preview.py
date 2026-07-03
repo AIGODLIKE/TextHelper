@@ -10,6 +10,7 @@ import imbuf
 from .addon_prefs import get_addon_prefs
 from .font_preview_draw import blf_load_for_preview, draw_blf_preview, trim_text_to_width
 from .font_preview_text import get_font_preview_text
+from .font_blf import blf_unload, font_path_usable
 from .png_clean import strip_png_color_profile, strip_png_dir, write_solid_png
 
 _PREVIEW_COLLECTION = None
@@ -201,10 +202,7 @@ def _render_preview_png(filepath, png_path, sample, width, height, point_size):
     except Exception:
         return False
     finally:
-        try:
-            blf.unload(filepath)
-        except Exception:
-            pass
+        blf_unload(filepath)
 
 
 def _ensure_settings(context):
@@ -328,6 +326,8 @@ def queue_font_preview(context, filepath, display_name=""):
     abs_path = bpy.path.abspath(filepath)
     if not os.path.isfile(abs_path):
         return
+    if not font_path_usable(abs_path):
+        return
     prefs = get_addon_prefs(context)
     if not getattr(prefs, "font_preview_icons", True):
         return
@@ -354,6 +354,8 @@ def get_font_icon(context, filepath, display_name=""):
         return 0
     abs_path = bpy.path.abspath(filepath)
     if not os.path.isfile(abs_path):
+        return 0
+    if not font_path_usable(abs_path):
         return 0
 
     prefs = get_addon_prefs(context)

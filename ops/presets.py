@@ -83,6 +83,9 @@ class TH_OT_toggle_preset_picker(ActiveFontDataPollMixin, Operator):
         from ..ops.hud_modal import _dismiss_popup_menus
 
         close_font_picker(context)
+        from ..hud.weight_picker import close_picker as close_weight_picker
+
+        close_weight_picker(context)
         state.th_hud_open_menu = ""
         _dismiss_popup_menus(context)
         state.th_preset_picker_open = True

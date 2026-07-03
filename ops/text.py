@@ -8,6 +8,7 @@ from ..utils.operator_poll import ActiveFontDataPollMixin, ActiveFontPollMixin
 from ..utils.text_format import get_active_text
 from ..utils.text_frame import ensure_layout_frame, tag_view3d_redraw
 from ..utils.text_orientation import clear_vertical_content, is_vertical, set_vertical_source
+from ..utils.ui_textbox import sync_panel_textbox_from_canonical
 
 
 class TH_OT_enter_text_edit(ActiveFontPollMixin, Operator):
@@ -31,6 +32,13 @@ class TH_OT_text_add(Operator):
     bl_idname = "font.texthelper_text_add"
     bl_label = "Add Text"
     bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        if context.area is None or context.area.type != "VIEW_3D":
+            cls.poll_message_set(_("Open a 3D Viewport and try again"))
+            return False
+        return True
 
     def execute(self, context):
         bpy.ops.object.text_add()
@@ -63,6 +71,7 @@ class TH_OT_clear_body(ActiveFontDataPollMixin, Operator):
         else:
             obj.data.body = ""
             obj.data.update_tag()
+            sync_panel_textbox_from_canonical(obj.data, vertical=False, context=context, flip_active=True)
         return {"FINISHED"}
 
 

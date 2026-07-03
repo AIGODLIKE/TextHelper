@@ -81,9 +81,11 @@ def prepare_font_edit_ui(context):
     try:
         from ..hud.font_picker import close_picker as close_font_picker
         from ..hud.preset_picker import close_picker as close_preset_picker
+        from ..hud.weight_picker import close_picker as close_weight_picker
         from ..hud.language_picker import close_picker as close_language_picker
 
         close_font_picker(context)
+        close_weight_picker(context)
         close_preset_picker(context)
         close_language_picker(context)
     except Exception:

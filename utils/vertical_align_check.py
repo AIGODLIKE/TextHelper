@@ -8,7 +8,8 @@ import unicodedata
 import blf
 import bpy
 
-from .text_orientation import COLUMN_FILL
+from .font_blf import blf_load, blf_unload
+from .text_orientation import COLUMN_FILL, is_vertical
 
 _CJK_PROBE = ("一", "口", "汉")
 _LATIN_PROBE = ("M", "i", "W")
@@ -59,7 +60,7 @@ def analyze_font_metrics(filepath: str, point_size: float = 24.0) -> dict:
     if cache_key in _METRICS_CACHE:
         return _METRICS_CACHE[cache_key]
 
-    font_id = blf.load(abs_path)
+    font_id = blf_load(abs_path)
     if font_id == -1:
         result = {
             "loaded": False,
@@ -96,10 +97,7 @@ def analyze_font_metrics(filepath: str, point_size: float = 24.0) -> dict:
             "fill_width": fill_width,
         }
     finally:
-        try:
-            blf.unload(abs_path)
-        except Exception:
-            pass
+        blf_unload(abs_path)
 
     _METRICS_CACHE[cache_key] = result
     return result
@@ -111,33 +109,47 @@ def _font_point_size(text_data) -> float:
 
 
 def analyze_font_for_vertical(text_data) -> dict | None:
+    from .font_loader import disk_font_path
+
     font = getattr(text_data, "font", None)
-    if font is None or not font.filepath:
+    if font is None:
         return None
-    return analyze_font_metrics(font.filepath, _font_point_size(text_data))
+    path = disk_font_path(font)
+    if not path:
+        return None
+    return analyze_font_metrics(path, _font_point_size(text_data))
 
 
 def vertical_source_text(text_data) -> str:
     return getattr(text_data.text_helper, "th_vertical_source", "") or ""
 
 
+def panel_source_text(text_data) -> str:
+    """Text shown in the N-panel editor for the active orientation."""
+    if is_vertical(text_data):
+        return vertical_source_text(text_data)
+    return getattr(text_data, "body", "") or ""
+
+
 def build_vertical_align_report(text_data) -> dict:
-    """Summary used by the N-panel to warn about vertical layout risks."""
-    font_report = analyze_font_for_vertical(text_data)
-    halfwidth = find_halfwidth_chars(vertical_source_text(text_data))
+    """Summary used by the N-panel to warn about layout risks."""
+    vertical = is_vertical(text_data)
+    font_report = analyze_font_for_vertical(text_data) if vertical else None
+    halfwidth = find_halfwidth_chars(panel_source_text(text_data))
 
     font_issues: list[str] = []
-    if font_report is None:
-        font_issues.append("unknown_font")
-    elif not font_report.get("loaded", False):
-        font_issues.append("font_load_failed")
-    elif not font_report.get("monospace_ok", False):
-        if font_report.get("proportional_cjk"):
-            font_issues.append("proportional_cjk")
-        if font_report.get("fill_width_mismatch"):
-            font_issues.append("fill_width_mismatch")
-        if font_report.get("latin_proportional"):
-            font_issues.append("latin_proportional")
+    if vertical:
+        if font_report is None:
+            font_issues.append("unknown_font")
+        elif not font_report.get("loaded", False):
+            font_issues.append("font_load_failed")
+        elif not font_report.get("monospace_ok", False):
+            if font_report.get("proportional_cjk"):
+                font_issues.append("proportional_cjk")
+            if font_report.get("fill_width_mismatch"):
+                font_issues.append("fill_width_mismatch")
+            if font_report.get("latin_proportional"):
+                font_issues.append("latin_proportional")
 
     has_issues = bool(font_issues) or bool(halfwidth)
     return {
@@ -196,6 +208,31 @@ def convert_text_to_fullwidth(text: str) -> str:
 
 def has_convertible_chars(text: str) -> bool:
     return any(should_convert_to_fullwidth(char) for char in (text or ""))
+
+
+def count_convertible_chars(text: str) -> int:
+    return sum(1 for char in (text or "") if should_convert_to_fullwidth(char))
+
+
+def apply_fullwidth_fix(text_data) -> int:
+    """Convert halfwidth chars in the active N-panel source. Returns chars fixed."""
+    from .text_orientation import set_vertical_source
+
+    raw = panel_source_text(text_data)
+    count = count_convertible_chars(raw)
+    if count <= 0:
+        return 0
+
+    converted = convert_text_to_fullwidth(raw)
+    if is_vertical(text_data):
+        set_vertical_source(text_data, converted)
+    else:
+        text_data.body = converted
+        from .ui_textbox import sync_panel_textbox_from_canonical
+
+        sync_panel_textbox_from_canonical(text_data, vertical=False, flip_active=True)
+        text_data.update_tag()
+    return count
 
 
 def invalidate_vertical_align_cache():

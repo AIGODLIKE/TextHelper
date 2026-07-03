@@ -1,0 +1,1792 @@
+[
+  {
+    "context": "*",
+    "msgid": "Text Helper",
+    "ja_JP": "テキストヘルパー"
+  },
+  {
+    "context": "*",
+    "msgid": "Text",
+    "ja_JP": "テキスト"
+  },
+  {
+    "context": "*",
+    "msgid": "Content",
+    "ja_JP": "テキスト内容"
+  },
+  {
+    "context": "*",
+    "msgid": "Quick Toolbar",
+    "ja_JP": "クイックツールバー"
+  },
+  {
+    "context": "*",
+    "msgid": "About",
+    "ja_JP": "について"
+  },
+  {
+    "context": "*",
+    "msgid": "Easy text input & font management",
+    "ja_JP": "簡単なテキスト入力とフォント管理"
+  },
+  {
+    "context": "*",
+    "msgid": "Easy text input & font management with a viewport floating toolbar.",
+    "ja_JP": "簡単なテキスト入力とフォント管理。3Dビューポートにフローティングツールバー付き。"
+  },
+  {
+    "context": "*",
+    "msgid": "Viewport",
+    "ja_JP": "3Dビューポート"
+  },
+  {
+    "context": "*",
+    "msgid": "Sidebar",
+    "ja_JP": "サイドバー"
+  },
+  {
+    "context": "*",
+    "msgid": "Format",
+    "ja_JP": "書式"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Direction",
+    "ja_JP": "文字方向"
+  },
+  {
+    "context": "*",
+    "msgid": "Horizontal",
+    "ja_JP": "横書き"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical",
+    "ja_JP": "縦書き"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Text Orientation",
+    "ja_JP": "文字方向を設定"
+  },
+  {
+    "context": "*",
+    "msgid": "Horizontal text input",
+    "ja_JP": "横書き入力"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical text input",
+    "ja_JP": "縦書き入力"
+  },
+  {
+    "context": "*",
+    "msgid": "Edit text in horizontal rows",
+    "ja_JP": "横方向の行でテキストを編集"
+  },
+  {
+    "context": "*",
+    "msgid": "Edit text in vertical columns",
+    "ja_JP": "縦方向の列でテキストを編集"
+  },
+  {
+    "context": "*",
+    "msgid": "Column Order",
+    "ja_JP": "列の順序"
+  },
+  {
+    "context": "*",
+    "msgid": "Right to Left",
+    "ja_JP": "右から左"
+  },
+  {
+    "context": "*",
+    "msgid": "Left to Right",
+    "ja_JP": "左から右"
+  },
+  {
+    "context": "*",
+    "msgid": "New columns grow from right to left",
+    "ja_JP": "新しい列は右から左へ追加"
+  },
+  {
+    "context": "*",
+    "msgid": "New columns grow from left to right",
+    "ja_JP": "新しい列は左から右へ追加"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Insert Column Break",
+    "ja_JP": "列区切りを挿入"
+  },
+  {
+    "context": "*",
+    "msgid": "New Column",
+    "ja_JP": "列を追加"
+  },
+  {
+    "context": "*",
+    "msgid": "Type horizontally; press Enter to start a new column",
+    "ja_JP": "横書きで入力し、Enter で新しい列を開始"
+  },
+  {
+    "context": "*",
+    "msgid": "Type horizontally · Enter = new column",
+    "ja_JP": "横書き入力 · Enter = 列追加"
+  },
+  {
+    "context": "*",
+    "msgid": "Shorter columns are auto-padded to stay aligned",
+    "ja_JP": "短い列は全角スペースで自動パディングされ、揃えられます"
+  },
+  {
+    "context": "*",
+    "msgid": "Right to Left: first line is the rightmost column; Enter adds leftward",
+    "ja_JP": "右から左：最初の行が最右列、Enter で左方向に列を追加"
+  },
+  {
+    "context": "*",
+    "msgid": "Left to Right: first line is the leftmost column; Enter adds rightward",
+    "ja_JP": "左から右：最初の行が最左列、Enter で右方向に列を追加"
+  },
+  {
+    "context": "*",
+    "msgid": "Non-monospaced font — columns may misalign",
+    "ja_JP": "等幅フォントではありません — 列がずれる場合があります"
+  },
+  {
+    "context": "*",
+    "msgid": "Halfwidth characters: {}",
+    "ja_JP": "半角文字：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "Fix",
+    "ja_JP": "修正"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Fix Halfwidth Characters",
+    "ja_JP": "半角文字を修正"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Convert halfwidth characters to fullwidth for better CJK alignment",
+    "ja_JP": "半角文字を全角に変換し、CJK の整列を改善"
+  },
+  {
+    "context": "Operator",
+    "msgid": "No halfwidth characters to convert",
+    "ja_JP": "変換する半角文字がありません"
+  },
+  {
+    "context": "*",
+    "msgid": "Fixed {:d} halfwidth character(s)",
+    "ja_JP": "{:d} 個の半角文字を修正しました"
+  },
+  {
+    "context": "*",
+    "msgid": "New columns appear to the left",
+    "ja_JP": "新しい列は左側に追加されます"
+  },
+  {
+    "context": "*",
+    "msgid": "New columns appear to the right",
+    "ja_JP": "新しい列は右側に追加されます"
+  },
+  {
+    "context": "*",
+    "msgid": "Blank line between columns starts a new column",
+    "ja_JP": "列間の空行は新しい列を開始します"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical: one character per line; blank line = new column",
+    "ja_JP": "縦書き：1 行 1 文字、空行 = 列追加"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Column Order",
+    "ja_JP": "列の順序を設定"
+  },
+  {
+    "context": "*",
+    "msgid": "Layout Frame",
+    "ja_JP": "レイアウト枠"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Frame",
+    "ja_JP": "テキスト枠"
+  },
+  {
+    "context": "*",
+    "msgid": "No layout frame — click Add Frame",
+    "ja_JP": "レイアウト枠がありません — 「枠を追加」をクリック"
+  },
+  {
+    "context": "*",
+    "msgid": "Auto Layout Frame",
+    "ja_JP": "レイアウト枠を自動作成"
+  },
+  {
+    "context": "*",
+    "msgid": "Create a layout frame automatically when adding new text",
+    "ja_JP": "新しいテキスト追加時にレイアウト枠を自動作成"
+  },
+  {
+    "context": "*",
+    "msgid": "Show Text Frame Bounds",
+    "ja_JP": "テキスト枠の境界を表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Draw layout frame rectangles in the 3D viewport",
+    "ja_JP": "3D ビューポートにレイアウト枠の矩形を描画"
+  },
+  {
+    "context": "*",
+    "msgid": "Suggested height for the N-panel textbox (drag its bottom edge to resize)",
+    "ja_JP": "N パネル テキストボックスの推奨高さ（下端をドラッグしてサイズ変更）"
+  },
+  {
+    "context": "*",
+    "msgid": "N-Panel Textbox Lines",
+    "ja_JP": "N パネル テキストボックス行数"
+  },
+  {
+    "context": "*",
+    "msgid": "Select a text object to edit.",
+    "ja_JP": "テキストオブジェクトを選択して編集を開始してください。"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open Text Helper add-on preferences",
+    "ja_JP": "テキストヘルパー アドオンのプリファレンスを開く"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Floating Toolbar",
+    "ja_JP": "フローティングツールバーの切り替え"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Show or hide the floating toolbar in the 3D viewport",
+    "ja_JP": "3D ビューポートのフローティングツールバーを表示または非表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-line N-panel editor (Blender 5.2+)",
+    "ja_JP": "複数行 N パネル エディター（Blender 5.2+）"
+  },
+  {
+    "context": "*",
+    "msgid": "Floating toolbar near selected text in the viewport",
+    "ja_JP": "3D ビューポートで選択したテキスト付近のフローティングツールバー"
+  },
+  {
+    "context": "*",
+    "msgid": "Style presets, alignment, and spacing controls",
+    "ja_JP": "スタイルプリセット、整列、間隔のコントロール"
+  },
+  {
+    "context": "*",
+    "msgid": "Select a text object or add a new one to start editing.",
+    "ja_JP": "テキストオブジェクトを選択するか、新規作成して編集を開始してください。"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-line textbox requires Blender 5.2+",
+    "ja_JP": "複数行テキストボックスには Blender 5.2+ が必要です"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} chars · {:d} words",
+    "ja_JP": "{:d} 文字 · {:d} 語"
+  },
+  {
+    "context": "*",
+    "msgid": "Frame {:d}",
+    "ja_JP": "枠 {:d}"
+  },
+  {
+    "context": "*",
+    "msgid": "Floating Toolbar",
+    "ja_JP": "フローティングツールバー"
+  },
+  {
+    "context": "*",
+    "msgid": "Shows below selected text in the 3D viewport",
+    "ja_JP": "3D ビューポートで選択したテキストの下に表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Show Toolbar",
+    "ja_JP": "ツールバーを表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Show Floating Toolbar",
+    "ja_JP": "フローティングツールバーを表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Display the floating text toolbar below the selected text in the 3D viewport",
+    "ja_JP": "3D ビューポートで選択したテキストの下にフローティングツールバーを表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Floating toolbar shown — look below the text in the 3D viewport",
+    "ja_JP": "フローティングツールバーを表示しました — 3D ビューポートでテキストの下を確認してください"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Enable Floating Toolbar in add-on preferences",
+    "ja_JP": "アドオンのプリファレンスで「フローティングツールバー」を有効にしてください"
+  },
+  {
+    "context": "*",
+    "msgid": "Toolbar Offset",
+    "ja_JP": "ツールバーオフセット"
+  },
+  {
+    "context": "*",
+    "msgid": "Distance from the top of the 3D viewport to the floating toolbar (pixels)",
+    "ja_JP": "3D ビューポート上端からフローティングツールバーまでの距離（ピクセル）"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Scale",
+    "ja_JP": "HUD スケール"
+  },
+  {
+    "context": "*",
+    "msgid": "Viewport HUD display scale",
+    "ja_JP": "3D ビューポート HUD の表示スケール"
+  },
+  {
+    "context": "*",
+    "msgid": "Accent Color",
+    "ja_JP": "アクセントカラー"
+  },
+  {
+    "context": "*",
+    "msgid": "Accent color for the viewport HUD and pickers",
+    "ja_JP": "3D ビューポート HUD とピッカーのアクセントカラー"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom Accent",
+    "ja_JP": "カスタムアクセント"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom HUD accent color",
+    "ja_JP": "カスタム HUD アクセントカラー"
+  },
+  {
+    "context": "*",
+    "msgid": "Green",
+    "ja_JP": "緑"
+  },
+  {
+    "context": "*",
+    "msgid": "Default green accent",
+    "ja_JP": "デフォルトの緑アクセント"
+  },
+  {
+    "context": "*",
+    "msgid": "Blue",
+    "ja_JP": "青"
+  },
+  {
+    "context": "*",
+    "msgid": "Blue accent",
+    "ja_JP": "青アクセント"
+  },
+  {
+    "context": "*",
+    "msgid": "Orange",
+    "ja_JP": "オレンジ"
+  },
+  {
+    "context": "*",
+    "msgid": "Orange accent",
+    "ja_JP": "オレンジアクセント"
+  },
+  {
+    "context": "*",
+    "msgid": "Purple",
+    "ja_JP": "紫"
+  },
+  {
+    "context": "*",
+    "msgid": "Purple accent",
+    "ja_JP": "紫アクセント"
+  },
+  {
+    "context": "*",
+    "msgid": "Pink",
+    "ja_JP": "ピンク"
+  },
+  {
+    "context": "*",
+    "msgid": "Pink accent",
+    "ja_JP": "ピンクアクセント"
+  },
+  {
+    "context": "*",
+    "msgid": "Cyan",
+    "ja_JP": "シアン"
+  },
+  {
+    "context": "*",
+    "msgid": "Cyan accent",
+    "ja_JP": "シアンアクセント"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom",
+    "ja_JP": "カスタム"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the custom color below",
+    "ja_JP": "下のカスタムカラーを使用"
+  },
+  {
+    "context": "*",
+    "msgid": "Style",
+    "ja_JP": "スタイル"
+  },
+  {
+    "context": "*",
+    "msgid": "Body",
+    "ja_JP": "本文"
+  },
+  {
+    "context": "*",
+    "msgid": "Heading",
+    "ja_JP": "見出し"
+  },
+  {
+    "context": "*",
+    "msgid": "Subheading",
+    "ja_JP": "小見出し"
+  },
+  {
+    "context": "*",
+    "msgid": "Caption",
+    "ja_JP": "キャプション"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add Text",
+    "ja_JP": "テキストを追加"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear Text",
+    "ja_JP": "クリア"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Paste into Text",
+    "ja_JP": "貼り付け"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Import Text File",
+    "ja_JP": "テキストファイルをインポート"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Text Style",
+    "ja_JP": "テキストスタイルを切り替え"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Text Alignment",
+    "ja_JP": "整列を設定"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add Text Frame",
+    "ja_JP": "テキスト枠を追加"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Could not add layout frame — select a text object with a 3D View open",
+    "ja_JP": "レイアウト枠を追加できません — テキストオブジェクトを選択し、3D ビューを開いてください"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Text Overflow",
+    "ja_JP": "テキストオーバーフローを切り替え"
+  },
+  {
+    "context": "*",
+    "msgid": "Bold",
+    "ja_JP": "太字"
+  },
+  {
+    "context": "*",
+    "msgid": "Italic",
+    "ja_JP": "斜体"
+  },
+  {
+    "context": "*",
+    "msgid": "Underline",
+    "ja_JP": "下線"
+  },
+  {
+    "context": "*",
+    "msgid": "Strikethrough",
+    "ja_JP": "取り消し線"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Text Case",
+    "ja_JP": "文字ケースを設定"
+  },
+  {
+    "context": "*",
+    "msgid": "Default case",
+    "ja_JP": "デフォルトのケース"
+  },
+  {
+    "context": "*",
+    "msgid": "Uppercase",
+    "ja_JP": "大文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Lowercase",
+    "ja_JP": "小文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Left",
+    "ja_JP": "左"
+  },
+  {
+    "context": "*",
+    "msgid": "Center",
+    "ja_JP": "中央"
+  },
+  {
+    "context": "*",
+    "msgid": "Right",
+    "ja_JP": "右"
+  },
+  {
+    "context": "*",
+    "msgid": "Justify",
+    "ja_JP": "両端揃え"
+  },
+  {
+    "context": "*",
+    "msgid": "Paste",
+    "ja_JP": "貼り付け"
+  },
+  {
+    "context": "*",
+    "msgid": "Clear",
+    "ja_JP": "クリア"
+  },
+  {
+    "context": "*",
+    "msgid": "Import",
+    "ja_JP": "インポート"
+  },
+  {
+    "context": "*",
+    "msgid": "System fonts",
+    "ja_JP": "システムフォント"
+  },
+  {
+    "context": "*",
+    "msgid": "Search fonts…",
+    "ja_JP": "フォントを検索…"
+  },
+  {
+    "context": "*",
+    "msgid": "Search Fonts",
+    "ja_JP": "フォントを検索"
+  },
+  {
+    "context": "*",
+    "msgid": "Filter the system font list",
+    "ja_JP": "システムフォント一覧をフィルター"
+  },
+  {
+    "context": "*",
+    "msgid": "Current: {}",
+    "ja_JP": "現在：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "Browse other font file…",
+    "ja_JP": "他のフォントファイルを参照…"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Refresh Font List",
+    "ja_JP": "フォント一覧を更新"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Rescan system font folders",
+    "ja_JP": "システムフォントフォルダーを再スキャン"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Found {:d} fonts",
+    "ja_JP": "{:d} 個のフォントが見つかりました"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply Font",
+    "ja_JP": "フォントを適用"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply this font to the selected text",
+    "ja_JP": "このフォントを選択したテキストに適用"
+  },
+  {
+    "context": "*",
+    "msgid": "Click refresh to load system fonts",
+    "ja_JP": "更新をクリックしてシステムフォントを読み込み"
+  },
+  {
+    "context": "*",
+    "msgid": "Type in search to narrow results…",
+    "ja_JP": "検索ボックスに入力して絞り込み…"
+  },
+  {
+    "context": "*",
+    "msgid": "No fonts match filter",
+    "ja_JP": "条件に一致するフォントがありません"
+  },
+  {
+    "context": "*",
+    "msgid": "Language",
+    "ja_JP": "言語"
+  },
+  {
+    "context": "*",
+    "msgid": "Language: {}",
+    "ja_JP": "言語：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "All",
+    "ja_JP": "すべて"
+  },
+  {
+    "context": "*",
+    "msgid": "English",
+    "ja_JP": "英語"
+  },
+  {
+    "context": "*",
+    "msgid": "Latin",
+    "ja_JP": "ラテン"
+  },
+  {
+    "context": "*",
+    "msgid": "Chinese",
+    "ja_JP": "中国語"
+  },
+  {
+    "context": "*",
+    "msgid": "Japanese",
+    "ja_JP": "日本語"
+  },
+  {
+    "context": "*",
+    "msgid": "Korean",
+    "ja_JP": "韓国語"
+  },
+  {
+    "context": "*",
+    "msgid": "Russian",
+    "ja_JP": "ロシア語"
+  },
+  {
+    "context": "*",
+    "msgid": "Arabic",
+    "ja_JP": "アラビア"
+  },
+  {
+    "context": "*",
+    "msgid": "Greek",
+    "ja_JP": "ギリシャ"
+  },
+  {
+    "context": "*",
+    "msgid": "Hebrew",
+    "ja_JP": "ヘブライ"
+  },
+  {
+    "context": "*",
+    "msgid": "Thai",
+    "ja_JP": "タイ"
+  },
+  {
+    "context": "*",
+    "msgid": "Filter fonts by supported writing system",
+    "ja_JP": "対応する文字体系でフォントをフィルター"
+  },
+  {
+    "context": "*",
+    "msgid": "Enter preview text…",
+    "ja_JP": "プレビューテキストを入力…"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Sort",
+    "ja_JP": "フォントの並べ替え"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort order for the system font list",
+    "ja_JP": "システムフォント一覧の並べ替え順"
+  },
+  {
+    "context": "*",
+    "msgid": "Name A-Z",
+    "ja_JP": "名前 A-Z"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort fonts by name ascending",
+    "ja_JP": "名前の昇順で並べ替え"
+  },
+  {
+    "context": "*",
+    "msgid": "Name Z-A",
+    "ja_JP": "名前 Z-A"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort fonts by name descending",
+    "ja_JP": "名前の降順で並べ替え"
+  },
+  {
+    "context": "*",
+    "msgid": "List Preview Scale",
+    "ja_JP": "一覧プレビュースケール"
+  },
+  {
+    "context": "*",
+    "msgid": "How large each font preview appears in the sidebar list",
+    "ja_JP": "サイドバー一覧の各フォントプレビューの表示サイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Maximum point size used when rendering the thumbnail image",
+    "ja_JP": "サムネイル画像レンダリング時の最大ポイントサイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Font preview cache cleared — reopen the font list to rebuild",
+    "ja_JP": "フォントプレビューキャッシュをクリアしました — フォント一覧を再度開いて再構築してください"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Preview Icons",
+    "ja_JP": "フォントプレビューアイコン"
+  },
+  {
+    "context": "*",
+    "msgid": "Show rendered font thumbnails beside each name in the font list",
+    "ja_JP": "フォント一覧の各名前の横にレンダリング済みサムネイルを表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview While Browsing",
+    "ja_JP": "閲覧中にプレビュー"
+  },
+  {
+    "context": "*",
+    "msgid": "Apply the highlighted list font to the text object while navigating the list",
+    "ja_JP": "一覧を移動中、ハイライトされたフォントをテキストオブジェクトにリアルタイム適用"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview Text",
+    "ja_JP": "プレビューテキスト"
+  },
+  {
+    "context": "*",
+    "msgid": "Characters rendered inside each font thumbnail",
+    "ja_JP": "各フォントサムネイル内にレンダリングする文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview Content",
+    "ja_JP": "プレビュー内容"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Object",
+    "ja_JP": "テキストオブジェクト"
+  },
+  {
+    "context": "*",
+    "msgid": "Use characters from the active text object",
+    "ja_JP": "アクティブなテキストオブジェクトの文字を使用"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom Text",
+    "ja_JP": "カスタムテキスト"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the preview text below",
+    "ja_JP": "下のプレビューテキストを使用"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Name",
+    "ja_JP": "フォント名"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the font file display name",
+    "ja_JP": "フォントファイルの表示名を使用"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview Font Size",
+    "ja_JP": "プレビューフォントサイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Point size used when rendering the thumbnail image",
+    "ja_JP": "サムネイル画像レンダリング時のポイントサイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Thumbnail Width",
+    "ja_JP": "サムネイル幅"
+  },
+  {
+    "context": "*",
+    "msgid": "Generated preview image width in pixels",
+    "ja_JP": "生成されるプレビュー画像の幅（ピクセル）"
+  },
+  {
+    "context": "*",
+    "msgid": "Thumbnail Height",
+    "ja_JP": "サムネイル高さ"
+  },
+  {
+    "context": "*",
+    "msgid": "Generated preview image height in pixels",
+    "ja_JP": "生成されるプレビュー画像の高さ（ピクセル）"
+  },
+  {
+    "context": "*",
+    "msgid": "List Icon Scale",
+    "ja_JP": "一覧アイコンスケール"
+  },
+  {
+    "context": "*",
+    "msgid": "How large previews appear in the sidebar font list",
+    "ja_JP": "サイドバーフォント一覧のプレビュー表示サイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview Banner Scale",
+    "ja_JP": "プレビューバナースケール"
+  },
+  {
+    "context": "*",
+    "msgid": "How large the preview banner appears above the font list",
+    "ja_JP": "フォント一覧上部のプレビューバナーの表示サイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview loading…",
+    "ja_JP": "プレビュー読み込み中…"
+  },
+  {
+    "context": "*",
+    "msgid": "Regenerate Font Previews",
+    "ja_JP": "フォントプレビューを再生成"
+  },
+  {
+    "context": "*",
+    "msgid": "Clear cached thumbnails and rebuild them with current preview settings",
+    "ja_JP": "キャッシュされたサムネイルをクリアし、現在のプレビュー設定で再構築"
+  },
+  {
+    "context": "*",
+    "msgid": "Font preview cache cleared",
+    "ja_JP": "フォントプレビューキャッシュをクリアしました"
+  },
+  {
+    "context": "*",
+    "msgid": "Blender font browser…",
+    "ja_JP": "Blender フォントブラウザー…"
+  },
+  {
+    "context": "*",
+    "msgid": "Loaded fonts",
+    "ja_JP": "読み込み済みフォント"
+  },
+  {
+    "context": "*",
+    "msgid": "Style slots (bold / italic)",
+    "ja_JP": "スタイルスロット（太字 / 斜体）"
+  },
+  {
+    "context": "*",
+    "msgid": "Bold Italic Font",
+    "ja_JP": "太字斜体フォント"
+  },
+  {
+    "context": "*",
+    "msgid": "Font loaded: {}",
+    "ja_JP": "フォントを読み込み：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "Font file not found",
+    "ja_JP": "フォントファイルが見つかりません"
+  },
+  {
+    "context": "*",
+    "msgid": "No font data available",
+    "ja_JP": "利用可能なフォントデータがありません"
+  },
+  {
+    "context": "*",
+    "msgid": "Open a 3D Viewport and try again",
+    "ja_JP": "3D ビューポートを開いてから再試行してください"
+  },
+  {
+    "context": "*",
+    "msgid": "Font browser cannot open in the current context",
+    "ja_JP": "現在のコンテキストではフォントブラウザーを開けません"
+  },
+  {
+    "context": "*",
+    "msgid": "Tip: set default folder in Edit → Preferences → File Paths → Data",
+    "ja_JP": "ヒント：編集 → プリファレンス → ファイルパス → データ でデフォルトフォルダーを設定できます"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Browse Font File",
+    "ja_JP": "フォントファイルを参照"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Load a .ttf/.otf font from disk (e.g. Windows Fonts folder) and assign it to the text",
+    "ja_JP": "ディスクから .ttf/.otf フォントを読み込み（例：Windows フォントフォルダー）、テキストに割り当て"
+  },
+  {
+    "context": "*",
+    "msgid": "Open Font Picker",
+    "ja_JP": "フォントピッカーを開く"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font Picker",
+    "ja_JP": "フォントピッカー"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open or close the viewport GPU font picker",
+    "ja_JP": "3D ビューポート GPU フォントピッカーを開くまたは閉じる"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} fonts · scroll wheel",
+    "ja_JP": "{:d} フォント · スクロールホイール"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} fonts · □ = missing glyph",
+    "ja_JP": "{:d} フォント · □ = 欠落グリフ"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} supported fonts · □ = missing glyph",
+    "ja_JP": "{:d} 対応フォント · □ = 欠落グリフ"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} fonts · □ = missing",
+    "ja_JP": "{:d} フォント · □ = 欠字"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} supported · □ = missing",
+    "ja_JP": "{:d} 対応 · □ = 欠字"
+  },
+  {
+    "context": "*",
+    "msgid": "Missing {:d}",
+    "ja_JP": "欠落 {:d}"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview: {}",
+    "ja_JP": "プレビュー：{}"
+  },
+  {
+    "context": "*",
+    "msgid": "Hide unsupported",
+    "ja_JP": "非対応を非表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-weight only",
+    "ja_JP": "複数ウェイトのみ"
+  },
+  {
+    "context": "*",
+    "msgid": "All font families",
+    "ja_JP": "すべてのフォントファミリー"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-Weight Fonts Only",
+    "ja_JP": "複数ウェイトフォントのみ"
+  },
+  {
+    "context": "*",
+    "msgid": "Only list font families that have more than one weight on disk",
+    "ja_JP": "ディスク上に複数のウェイトがあるフォントファミリーのみ一覧表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Weights",
+    "ja_JP": "ウェイト"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Weight",
+    "ja_JP": "フォントウェイト"
+  },
+  {
+    "context": "*",
+    "msgid": "Switch font weight",
+    "ja_JP": "フォントウェイトを切り替え"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Weight Picker",
+    "ja_JP": "フォントウェイトピッカー"
+  },
+  {
+    "context": "*",
+    "msgid": "Open or close the viewport font weight picker",
+    "ja_JP": "3D ビューポート フォントウェイトピッカーを開くまたは閉じる"
+  },
+  {
+    "context": "*",
+    "msgid": "No alternate weights found for this font",
+    "ja_JP": "このフォントに代替ウェイトが見つかりません"
+  },
+  {
+    "context": "*",
+    "msgid": "No font weight information available",
+    "ja_JP": "フォントウェイト情報を取得できません"
+  },
+  {
+    "context": "*",
+    "msgid": "Weight",
+    "ja_JP": "ウェイト"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} families · □ = missing",
+    "ja_JP": "{:d} ファミリー · □ = 欠字"
+  },
+  {
+    "context": "*",
+    "msgid": "Show all fonts",
+    "ja_JP": "すべてのフォントを表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Fonts",
+    "ja_JP": "フォント"
+  },
+  {
+    "context": "*",
+    "msgid": "Font",
+    "ja_JP": "フォント"
+  },
+  {
+    "context": "*",
+    "msgid": "Bold Font",
+    "ja_JP": "太字フォント"
+  },
+  {
+    "context": "*",
+    "msgid": "Italic Font",
+    "ja_JP": "斜体フォント"
+  },
+  {
+    "context": "*",
+    "msgid": "Wrap",
+    "ja_JP": "折り返し"
+  },
+  {
+    "context": "*",
+    "msgid": "Truncate",
+    "ja_JP": "切り捨て"
+  },
+  {
+    "context": "*",
+    "msgid": "Add Frame",
+    "ja_JP": "枠を追加"
+  },
+  {
+    "context": "*",
+    "msgid": "Double-click text in the viewport to edit",
+    "ja_JP": "3D ビューポートでテキストをダブルクリックして編集"
+  },
+  {
+    "context": "*",
+    "msgid": "Editing in viewport",
+    "ja_JP": "3D ビューポート内で編集中"
+  },
+  {
+    "context": "*",
+    "msgid": "Double-click empty space to exit edit mode",
+    "ja_JP": "編集モード中、空白をダブルクリックして終了"
+  },
+  {
+    "context": "*",
+    "msgid": "Show HUD",
+    "ja_JP": "HUD を表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Show the floating toolbar for this text object in the viewport",
+    "ja_JP": "3D ビューポートでこのテキストオブジェクトのフローティングツールバーを表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Hide Floating Toolbar",
+    "ja_JP": "フローティングツールバーを非表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Hide the floating toolbar for this text object",
+    "ja_JP": "このテキストオブジェクトのフローティングツールバーを非表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Show Frame Bounds",
+    "ja_JP": "枠の境界を表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Show the green layout frame overlay for this text object",
+    "ja_JP": "このテキストオブジェクトの緑色レイアウト枠オーバーレイを表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Frame Bounds",
+    "ja_JP": "枠の境界を切り替え"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Show or hide the green layout frame overlay",
+    "ja_JP": "緑色レイアウト枠オーバーレイを表示または非表示"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD",
+    "ja_JP": "HUD"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Edit Text",
+    "ja_JP": "テキストを編集"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Enter in-viewport text editing mode",
+    "ja_JP": "3D ビューポート内テキスト編集モードに入る"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Select a text object first",
+    "ja_JP": "先にテキストオブジェクトを選択してください"
+  },
+  {
+    "context": "*",
+    "msgid": "Shear",
+    "ja_JP": "シアー"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust text shear (↺ resets to preset default)",
+    "ja_JP": "テキストのシアーを調整（↺ でプリセットのデフォルトにリセット）"
+  },
+  {
+    "context": "*",
+    "msgid": "Char Spacing",
+    "ja_JP": "字間"
+  },
+  {
+    "context": "*",
+    "msgid": "Word Spacing",
+    "ja_JP": "語間"
+  },
+  {
+    "context": "*",
+    "msgid": "Line Height",
+    "ja_JP": "行の高さ"
+  },
+  {
+    "context": "*",
+    "msgid": "Spacing",
+    "ja_JP": "間隔"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Size",
+    "ja_JP": "フォントサイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Strikethrough Position",
+    "ja_JP": "取り消し線の位置"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust strikethrough line position (↺ resets to default)",
+    "ja_JP": "取り消し線の位置を調整（↺ でデフォルトにリセット）"
+  },
+  {
+    "context": "*",
+    "msgid": "Reset",
+    "ja_JP": "リセット"
+  },
+  {
+    "context": "*",
+    "msgid": "Drag to reposition the toolbar",
+    "ja_JP": "ドラッグしてツールバーの位置を移動"
+  },
+  {
+    "context": "*",
+    "msgid": "Show or hide layout frame bounds",
+    "ja_JP": "レイアウト枠の境界を表示または非表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Style preset",
+    "ja_JP": "スタイルプリセット"
+  },
+  {
+    "context": "*",
+    "msgid": "Open style preset picker",
+    "ja_JP": "スタイルプリセットピッカーを開く"
+  },
+  {
+    "context": "*",
+    "msgid": "Style Preset",
+    "ja_JP": "スタイルプリセット"
+  },
+  {
+    "context": "*",
+    "msgid": "Open font picker",
+    "ja_JP": "フォントピッカーを開く"
+  },
+  {
+    "context": "*",
+    "msgid": "Align left",
+    "ja_JP": "左揃え"
+  },
+  {
+    "context": "*",
+    "msgid": "Align center",
+    "ja_JP": "中央揃え"
+  },
+  {
+    "context": "*",
+    "msgid": "Align right",
+    "ja_JP": "右揃え"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust font size (↺ resets to preset default)",
+    "ja_JP": "フォントサイズを調整（↺ でプリセットのデフォルトにリセット）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust character spacing (↺ resets to preset default)",
+    "ja_JP": "字間を調整（↺ でプリセットのデフォルトにリセット）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust word spacing (↺ resets to preset default)",
+    "ja_JP": "語間を調整（↺ でプリセットのデフォルトにリセット）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust line height (↺ resets to preset default)",
+    "ja_JP": "行の高さを調整（↺ でプリセットのデフォルトにリセット）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust paragraph spacing (↺ resets to preset default)",
+    "ja_JP": "段落間隔を調整（↺ でプリセットのデフォルトにリセット）"
+  },
+  {
+    "context": "*",
+    "msgid": "Hide floating toolbar",
+    "ja_JP": "フローティングツールバーを非表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Hide floating toolbar",
+    "ja_JP": "フローティングツールバーを非表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Strikethrough is not supported by Blender text objects",
+    "ja_JP": "Blender のテキストオブジェクトは取り消し線に対応していません"
+  },
+  {
+    "context": "*",
+    "msgid": "Character Spacing",
+    "ja_JP": "字間"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Strikethrough is not supported by Blender text objects",
+    "ja_JP": "Blender のテキストオブジェクトは取り消し線に対応していません"
+  },
+  {
+    "context": "*",
+    "msgid": "Line Spacing",
+    "ja_JP": "行間"
+  },
+  {
+    "context": "*",
+    "msgid": "Offset Y",
+    "ja_JP": "Y オフセット"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Regenerate Font Previews",
+    "ja_JP": "フォントプレビューを再生成"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear cached thumbnails and rebuild them with current preview settings",
+    "ja_JP": "キャッシュされたサムネイルをクリアし、現在のプレビュー設定で再構築"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Adjust Spacing",
+    "ja_JP": "間隔を調整"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply Text Preset",
+    "ja_JP": "テキストプリセットを適用"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Ensure HUD Modal",
+    "ja_JP": "HUD モーダルを確保"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Reset Format Value",
+    "ja_JP": "書式値をリセット"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Reset font size or spacing to the current style preset default",
+    "ja_JP": "フォントサイズまたは間隔を現在のスタイルプリセットのデフォルトにリセット"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Font Language Filter",
+    "ja_JP": "フォント言語フィルターを設定"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Spacing Value",
+    "ja_JP": "間隔値を設定"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set Vertical Alignment",
+    "ja_JP": "垂直整列を設定"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Style Preset Picker",
+    "ja_JP": "スタイルプリセットピッカー"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open or close the viewport GPU style preset picker",
+    "ja_JP": "3D ビューポート GPU スタイルプリセットピッカーを開くまたは閉じる"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text Helper HUD",
+    "ja_JP": "テキストヘルパー HUD"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text Helper Preferences",
+    "ja_JP": "テキストヘルパー プリファレンス"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text Style Preset",
+    "ja_JP": "テキストスタイルプリセット"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Transform text to default, uppercase, or lowercase",
+    "ja_JP": "テキストをデフォルト、大文字、小文字に変換"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Unlink Font",
+    "ja_JP": "フォントのリンク解除"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open Font (Blender)",
+    "ja_JP": "フォントを開く（Blender）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Load a .ttf/.otf font from disk and assign it to the text",
+    "ja_JP": "ディスクから .ttf/.otf フォントを読み込み、テキストに割り当て"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font: {}",
+    "ja_JP": "フォント：{}"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Bold Font",
+    "ja_JP": "太字フォント"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Italic Font",
+    "ja_JP": "斜体フォント"
+  },
+  {
+    "context": "*",
+    "msgid": "Show the floating toolbar near selected text in the 3D viewport",
+    "ja_JP": "3D ビューポートで選択したテキスト付近にフローティングツールバーを表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Apply the highlighted font while hovering or navigating the font list",
+    "ja_JP": "フォント一覧をホバーまたは移動中、ハイライトされたフォントをリアルタイム適用"
+  },
+  {
+    "context": "*",
+    "msgid": "What to render inside the thumbnail",
+    "ja_JP": "サムネイル内にレンダリングする内容"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Offset X",
+    "ja_JP": "HUD X オフセット"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Offset Y",
+    "ja_JP": "HUD Y オフセット"
+  },
+  {
+    "context": "*",
+    "msgid": "User drag offset for the floating toolbar (screen pixels)",
+    "ja_JP": "フローティングツールバーのユーザーによるドラッグオフセット（スクリーンピクセル）"
+  },
+  {
+    "context": "*",
+    "msgid": "Hide Unsupported Fonts",
+    "ja_JP": "非対応フォントを非表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Only list fonts that contain every non-space character in the preview text",
+    "ja_JP": "プレビューテキスト内のすべての非スペース文字を含むフォントのみ一覧表示"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Expand Panel",
+    "ja_JP": "HUD 展開パネル"
+  },
+  {
+    "context": "*",
+    "msgid": "Expanded slider row below the floating toolbar",
+    "ja_JP": "フローティングツールバー下の展開スライダー行"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Index",
+    "ja_JP": "フォントインデックス"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Picker Preview",
+    "ja_JP": "フォントピッカープレビュー"
+  },
+  {
+    "context": "*",
+    "msgid": "Custom preview phrase shown in the viewport font picker",
+    "ja_JP": "3D ビューポート フォントピッカーに表示するカスタムプレビューフレーズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Script Filter",
+    "ja_JP": "文字体系フィルター"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Case",
+    "ja_JP": "文字ケース"
+  },
+  {
+    "context": "*",
+    "msgid": "Letter case transform for the text content",
+    "ja_JP": "テキスト内容の文字ケース変換"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Case Snapshot",
+    "ja_JP": "文字ケーススナップショット"
+  },
+  {
+    "context": "*",
+    "msgid": "Stored original text before case transform",
+    "ja_JP": "ケース変換前に保存された元のテキスト"
+  },
+  {
+    "context": "*",
+    "msgid": "Text Orientation",
+    "ja_JP": "文字方向"
+  },
+  {
+    "context": "*",
+    "msgid": "Horizontal rows or vertical columns (transposed in body)",
+    "ja_JP": "横方向の行または縦方向の列（本文内で転置）"
+  },
+  {
+    "context": "*",
+    "msgid": "Where the first typed column appears; Enter adds the next column",
+    "ja_JP": "最初に入力した列の位置；Enter で次の列を追加"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical Source",
+    "ja_JP": "縦書きソース"
+  },
+  {
+    "context": "*",
+    "msgid": "Horizontal input in N-panel: each line is one vertical column",
+    "ja_JP": "N パネル横書き入力：各行が 1 つの縦列に対応"
+  },
+  {
+    "context": "*",
+    "msgid": "Underline Enabled",
+    "ja_JP": "下線が有効"
+  },
+  {
+    "context": "*",
+    "msgid": "Logical underline toggle (mutually exclusive with strikethrough)",
+    "ja_JP": "論理下線トグル（取り消し線と排他的）"
+  },
+  {
+    "context": "*",
+    "msgid": "Strikethrough Enabled",
+    "ja_JP": "取り消し線が有効"
+  },
+  {
+    "context": "*",
+    "msgid": "Logical strikethrough toggle (mutually exclusive with underline)",
+    "ja_JP": "論理取り消し線トグル（下線と排他的）"
+  },
+  {
+    "context": "*",
+    "msgid": "Vertical line position used when strikethrough is enabled",
+    "ja_JP": "取り消し線有効時の線の垂直位置"
+  },
+  {
+    "context": "*",
+    "msgid": "Pre Bold Size",
+    "ja_JP": "太字前サイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Stored size before faux-bold enlargement",
+    "ja_JP": "疑似太字拡大前に保存されたサイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Name",
+    "ja_JP": "名前"
+  },
+  {
+    "context": "*",
+    "msgid": "Path",
+    "ja_JP": "パス"
+  },
+  {
+    "context": "*",
+    "msgid": "Original letter casing",
+    "ja_JP": "元の文字ケースを保持"
+  },
+  {
+    "context": "*",
+    "msgid": "All uppercase letters",
+    "ja_JP": "すべて大文字"
+  },
+  {
+    "context": "*",
+    "msgid": "All lowercase letters",
+    "ja_JP": "すべて小文字"
+  },
+  {
+    "context": "*",
+    "msgid": "First line is rightmost; Enter adds a column to the left",
+    "ja_JP": "最初の行が最右列；Enter で左方向に列を追加"
+  },
+  {
+    "context": "*",
+    "msgid": "First line is leftmost; Enter adds a column to the right",
+    "ja_JP": "最初の行が最左列；Enter で右方向に列を追加"
+  },
+  {
+    "context": "*",
+    "msgid": "Top",
+    "ja_JP": "上"
+  },
+  {
+    "context": "*",
+    "msgid": "Top Baseline",
+    "ja_JP": "上ベースライン"
+  },
+  {
+    "context": "*",
+    "msgid": "Bottom Baseline",
+    "ja_JP": "下ベースライン"
+  },
+  {
+    "context": "*",
+    "msgid": "Bottom",
+    "ja_JP": "下"
+  },
+  {
+    "context": "*",
+    "msgid": "Character",
+    "ja_JP": "文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Line",
+    "ja_JP": "行"
+  },
+  {
+    "context": "*",
+    "msgid": "Paragraph",
+    "ja_JP": "段落"
+  },
+  {
+    "context": "*",
+    "msgid": "Size",
+    "ja_JP": "サイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "All scripts",
+    "ja_JP": "すべての文字体系"
+  },
+  {
+    "context": "*",
+    "msgid": "All languages",
+    "ja_JP": "すべての言語"
+  },
+  {
+    "context": "*",
+    "msgid": "English (Latin script)",
+    "ja_JP": "英語（ラテン文字）"
+  },
+  {
+    "context": "*",
+    "msgid": "Latin script",
+    "ja_JP": "ラテン文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Chinese (Han characters)",
+    "ja_JP": "中国語（漢字）"
+  },
+  {
+    "context": "*",
+    "msgid": "Japanese (kana and kanji)",
+    "ja_JP": "日本語（かなと漢字）"
+  },
+  {
+    "context": "*",
+    "msgid": "Korean (Hangul)",
+    "ja_JP": "韓国語（ハングル）"
+  },
+  {
+    "context": "*",
+    "msgid": "Russian (Cyrillic script)",
+    "ja_JP": "ロシア語（キリル文字）"
+  },
+  {
+    "context": "*",
+    "msgid": "Arabic script",
+    "ja_JP": "アラビア文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Greek script",
+    "ja_JP": "ギリシャ文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Hebrew script",
+    "ja_JP": "ヘブライ文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Thai script",
+    "ja_JP": "タイ文字"
+  },
+  {
+    "context": "*",
+    "msgid": "Type or paste multi-line text…",
+    "ja_JP": "複数行テキストを入力または貼り付け…"
+  },
+  {
+    "context": "*",
+    "msgid": "# Title\n**bold** *italic* `code`",
+    "ja_JP": "# タイトル\n**太字** *斜体* `コード`"
+  },
+  {
+    "context": "*",
+    "msgid": "Loading fonts…",
+    "ja_JP": "フォントを読み込み中…"
+  }
+]

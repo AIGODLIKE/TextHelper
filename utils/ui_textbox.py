@@ -112,10 +112,13 @@ def update_panel_buf_b(self, context):
     _update_panel_buf(self, context, "th_panel_buf_b")
 
 
-def resolve_panel_textbox(text_data, context, *, vertical=False):
+def resolve_panel_textbox(text_data, context, *, vertical=False, visible_lines=None):
     """Pick a buffer property so each line-height pref gets a fresh textbox state."""
     text_helper = text_data.text_helper
-    lines = n_panel_textbox_lines(context)
+    if visible_lines is None:
+        lines = n_panel_textbox_lines(context)
+    else:
+        lines = max(3, int(visible_lines))
     mode = _panel_buf_mode(vertical)
     canonical = _canonical_panel_text(text_data, vertical)
 
@@ -141,6 +144,34 @@ def resolve_panel_textbox(text_data, context, *, vertical=False):
         if not _module_sync_guard:
             _queue_panel_update(text_data, {active: canonical})
     return text_helper, active
+
+
+def sync_panel_textbox_from_canonical(
+    text_data,
+    *,
+    vertical=False,
+    context=None,
+    visible_lines=None,
+    flip_active=False,
+):
+    """Push th_vertical_source / body into both panel textbox buffers immediately."""
+    text_helper = text_data.text_helper
+    canonical = _canonical_panel_text(text_data, vertical)
+    if visible_lines is None:
+        visible_lines = n_panel_textbox_lines(context)
+    lines = max(3, int(visible_lines))
+
+    global _module_sync_guard
+    _module_sync_guard = True
+    try:
+        text_helper.th_panel_buf_a = canonical
+        text_helper.th_panel_buf_b = canonical
+        text_helper.th_panel_buf_lines = lines
+        text_helper.th_panel_buf_mode = _panel_buf_mode(vertical)
+        if flip_active:
+            text_helper.th_panel_buf_active = not getattr(text_helper, "th_panel_buf_active", False)
+    finally:
+        _module_sync_guard = False
 
 
 def _draw_layout_textbox(col, data, prop, *, visible_lines, placeholder=""):
@@ -179,11 +210,15 @@ def draw_multiline_field(layout, data, prop, *, context=None, placeholder="", vi
         text_data = None
 
     if text_data is not None and hasattr(text_data, "text_helper"):
-        data, prop = resolve_panel_textbox(text_data, context, vertical=vertical)
+        data, prop = resolve_panel_textbox(
+            text_data,
+            context,
+            vertical=vertical,
+            visible_lines=int(visible_lines),
+        )
 
-    col = layout.column(align=True)
     return _draw_layout_textbox(
-        col,
+        layout,
         data,
         prop,
         visible_lines=int(visible_lines),

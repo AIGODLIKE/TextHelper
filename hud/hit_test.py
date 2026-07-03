@@ -38,8 +38,8 @@ def get_rects_for_context(context, obj, text_data):
     if anchor is None:
         return []
     scale = max(context.preferences.system.ui_scale, 0.5) * prefs.hud_scale
-    rects, _, _ = layout_toolbar(anchor[0], anchor[1], scale, text_data)
-    return rects
+    layout = layout_toolbar(anchor[0], anchor[1], scale, text_data, context)
+    return layout["rects"]
 
 
 def get_hud_hit_rects(context, obj, text_data):

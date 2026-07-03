@@ -37,6 +37,13 @@ from ..hud.preset_picker import (
     hit_test_picker as hit_test_preset_picker,
     picker_open as preset_picker_open,
 )
+from ..hud.weight_picker import (
+    close_picker as close_weight_picker,
+    handle_picker_click as handle_weight_picker_click,
+    handle_picker_hover as handle_weight_picker_hover,
+    hit_test_picker as hit_test_weight_picker,
+    picker_open as weight_picker_open,
+)
 from ..hud.language_picker import (
     close_picker as close_language_picker,
     handle_picker_click as handle_language_picker_click,
@@ -217,12 +224,13 @@ def _cancel_modal(state):
 
 def _close_all_pickers(context):
     close_font_picker(context)
+    close_weight_picker(context)
     close_preset_picker(context)
     close_language_picker(context)
 
 
 def _picker_keep_open_ids():
-    return frozenset({"font", "preset"})
+    return frozenset({"font", "font_weight", "preset"})
 
 
 def _dismiss_popup_menus(context):
@@ -252,6 +260,15 @@ def _handle_dropdown(context, obj, item, state):
             getattr(getattr(bpy.ops, opmod), opname)()
 
         _run_hud_op(context, obj, _toggle_preset)
+        return
+
+    if item.id == "font_weight" and item.op:
+        opmod, opname = item.op.split(".", 1)
+
+        def _toggle_weight(opmod=opmod, opname=opname):
+            getattr(getattr(bpy.ops, opmod), opname)()
+
+        _run_hud_op(context, obj, _toggle_weight)
         return
 
     menu_id = item.op
@@ -389,9 +406,10 @@ class TH_OT_hud_modal(Operator):
         text_data = obj.data
         show_hud = hud_enabled(context, text_data)
         font_picker_active = font_picker_open(context)
+        weight_picker_active = weight_picker_open(context)
         preset_picker_active = preset_picker_open(context)
         language_picker_active = language_picker_open(context)
-        picker_active = font_picker_active or preset_picker_active or language_picker_active
+        picker_active = font_picker_active or weight_picker_active or preset_picker_active or language_picker_active
         rects = get_hud_hit_rects(context, obj, text_data) if show_hud else []
 
         if picker_active:
@@ -426,6 +444,8 @@ class TH_OT_hud_modal(Operator):
                 else:
                     if language_picker_active:
                         handle_language_picker_hover(context, mx, my)
+                    elif weight_picker_active:
+                        handle_weight_picker_hover(context, mx, my)
                     elif preset_picker_active:
                         handle_preset_picker_hover(context, mx, my)
                     elif font_picker_active:
@@ -457,6 +477,13 @@ class TH_OT_hud_modal(Operator):
                     preset_hit = hit_test_preset_picker(context, mx, my)
                     if preset_hit is not None:
                         handle_preset_picker_click(context, preset_hit)
+                        tag_redraw()
+                        return {"RUNNING_MODAL"}
+
+                if weight_picker_active:
+                    weight_hit = hit_test_weight_picker(context, mx, my)
+                    if weight_hit is not None:
+                        handle_weight_picker_click(context, weight_hit)
                         tag_redraw()
                         return {"RUNNING_MODAL"}
 

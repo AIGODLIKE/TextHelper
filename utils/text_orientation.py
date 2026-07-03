@@ -204,11 +204,22 @@ def set_vertical_source(text_data, raw: str) -> None:
         sync_vertical_source_to_body(text_data)
     finally:
         _VERTICAL_SOURCE_GUARD = False
+    from .ui_textbox import sync_panel_textbox_from_canonical
+
+    sync_panel_textbox_from_canonical(text_data, vertical=True)
 
 
 def clear_vertical_content(text_data) -> None:
-    text_data.text_helper.th_vertical_source = ""
-    text_data.body = ""
+    global _VERTICAL_SOURCE_GUARD
+    _VERTICAL_SOURCE_GUARD = True
+    try:
+        text_data.text_helper.th_vertical_source = ""
+        text_data.body = ""
+    finally:
+        _VERTICAL_SOURCE_GUARD = False
+    from .ui_textbox import sync_panel_textbox_from_canonical
+
+    sync_panel_textbox_from_canonical(text_data, vertical=True, flip_active=True)
     _refresh_after_body_change(text_data)
 
 

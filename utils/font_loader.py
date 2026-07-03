@@ -81,6 +81,20 @@ def disk_font_path(font):
     return abs_path
 
 
+def resolve_font_filepath(font):
+    """Return a font path for UI lookup even when the file is temporarily missing."""
+    path = disk_font_path(font)
+    if path:
+        return path
+    raw = (getattr(font, "filepath", "") or "").strip()
+    if not raw or raw.startswith("<"):
+        return ""
+    abs_path = bpy.path.abspath(raw)
+    if not abs_path or abs_path.startswith("<"):
+        return ""
+    return abs_path
+
+
 def find_loaded_font(filepath):
     abs_path = disk_font_path_from_string(filepath)
     if not abs_path:
@@ -104,13 +118,21 @@ def disk_font_path_from_string(filepath):
 
 def load_font_file(filepath):
     """Load a .ttf/.otf into bpy.data.fonts, reusing existing data-blocks."""
+    from .font_blf import font_path_usable, mark_font_failed
+
     abs_path = disk_font_path_from_string(filepath)
     if not abs_path:
+        raise FileNotFoundError(filepath or "")
+    if not font_path_usable(abs_path):
         raise FileNotFoundError(filepath or "")
     existing = find_loaded_font(abs_path)
     if existing is not None:
         return existing
-    return bpy.data.fonts.load(abs_path)
+    try:
+        return bpy.data.fonts.load(abs_path)
+    except Exception:
+        mark_font_failed(abs_path)
+        raise
 
 
 _VARIANT_SUFFIXES = {
@@ -237,8 +259,23 @@ def _font_display_name(filename):
     return stem.replace("_", " ").replace("-", " ")
 
 
+_FONT_HUD_LABEL_MAX_LEN = 20
+
+
+def font_hud_label(font):
+    """Blender font data-block name for the floating toolbar, truncated."""
+    if font is None:
+        return ""
+    name = font.name
+    if len(name) > _FONT_HUD_LABEL_MAX_LEN:
+        return name[:_FONT_HUD_LABEL_MAX_LEN] + "…"
+    return name
+
+
 def iter_system_fonts():
     """Yield sorted dicts: display_name, filepath."""
+    from .font_blf import font_magic_ok
+
     seen = set()
     entries = []
     for directory in system_font_directories():
@@ -252,6 +289,8 @@ def iter_system_fonts():
                 continue
             filepath = os.path.join(directory, name)
             if not os.path.isfile(filepath):
+                continue
+            if not font_magic_ok(filepath):
                 continue
             key = os.path.normcase(filepath)
             if key in seen:

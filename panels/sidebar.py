@@ -7,7 +7,14 @@ from ..utils.ui_textbox import draw_multiline_field
 from ..utils.addon_prefs import get_addon_prefs
 from ..utils.text_format import get_active_text
 from ..utils.text_orientation import is_vertical, vertical_source_char_count
-from ..utils.vertical_align_check import build_vertical_align_report, format_halfwidth_preview, has_convertible_chars
+from ..utils.vertical_align_check import (
+    build_vertical_align_report,
+    format_halfwidth_preview,
+    has_convertible_chars,
+    panel_source_text,
+)
+
+_BUTTON_ROW_SCALE_Y = 1.5
 
 
 def _floating_toolbar_pressed(context, text_data=None):
@@ -20,88 +27,130 @@ def _floating_toolbar_pressed(context, text_data=None):
 
 
 def _draw_panel_header(layout, context, text_data=None):
-    layout.operator(
+    row = layout.row(align=True)
+    row.scale_x = 0.92
+    row.scale_y = 0.92
+    row.operator(
         "wm.texthelper_toggle_toolbar",
         text="",
         icon="OVERLAY",
         depress=_floating_toolbar_pressed(context, text_data),
     )
-    layout.operator(
+    row.operator(
         "font.texthelper_open_addon_preferences",
         text="",
         icon="PREFERENCES",
     )
 
 
-def _draw_vertical_align_warnings(layout, text_data):
-    report = build_vertical_align_report(text_data)
-    if not report["has_issues"]:
-        return
-
-    font_issues = report["font_issues"]
-    if any(
-        key in font_issues
-        for key in ("proportional_cjk", "fill_width_mismatch", "latin_proportional")
-    ):
-        layout.label(text=_("Non-monospaced font — columns may misalign"), icon="ERROR")
-
-    halfwidth = report["halfwidth_chars"]
-    source = getattr(text_data.text_helper, "th_vertical_source", "") or ""
-    if halfwidth:
-        preview = format_halfwidth_preview(halfwidth)
-        row = layout.row(align=True)
-        if has_convertible_chars(source):
-            fix_col = row.column(align=True)
-            fix_col.ui_units_x = 2.0
-            fix_col.ui_units_y = 2.0
-            fix_col.operator(
-                "font.texthelper_convert_vertical_fullwidth",
-                text="",
-                icon="MODIFIER",
-            )
-        row.label(text=_("Halfwidth characters: {}").format(preview))
+def _char_count_text(text_data, *, vertical):
+    if vertical:
+        chars = vertical_source_char_count(text_data)
+        source = getattr(text_data.text_helper, "th_vertical_source", "") or ""
+        words = sum(1 for line in source.split("\n") if line.strip())
+    else:
+        chars = len(text_data.body)
+        words = len(text_data.body.split()) if text_data.body else 0
+    return _("{:d} chars · {:d} words").format(chars, words)
 
 
-def _draw_direction_row(layout, text_data):
-    row = layout.row(align=True)
+def _button_row(parent):
+    row = parent.row(align=True)
+    row.scale_y = _BUTTON_ROW_SCALE_Y
+    return row
+
+
+def _draw_orientation_row(layout, text_data):
+    row = _button_row(layout)
     orientation = getattr(text_data.text_helper, "th_text_orientation", "HORIZONTAL")
     row.operator(
         "font.texthelper_set_text_orientation",
         text=_("Horizontal"),
+        icon="ALIGN_LEFT",
         depress=orientation == "HORIZONTAL",
     ).orientation = "HORIZONTAL"
     row.operator(
         "font.texthelper_set_text_orientation",
         text=_("Vertical"),
+        icon="SORT_ASC",
         depress=orientation == "VERTICAL",
     ).orientation = "VERTICAL"
 
-    if orientation != "VERTICAL":
-        return
 
+def _draw_column_order_row(col, text_data):
     order = getattr(text_data.text_helper, "th_vertical_column_order", "RTL")
-    row = layout.row(align=True)
+    row = _button_row(col)
     row.operator(
         "font.texthelper_set_column_order",
         text=_("Right to Left"),
+        icon="BACK",
         depress=order == "RTL",
     ).order = "RTL"
     row.operator(
         "font.texthelper_set_column_order",
         text=_("Left to Right"),
+        icon="FORWARD",
         depress=order == "LTR",
     ).order = "LTR"
 
 
+def _draw_actions_row(col):
+    row = _button_row(col)
+    row.operator("font.texthelper_paste_body", text=_("Paste"), icon="PASTEDOWN")
+    row.operator("font.texthelper_clear_body", text=_("Clear"), icon="TRASH")
+
+
+def _draw_align_warnings(col, text_data, *, vertical):
+    report = build_vertical_align_report(text_data)
+    if not report["has_issues"]:
+        return
+
+    warn = col.column(align=True)
+    warn.scale_y = 0.92
+
+    if vertical:
+        font_issues = report["font_issues"]
+        if any(
+            key in font_issues
+            for key in ("proportional_cjk", "fill_width_mismatch", "latin_proportional")
+        ):
+            warn.label(text=_("Non-monospaced font — columns may misalign"), icon="ERROR")
+
+    halfwidth = report["halfwidth_chars"]
+    source = panel_source_text(text_data)
+    if halfwidth:
+        preview = format_halfwidth_preview(halfwidth)
+        warn.label(text=_("Halfwidth characters: {}").format(preview), icon="WARNING_LARGE")
+        if has_convertible_chars(source):
+            fix_row = _button_row(warn)
+            fix_row.operator(
+                "font.texthelper_convert_vertical_fullwidth",
+                text=_("Fix"),
+                icon="SHADERFX",
+            )
+
+
+def _draw_footer(col, text_data, *, vertical):
+    row = col.row(align=True)
+    row.scale_y = 0.88
+    row.label(text=_char_count_text(text_data, vertical=vertical))
+
+
 def _draw_content_box(layout, context, text_data):
-    col = layout.column(align=True)
-    _draw_direction_row(col, text_data)
+    plate = layout.box()
+    col = plate.column(align=True)
+    _draw_orientation_row(col, text_data)
 
     vertical = is_vertical(text_data)
 
     if vertical:
-        draw_multiline_field(col, text_data.text_helper, "th_vertical_source", context=context, vertical=True)
-        _draw_vertical_align_warnings(col, text_data)
+        draw_multiline_field(
+            col,
+            text_data.text_helper,
+            "th_vertical_source",
+            context=context,
+            vertical=True,
+        )
     else:
         draw_multiline_field(
             col,
@@ -112,18 +161,12 @@ def _draw_content_box(layout, context, text_data):
             vertical=False,
         )
 
-    row = col.row(align=True)
-    row.operator("font.texthelper_paste_body", text=_("Paste"), icon="PASTEDOWN")
-    row.operator("font.texthelper_clear_body", text=_("Clear"), icon="X")
-
     if vertical:
-        chars = vertical_source_char_count(text_data)
-        source = getattr(text_data.text_helper, "th_vertical_source", "") or ""
-        words = sum(1 for line in source.split("\n") if line.strip())
-    else:
-        chars = len(text_data.body)
-        words = len(text_data.body.split()) if text_data.body else 0
-    col.label(text=_("{:d} chars · {:d} words").format(chars, words))
+        _draw_column_order_row(col, text_data)
+
+    _draw_actions_row(col)
+    _draw_align_warnings(col, text_data, vertical=vertical)
+    _draw_footer(col, text_data, vertical=vertical)
 
 
 class VIEW3D_PT_text_helper(Panel):
