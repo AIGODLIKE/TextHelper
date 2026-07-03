@@ -9,13 +9,29 @@
 
 ---
 
-## 功能概览
+## 亮点功能
 
-### 侧边栏（N 面板）
+### 文本输入
 
-https://github.com/user-attachments/assets/3369a3c5-3ce4-4c22-87bd-4387a4477f73
+https://github.com/user-attachments/assets/b7d06527-94dc-4f77-ae7a-d5b3cc7e12ba
 
-- 多行 **textbox**（Blender 5.2+），可设置可见行数
+- 多行 **textbox**（需要Blender 5.2+）
+- 换行=Shift+Enter | 确认=Enter
+
+### 字体
+
+https://github.com/user-attachments/assets/adf5a290-0b00-45e4-88f3-e48734f28172
+
+
+
+- **实时预览**：实时预览字体/字重效果，支持当前输入内容用作预览（也可以使用字体名称或者自定义字符串）
+- **实时生效**：悬停时实时更换字体/字重
+- **无效字体排除**：支持根据输入内容**自动匹配**支持的字体（小提示，当输入内容变为“□”时,可以直接展开字体库修复，超级好用啊~）
+- **字重合并**：支持同族字体字重合并
+- 浏览本地 `.ttf` / `.otf`；可选悬停实时预览
+- **多系统支持**：扫描 **系统字体**（Windows / macOS / Linux）
+
+
 - 横排 / **竖排** 模式，列顺序（从右到左 / 从左到右）
 - 粘贴、清空（需 clipboard 权限）
 - 竖排半角字符提示与一键转全角
