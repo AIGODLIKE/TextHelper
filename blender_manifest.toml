@@ -1,0 +1,33 @@
+schema_version = "1.0.0"
+id = "TextHelper"
+name = "Text Helper"
+tagline = "Easy text input & font management"
+version = "1.7.0"
+type = "add-on"
+maintainer = "ACGGIT"
+
+blender_version_min = "5.2.0"
+
+website = "https://github.com/AIGODLIKE/TextHelper"
+support = "https://github.com/AIGODLIKE/TextHelper/issues"
+
+tags = ["3D View", "Object"]
+license = ["SPDX:GPL-3.0-or-later"]
+
+[permissions]
+files = "Load fonts from disk and cache font preview thumbnails"
+clipboard = "Paste text into the active text object"
+
+[build]
+paths_exclude_pattern = [
+    "__pycache__/",
+    "/.git/",
+    ".gitignore",
+    ".gitattributes",
+    "/*.zip",
+    "*.blend1",
+    ".vscode/",
+    ".idea/",
+    ".DS_Store",
+    "Thumbs.db",
+]
