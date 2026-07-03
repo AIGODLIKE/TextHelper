@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Text Helper",
     "author": "ACGGIT",
-    "version": (1, 7, 0),
+    "version": (1, 7, 1),
     "blender": (5, 2, 0),
     "location": "View3D > Sidebar > Text Helper",
     "description": "Easy text input & font management",
@@ -16,7 +16,7 @@ ADDON_PACKAGE = __name__
 
 import bpy
 
-from . import i18n, keymap, ops, panels, preferences, props, runtime, sync
+from . import i18n, ops, panels, preferences, props, runtime, sync
 
 
 def register():
@@ -26,7 +26,6 @@ def register():
     sync.register()
     ops.register()
     panels.register()
-    keymap.register()
     try:
         from .utils.font_preview import init_font_preview_cache
 
@@ -37,7 +36,6 @@ def register():
 
 def unregister():
     runtime.shutdown()
-    keymap.unregister()
     panels.unregister()
     ops.unregister()
     sync.unregister()

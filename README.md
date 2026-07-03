@@ -1,6 +1,6 @@
 # Text Helper
 
-**Version 1.7.0** · Blender **5.2+** · [GPL-3.0-or-later](LICENSE)
+**Version 1.7.1** · Blender **5.2+** · [GPL-3.0-or-later](LICENSE)
 
 Text Helper makes working with Blender text objects faster: multi-line editing in the sidebar, a floating viewport toolbar, system font browsing with live previews, and vertical (column) text workflows.
 
@@ -34,7 +34,6 @@ Maintainer: **ACGGIT**
 
 - Simplified Chinese UI (auto-detected from Blender locale)
 - Customizable HUD accent color and scale
-- Keyboard shortcuts: Ctrl+B / I / U (style), Ctrl+Shift+L / E / R (align)
 
 ---
 
@@ -42,7 +41,7 @@ Maintainer: **ACGGIT**
 
 ### Blender Extensions (recommended)
 
-1. Download `TextHelper-1.7.0.zip` from [Releases](https://github.com/AIGODLIKE/TextHelper/releases) (when published), or build locally (see below).
+1. Download `TextHelper-1.7.1.zip` from [Releases](https://github.com/AIGODLIKE/TextHelper/releases) (when published), or build locally (see below).
 2. In Blender: **Edit → Preferences → Get Extensions → Install from Disk…**
 3. Select the zip and enable **Text Helper**.
 
@@ -60,7 +59,7 @@ From the parent folder that contains `_build_texthelper_zip.py`:
 python _build_texthelper_zip.py
 ```
 
-Output: `TextHelper-1.7.0.zip`
+Output: `TextHelper-1.7.1.zip`
 
 ---
 
