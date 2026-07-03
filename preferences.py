@@ -97,7 +97,7 @@ class TH_Preferences(AddonPreferences):
     font_preview_sample: StringProperty(
         name="Preview Text",
         description="Characters rendered inside each font thumbnail",
-        default="The quick brown fox jumps over the lazy dog",
+        default="Exploration witnesses courage, open source witnesses glory",
         update=_invalidate_font_previews,
     )
     font_preview_mode: EnumProperty(

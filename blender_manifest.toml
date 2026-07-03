@@ -2,7 +2,7 @@ schema_version = "1.0.0"
 id = "TextHelper"
 name = "Text Helper"
 tagline = "Easy text input & font management"
-version = "1.8.0"
+version = "1.8.5"
 type = "add-on"
 maintainer = "ACGGIT"
 
@@ -34,4 +34,7 @@ paths_exclude_pattern = [
     ".DS_Store",
     "Thumbs.db",
     "i18n/_audit_translations.py",
+    "i18n/_audit_rna_strings.py",
+    "i18n/_audit_zh_hant.py",
+    "i18n/_generate_zh_hant.py",
 ]

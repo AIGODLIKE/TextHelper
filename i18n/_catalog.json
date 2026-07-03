@@ -1788,5 +1788,25 @@
     "context": "*",
     "msgid": "Loading fonts…",
     "zh_HANS": "正在加载字体…"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text Helper is not ready yet",
+    "zh_HANS": "Text Helper 尚未就绪"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Preferences unavailable",
+    "zh_HANS": "偏好设置不可用"
+  },
+  {
+    "context": "*",
+    "msgid": "Default",
+    "zh_HANS": "默认"
+  },
+  {
+    "context": "*",
+    "msgid": "Default visible line count for the N-panel textbox (you can still drag the bottom edge to resize)",
+    "zh_HANS": "N 面板文本框默认可见行数（仍可拖动底边调整大小）"
   }
 ]

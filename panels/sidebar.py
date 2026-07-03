@@ -174,6 +174,7 @@ class VIEW3D_PT_text_helper(Panel):
     bl_region_type = "UI"
     bl_category = "Text Helper"
     bl_label = "Text Helper"
+    bl_translation_context = "*"
 
     @classmethod
     def poll(cls, context):
@@ -201,6 +202,7 @@ class VIEW3D_PT_text_helper_empty(Panel):
     bl_region_type = "UI"
     bl_category = "Text Helper"
     bl_label = "Text Helper"
+    bl_translation_context = "*"
 
     @classmethod
     def poll(cls, context):

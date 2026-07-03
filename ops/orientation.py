@@ -68,7 +68,6 @@ class TH_OT_convert_vertical_fullwidth(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_convert_vertical_fullwidth"
     bl_label = "Fix Halfwidth Characters"
     bl_description = "Convert halfwidth characters to fullwidth for better CJK alignment"
-    bl_translation_context = "Operator"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):

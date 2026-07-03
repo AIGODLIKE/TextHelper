@@ -4,7 +4,7 @@ import bpy
 from bpy.types import Operator, UIList
 
 from ..i18n import _
-from ..utils.operator_poll import ActiveFontDataPollMixin
+from ..utils.operator_poll import ActiveFontDataPollMixin, ActiveFontPollMixin, WindowManagerPollMixin
 from ..utils.addon_prefs import get_addon_prefs, prefs_are_editable
 from ..utils.font_loader import (
     assign_font,
@@ -204,7 +204,7 @@ def draw_system_font_list(layout, context, rows=6, list_id="th_font_sidebar"):
         layout.label(text=_("Current: {}").format(text_data.font.name), icon="CHECKMARK")
 
 
-class TH_OT_refresh_system_fonts(Operator):
+class TH_OT_refresh_system_fonts(WindowManagerPollMixin, Operator):
     bl_idname = "font.texthelper_refresh_system_fonts"
     bl_label = "Refresh Font List"
     bl_description = "Rescan system font folders"
@@ -229,7 +229,7 @@ class TH_OT_refresh_system_fonts(Operator):
         return {"FINISHED"}
 
 
-class TH_OT_regenerate_font_previews(Operator):
+class TH_OT_regenerate_font_previews(WindowManagerPollMixin, Operator):
     bl_idname = "font.texthelper_regenerate_font_previews"
     bl_label = "Regenerate Font Previews"
     bl_description = "Clear cached thumbnails and rebuild them with current preview settings"

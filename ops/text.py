@@ -4,7 +4,7 @@ from bpy.types import Operator
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs
 from ..utils.font_context import ensure_text_font, enter_text_edit_mode
-from ..utils.operator_poll import ActiveFontDataPollMixin, ActiveFontPollMixin
+from ..utils.operator_poll import ActiveFontDataPollMixin, ActiveFontPollMixin, TextHelperOperatorMixin
 from ..utils.text_format import get_active_text
 from ..utils.text_frame import ensure_layout_frame, tag_view3d_redraw
 from ..utils.text_orientation import clear_vertical_content, is_vertical, set_vertical_source
@@ -28,7 +28,7 @@ class TH_OT_enter_text_edit(ActiveFontPollMixin, Operator):
         return {"FINISHED"}
 
 
-class TH_OT_text_add(Operator):
+class TH_OT_text_add(TextHelperOperatorMixin, Operator):
     bl_idname = "font.texthelper_text_add"
     bl_label = "Add Text"
     bl_options = {"REGISTER", "UNDO"}
@@ -130,9 +130,9 @@ class TH_OT_set_text_case(ActiveFontDataPollMixin, Operator):
 
     case: bpy.props.EnumProperty(
         items=(
-            ("DEFAULT", "Default", "Keep original casing"),
-            ("UPPER", "Uppercase", "Convert all letters to uppercase"),
-            ("LOWER", "Lowercase", "Convert all letters to lowercase"),
+            ("DEFAULT", "Default", "Original letter casing"),
+            ("UPPER", "Uppercase", "All uppercase letters"),
+            ("LOWER", "Lowercase", "All lowercase letters"),
         ),
     )
 

@@ -5,6 +5,12 @@ from __future__ import annotations
 from .text_format import get_active_text, get_active_text_data
 
 
+class TextHelperOperatorMixin:
+    """Shared RNA translation context for operator labels and tooltips."""
+
+    bl_translation_context = "Operator"
+
+
 def poll_active_font(context):
     return get_active_text(context) is not None
 
@@ -36,7 +42,7 @@ def poll_active_font_data_message(cls, context):
     return True
 
 
-class ActiveFontDataPollMixin:
+class ActiveFontDataPollMixin(TextHelperOperatorMixin):
     """Mixin for operators that require an active text object's data."""
 
     @classmethod
@@ -44,9 +50,32 @@ class ActiveFontDataPollMixin:
         return poll_active_font_data_message(cls, context)
 
 
-class ActiveFontPollMixin:
+class ActiveFontPollMixin(TextHelperOperatorMixin):
     """Mixin for operators that require a selected text object."""
 
     @classmethod
     def poll(cls, context):
         return poll_active_font_message(cls, context)
+
+
+class WindowManagerPollMixin(TextHelperOperatorMixin):
+    """Mixin for operators that only need Text Helper WM state."""
+
+    @classmethod
+    def poll(cls, context):
+        wm = context.window_manager
+        if wm is None or getattr(wm, "th_state", None) is None:
+            cls.poll_message_set("Text Helper is not ready yet")
+            return False
+        return True
+
+
+class PreferencesPollMixin(TextHelperOperatorMixin):
+    """Mixin for operators that open add-on preferences."""
+
+    @classmethod
+    def poll(cls, context):
+        if context.preferences is None:
+            cls.poll_message_set("Preferences unavailable")
+            return False
+        return True

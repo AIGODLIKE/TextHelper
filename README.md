@@ -1,6 +1,6 @@
 # Text Helper
 
-**Version 1.7.2** · Blender **5.2+** · [GPL-3.0-or-later](LICENSE)
+**Version 1.8.5** · Blender **5.2+** · [GPL-3.0-or-later](LICENSE)
 
 Text Helper makes working with Blender text objects faster: multi-line editing in the sidebar, a floating viewport toolbar, system font browsing with live previews, and vertical (column) text workflows.
 
@@ -27,12 +27,14 @@ Maintainer: **ACGGIT**
 ### Fonts
 
 - Scan **system fonts** on Windows, macOS, and Linux
-- Search, sort, script/language filter, thumbnail previews
+- Search, sort, script/language filter, **font weight picker**, thumbnail previews
 - Browse custom `.ttf` / `.otf` files; optional live preview on hover
 
 ### Other
 
 - Simplified Chinese UI (auto-detected from Blender locale)
+- Traditional Chinese UI (`zh_Hant`)
+- Japanese UI (`ja_JP`)
 - Customizable HUD accent color and scale
 
 ---
@@ -41,7 +43,7 @@ Maintainer: **ACGGIT**
 
 ### Blender Extensions (recommended)
 
-1. Download `TextHelper-1.7.2.zip` from [Releases](https://github.com/AIGODLIKE/TextHelper/releases) (when published), or build locally (see below).
+1. Download `TextHelper-1.8.5.zip` from [Releases](https://github.com/AIGODLIKE/TextHelper/releases) (when published), or build locally (see below).
 2. In Blender: **Edit → Preferences → Get Extensions → Install from Disk…**
 3. Select the zip and enable **Text Helper**.
 
@@ -51,19 +53,29 @@ Maintainer: **ACGGIT**
    `%APPDATA%\Blender Foundation\Blender\5.2\extensions\user_default\TextHelper`
 2. Restart Blender or refresh extensions.
 
-### Build zip locally
+### Build zip locally (official)
 
-From the parent folder that contains `_build_texthelper_zip.py`:
+From the `TextHelper` add-on directory:
 
 ```bash
-python _build_texthelper_zip.py
+blender --command extension validate
+blender --command extension build
 ```
 
-Output: `TextHelper-1.7.2.zip`
+Output: `TextHelper-1.8.5.zip`
+
+A helper script `_build_texthelper_zip.py` is also available in the parent `DATA` folder for quick local copies; use the Blender CLI output for Extension Store submissions.
 
 ---
 
-## Permissions
+## Recent changes (1.8.x)
+
+- **1.8.5** — Default font preview sample text updated
+- **1.8.4** — Traditional Chinese (`zh_Hant`) UI; Blender TW phrasing (e.g. 視圖區)
+- **1.8.2** — Operator poll / i18n compliance fixes
+- **1.8.0** — JSON-based i18n (zh_Hans, ja_JP), font weight picker, N-panel layout polish
+
+---
 
 Declared in `blender_manifest.toml`:
 

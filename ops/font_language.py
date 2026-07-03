@@ -6,10 +6,11 @@ from bpy.types import Menu, Operator
 from ..i18n import _
 from ..utils.addon_prefs import prefs_bl_idname
 from ..utils.font_language import LANGUAGE_FILTER_ITEMS, get_language_filter, invalidate_font_language_cache
+from ..utils.operator_poll import PreferencesPollMixin, WindowManagerPollMixin
 from ..utils.text_frame import tag_view3d_redraw
 
 
-class TH_OT_set_font_language(Operator):
+class TH_OT_set_font_language(WindowManagerPollMixin, Operator):
     bl_idname = "font.texthelper_set_font_language"
     bl_label = "Set Font Language Filter"
     bl_options = {"INTERNAL"}
@@ -38,7 +39,7 @@ class TH_OT_set_font_language(Operator):
         return {"FINISHED"}
 
 
-class TH_OT_open_addon_preferences(Operator):
+class TH_OT_open_addon_preferences(PreferencesPollMixin, Operator):
     bl_idname = "font.texthelper_open_addon_preferences"
     bl_label = "Text Helper Preferences"
     bl_description = "Open Text Helper add-on preferences"

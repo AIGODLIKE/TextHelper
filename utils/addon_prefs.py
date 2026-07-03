@@ -12,7 +12,7 @@ class _DefaultPrefs:
     hud_accent_custom = (0.12, 0.86, 0.42)
     font_preview_icons = True
     font_preview_on_select = True
-    font_preview_sample = "The quick brown fox jumps over the lazy dog"
+    font_preview_sample = "Exploration witnesses courage, open source witnesses glory"
     font_preview_mode = "OBJECT"
     font_preview_size = 36
     font_preview_width = 512

@@ -1,4 +1,4 @@
-"""Addon UI translations (English source + zh_HANS + ja_JP)."""
+"""Addon UI translations (English source + zh_HANS + zh_Hant + ja_JP)."""
 
 import json
 from pathlib import Path
@@ -21,8 +21,14 @@ def _table_from_json(filename: str, value_key: str) -> dict:
 _OWNER = None
 
 
+def _hant_table() -> dict:
+    return _table_from_json("zh_Hant.json", "zh_Hant")
+
+
 _TRANSLATIONS = {
     "zh_HANS": _table_from_json("_catalog.json", "zh_HANS"),
+    "zh_Hant": _hant_table(),
+    "zh_HANT": _hant_table(),
     "ja_JP": _table_from_json("ja_JP.json", "ja_JP"),
 }
 

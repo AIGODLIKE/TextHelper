@@ -15,7 +15,7 @@ from .png_clean import strip_png_color_profile, strip_png_dir, write_solid_png
 
 _PREVIEW_COLLECTION = None
 _ACTIVE_SETTINGS_HASH = ""
-_DEFAULT_SAMPLE = "The quick brown fox jumps over the lazy dog"
+_DEFAULT_SAMPLE = "Exploration witnesses courage, open source witnesses glory"
 _FALLBACK_SAMPLE = "Aa"
 _PREVIEW_QUEUE = []
 _QUEUE_KEYS = set()

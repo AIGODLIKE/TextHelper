@@ -3,7 +3,7 @@
 from .addon_prefs import get_addon_prefs
 from .text_format import get_active_text_data
 
-DEFAULT_SAMPLE = "The quick brown fox jumps over the lazy dog"
+DEFAULT_SAMPLE = "Exploration witnesses courage, open source witnesses glory"
 MAX_PREVIEW_LEN = 48
 
 _LEGACY_MODES = {

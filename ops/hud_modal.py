@@ -5,7 +5,7 @@ from bpy.types import Operator
 
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs, prefs_are_editable
-from ..utils.operator_poll import ActiveFontPollMixin
+from ..utils.operator_poll import ActiveFontPollMixin, TextHelperOperatorMixin
 from ..utils.view3d_context import (
     find_view3d_area_region,
     mouse_in_view3d_ui,
@@ -349,7 +349,7 @@ class _HudPointerEvent:
         self.mouse_region_x = mx
         self.mouse_region_y = my
 
-class TH_OT_hud_modal(Operator):
+class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
     bl_idname = "wm.texthelper_hud_modal"
     bl_label = "Text Helper HUD"
     bl_options = {"INTERNAL"}
@@ -603,7 +603,7 @@ class TH_OT_hud_modal(Operator):
         return {"RUNNING_MODAL"}
 
 
-class TH_OT_hud_ensure_modal(Operator):
+class TH_OT_hud_ensure_modal(TextHelperOperatorMixin, Operator):
     bl_idname = "wm.texthelper_hud_ensure_modal"
     bl_label = "Ensure HUD Modal"
     bl_options = {"INTERNAL"}
@@ -656,7 +656,7 @@ class TH_OT_show_hud(ActiveFontPollMixin, Operator):
         return {"FINISHED"}
 
 
-class TH_OT_toggle_floating_toolbar(Operator):
+class TH_OT_toggle_floating_toolbar(TextHelperOperatorMixin, Operator):
     bl_idname = "wm.texthelper_toggle_toolbar"
     bl_label = "Toggle Floating Toolbar"
     bl_description = "Show or hide the floating toolbar in the 3D viewport"

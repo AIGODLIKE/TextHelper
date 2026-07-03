@@ -17,7 +17,7 @@ from ..utils.font_glyph import (
     unregister_blf_unload_hook,
 )
 from ..utils.font_blf import blf_load, blf_unload, font_path_usable
-from ..utils.font_loader import ensure_font_catalog, is_current_font, queue_font_catalog
+from ..utils.font_loader import is_current_font, queue_font_catalog
 from ..utils.font_family import family_weight_counts, group_catalog_items
 from ..utils.view3d_context import run_active_font_op
 from ..utils.font_language import (

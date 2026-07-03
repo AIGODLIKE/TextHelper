@@ -16,7 +16,11 @@ for path in ROOT.rglob("*.py"):
     for match in pattern.finditer(text):
         msgids.add(match.group(2))
 
-for filename, value_key in (("_catalog.json", "zh_HANS"), ("ja_JP.json", "ja_JP")):
+for filename, value_key in (
+    ("_catalog.json", "zh_HANS"),
+    ("zh_Hant.json", "zh_Hant"),
+    ("ja_JP.json", "ja_JP"),
+):
     payload = json.loads((I18N / filename).read_text(encoding="utf-8"))
     keys = {item["msgid"] for item in payload}
     missing = sorted(msgids - keys)

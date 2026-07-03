@@ -2,1811 +2,1811 @@
   {
     "context": "*",
     "msgid": "Text Helper",
-    "ja_JP": "テキストヘルパー"
+    "zh_Hant": "文字助手"
   },
   {
     "context": "*",
     "msgid": "Text",
-    "ja_JP": "テキスト"
+    "zh_Hant": "文字"
   },
   {
     "context": "*",
     "msgid": "Content",
-    "ja_JP": "テキスト内容"
+    "zh_Hant": "文字內容"
   },
   {
     "context": "*",
     "msgid": "Quick Toolbar",
-    "ja_JP": "クイックツールバー"
+    "zh_Hant": "快捷工具欄"
   },
   {
     "context": "*",
     "msgid": "About",
-    "ja_JP": "について"
+    "zh_Hant": "關於"
   },
   {
     "context": "*",
     "msgid": "Easy text input & font management",
-    "ja_JP": "簡単なテキスト入力とフォント管理"
+    "zh_Hant": "輕鬆文字輸入&字型管理"
   },
   {
     "context": "*",
     "msgid": "Easy text input & font management with a viewport floating toolbar.",
-    "ja_JP": "簡単なテキスト入力とフォント管理。3Dビューポートにフローティングツールバー付き。"
+    "zh_Hant": "輕鬆文字輸入與字型管理，含視圖區浮動工具欄。"
   },
   {
     "context": "*",
     "msgid": "Viewport",
-    "ja_JP": "3Dビューポート"
+    "zh_Hant": "視圖區"
   },
   {
     "context": "*",
     "msgid": "Sidebar",
-    "ja_JP": "サイドバー"
+    "zh_Hant": "側欄"
   },
   {
     "context": "*",
     "msgid": "Format",
-    "ja_JP": "書式"
+    "zh_Hant": "格式"
   },
   {
     "context": "*",
     "msgid": "Text Direction",
-    "ja_JP": "文字方向"
+    "zh_Hant": "文字方向"
   },
   {
     "context": "*",
     "msgid": "Horizontal",
-    "ja_JP": "横書き"
+    "zh_Hant": "橫向"
   },
   {
     "context": "*",
     "msgid": "Vertical",
-    "ja_JP": "縦書き"
+    "zh_Hant": "豎向"
   },
   {
     "context": "Operator",
     "msgid": "Set Text Orientation",
-    "ja_JP": "文字方向を設定"
+    "zh_Hant": "設定文字方向"
   },
   {
     "context": "*",
     "msgid": "Horizontal text input",
-    "ja_JP": "横書き入力"
+    "zh_Hant": "橫向輸入文字"
   },
   {
     "context": "*",
     "msgid": "Vertical text input",
-    "ja_JP": "縦書き入力"
+    "zh_Hant": "豎向輸入文字"
   },
   {
     "context": "*",
     "msgid": "Edit text in horizontal rows",
-    "ja_JP": "横方向の行でテキストを編集"
+    "zh_Hant": "按橫向行編輯文字"
   },
   {
     "context": "*",
     "msgid": "Edit text in vertical columns",
-    "ja_JP": "縦方向の列でテキストを編集"
+    "zh_Hant": "按豎向列編輯文字"
   },
   {
     "context": "*",
     "msgid": "Column Order",
-    "ja_JP": "列の順序"
+    "zh_Hant": "列順序"
   },
   {
     "context": "*",
     "msgid": "Right to Left",
-    "ja_JP": "右から左"
+    "zh_Hant": "從右到左"
   },
   {
     "context": "*",
     "msgid": "Left to Right",
-    "ja_JP": "左から右"
+    "zh_Hant": "從左到右"
   },
   {
     "context": "*",
     "msgid": "New columns grow from right to left",
-    "ja_JP": "新しい列は右から左へ追加"
+    "zh_Hant": "新列從右向左排列"
   },
   {
     "context": "*",
     "msgid": "New columns grow from left to right",
-    "ja_JP": "新しい列は左から右へ追加"
+    "zh_Hant": "新列從左向右排列"
   },
   {
     "context": "Operator",
     "msgid": "Insert Column Break",
-    "ja_JP": "列区切りを挿入"
+    "zh_Hant": "插入換列"
   },
   {
     "context": "*",
     "msgid": "New Column",
-    "ja_JP": "列を追加"
+    "zh_Hant": "換列"
   },
   {
     "context": "*",
     "msgid": "Type horizontally; press Enter to start a new column",
-    "ja_JP": "横書きで入力し、Enter で新しい列を開始"
+    "zh_Hant": "橫向輸入，回車換列"
   },
   {
     "context": "*",
     "msgid": "Type horizontally · Enter = new column",
-    "ja_JP": "横書き入力 · Enter = 列追加"
+    "zh_Hant": "橫向輸入 · 回車換列"
   },
   {
     "context": "*",
     "msgid": "Shorter columns are auto-padded to stay aligned",
-    "ja_JP": "短い列は全角スペースで自動パディングされ、揃えられます"
+    "zh_Hant": "較短列會自動補全形空格以保持對齊"
   },
   {
     "context": "*",
     "msgid": "Right to Left: first line is the rightmost column; Enter adds leftward",
-    "ja_JP": "右から左：最初の行が最右列、Enter で左方向に列を追加"
+    "zh_Hant": "從右到左：第一行在最右列，回車向左新增列"
   },
   {
     "context": "*",
     "msgid": "Left to Right: first line is the leftmost column; Enter adds rightward",
-    "ja_JP": "左から右：最初の行が最左列、Enter で右方向に列を追加"
+    "zh_Hant": "從左到右：第一行在最左列，回車向右新增列"
   },
   {
     "context": "*",
     "msgid": "Non-monospaced font — columns may misalign",
-    "ja_JP": "等幅フォントではありません — 列がずれる場合があります"
+    "zh_Hant": "非等寬字型 — 豎列可能對不齊"
   },
   {
     "context": "*",
     "msgid": "Halfwidth characters: {}",
-    "ja_JP": "半角文字：{}"
+    "zh_Hant": "半形字元：{}"
   },
   {
     "context": "*",
     "msgid": "Fix",
-    "ja_JP": "修正"
+    "zh_Hant": "修復"
   },
   {
     "context": "Operator",
     "msgid": "Fix Halfwidth Characters",
-    "ja_JP": "半角文字を修正"
+    "zh_Hant": "修復半形字元"
   },
   {
     "context": "Operator",
     "msgid": "Convert halfwidth characters to fullwidth for better CJK alignment",
-    "ja_JP": "半角文字を全角に変換し、CJK の整列を改善"
+    "zh_Hant": "將半形字元轉為全形，以改善中文排版對齊"
   },
   {
     "context": "Operator",
     "msgid": "No halfwidth characters to convert",
-    "ja_JP": "変換する半角文字がありません"
+    "zh_Hant": "沒有可轉換的半形字元"
   },
   {
     "context": "*",
     "msgid": "Fixed {:d} halfwidth character(s)",
-    "ja_JP": "{:d} 個の半角文字を修正しました"
+    "zh_Hant": "已修復 {:d} 個半形字元"
   },
   {
     "context": "*",
     "msgid": "New columns appear to the left",
-    "ja_JP": "新しい列は左側に追加されます"
+    "zh_Hant": "新列新增在左側"
   },
   {
     "context": "*",
     "msgid": "New columns appear to the right",
-    "ja_JP": "新しい列は右側に追加されます"
+    "zh_Hant": "新列新增在右側"
   },
   {
     "context": "*",
     "msgid": "Blank line between columns starts a new column",
-    "ja_JP": "列間の空行は新しい列を開始します"
+    "zh_Hant": "列與列之間的空行表示換列"
   },
   {
     "context": "*",
     "msgid": "Vertical: one character per line; blank line = new column",
-    "ja_JP": "縦書き：1 行 1 文字、空行 = 列追加"
+    "zh_Hant": "豎向：每行一字；空一行表示換列"
   },
   {
     "context": "Operator",
     "msgid": "Set Column Order",
-    "ja_JP": "列の順序を設定"
+    "zh_Hant": "設定列順序"
   },
   {
     "context": "*",
     "msgid": "Layout Frame",
-    "ja_JP": "レイアウト枠"
+    "zh_Hant": "排版框"
   },
   {
     "context": "*",
     "msgid": "Text Frame",
-    "ja_JP": "テキスト枠"
+    "zh_Hant": "排版框"
   },
   {
     "context": "*",
     "msgid": "No layout frame — click Add Frame",
-    "ja_JP": "レイアウト枠がありません — 「枠を追加」をクリック"
+    "zh_Hant": "尚無排版框 — 點選「新增框」"
   },
   {
     "context": "*",
     "msgid": "Auto Layout Frame",
-    "ja_JP": "レイアウト枠を自動作成"
+    "zh_Hant": "自動建立排版框"
   },
   {
     "context": "*",
     "msgid": "Create a layout frame automatically when adding new text",
-    "ja_JP": "新しいテキスト追加時にレイアウト枠を自動作成"
+    "zh_Hant": "新建文字時自動建立排版框"
   },
   {
     "context": "*",
     "msgid": "Show Text Frame Bounds",
-    "ja_JP": "テキスト枠の境界を表示"
+    "zh_Hant": "顯示排版框邊界"
   },
   {
     "context": "*",
     "msgid": "Draw layout frame rectangles in the 3D viewport",
-    "ja_JP": "3D ビューポートにレイアウト枠の矩形を描画"
+    "zh_Hant": "在 3D 視圖區中繪製排版框矩形"
   },
   {
     "context": "*",
     "msgid": "Suggested height for the N-panel textbox (drag its bottom edge to resize)",
-    "ja_JP": "N パネル テキストボックスの推奨高さ（下端をドラッグしてサイズ変更）"
+    "zh_Hant": "N 面板文字框建議高度（可拖動底邊調整大小）"
   },
   {
     "context": "*",
     "msgid": "N-Panel Textbox Lines",
-    "ja_JP": "N パネル テキストボックス行数"
+    "zh_Hant": "N 面板文字框行數"
   },
   {
     "context": "*",
     "msgid": "Select a text object to edit.",
-    "ja_JP": "テキストオブジェクトを選択して編集を開始してください。"
+    "zh_Hant": "選擇文字物件以開始編輯。"
   },
   {
     "context": "Operator",
     "msgid": "Open Text Helper add-on preferences",
-    "ja_JP": "テキストヘルパー アドオンのプリファレンスを開く"
+    "zh_Hant": "開啟 Text Helper 外掛偏好設定"
   },
   {
     "context": "Operator",
     "msgid": "Toggle Floating Toolbar",
-    "ja_JP": "フローティングツールバーの切り替え"
+    "zh_Hant": "切換浮動工具欄"
   },
   {
     "context": "Operator",
     "msgid": "Show or hide the floating toolbar in the 3D viewport",
-    "ja_JP": "3D ビューポートのフローティングツールバーを表示または非表示"
+    "zh_Hant": "顯示或隱藏 3D 視圖區中的浮動工具欄"
   },
   {
     "context": "*",
     "msgid": "Multi-line N-panel editor (Blender 5.2+)",
-    "ja_JP": "複数行 N パネル エディター（Blender 5.2+）"
+    "zh_Hant": "多行 N 面板編輯器（需 Blender 5.2+）"
   },
   {
     "context": "*",
     "msgid": "Floating toolbar near selected text in the viewport",
-    "ja_JP": "3D ビューポートで選択したテキスト付近のフローティングツールバー"
+    "zh_Hant": "視圖區中選中文字下方的浮動工具欄"
   },
   {
     "context": "*",
     "msgid": "Style presets, alignment, and spacing controls",
-    "ja_JP": "スタイルプリセット、整列、間隔のコントロール"
+    "zh_Hant": "樣式預設、對齊與間距控制"
   },
   {
     "context": "*",
     "msgid": "Select a text object or add a new one to start editing.",
-    "ja_JP": "テキストオブジェクトを選択するか、新規作成して編集を開始してください。"
+    "zh_Hant": "選擇文字物件或新建一個開始編輯。"
   },
   {
     "context": "*",
     "msgid": "Multi-line textbox requires Blender 5.2+",
-    "ja_JP": "複数行テキストボックスには Blender 5.2+ が必要です"
+    "zh_Hant": "多行文字框需要 Blender 5.2+"
   },
   {
     "context": "*",
     "msgid": "{:d} chars · {:d} words",
-    "ja_JP": "{:d} 文字 · {:d} 語"
+    "zh_Hant": "{:d} 字 · {:d} 詞"
   },
   {
     "context": "*",
     "msgid": "Frame {:d}",
-    "ja_JP": "枠 {:d}"
+    "zh_Hant": "框 {:d}"
   },
   {
     "context": "*",
     "msgid": "Floating Toolbar",
-    "ja_JP": "フローティングツールバー"
+    "zh_Hant": "浮動工具欄"
   },
   {
     "context": "*",
     "msgid": "Shows below selected text in the 3D viewport",
-    "ja_JP": "3D ビューポートで選択したテキストの下に表示"
+    "zh_Hant": "顯示在 3D 視圖區中選中文字的下方"
   },
   {
     "context": "Operator",
     "msgid": "Show Toolbar",
-    "ja_JP": "ツールバーを表示"
+    "zh_Hant": "顯示工具欄"
   },
   {
     "context": "Operator",
     "msgid": "Show Floating Toolbar",
-    "ja_JP": "フローティングツールバーを表示"
+    "zh_Hant": "顯示浮動工具欄"
   },
   {
     "context": "Operator",
     "msgid": "Display the floating text toolbar below the selected text in the 3D viewport",
-    "ja_JP": "3D ビューポートで選択したテキストの下にフローティングツールバーを表示"
+    "zh_Hant": "在 3D 視圖區中於選中文字下方顯示浮動工具欄"
   },
   {
     "context": "Operator",
     "msgid": "Floating toolbar shown — look below the text in the 3D viewport",
-    "ja_JP": "フローティングツールバーを表示しました — 3D ビューポートでテキストの下を確認してください"
+    "zh_Hant": "浮動工具欄已顯示 — 請在 3D 視圖區中文字下方檢視"
   },
   {
     "context": "Operator",
     "msgid": "Enable Floating Toolbar in add-on preferences",
-    "ja_JP": "アドオンのプリファレンスで「フローティングツールバー」を有効にしてください"
+    "zh_Hant": "請在外掛偏好設定中開啟「浮動工具欄」"
   },
   {
     "context": "*",
     "msgid": "Toolbar Offset",
-    "ja_JP": "ツールバーオフセット"
+    "zh_Hant": "工具欄偏移"
   },
   {
     "context": "*",
     "msgid": "Distance from the top of the 3D viewport to the floating toolbar (pixels)",
-    "ja_JP": "3D ビューポート上端からフローティングツールバーまでの距離（ピクセル）"
+    "zh_Hant": "浮動工具欄距 3D 視圖區頂部的距離（畫素）"
   },
   {
     "context": "*",
     "msgid": "HUD Scale",
-    "ja_JP": "HUD スケール"
+    "zh_Hant": "HUD 縮放"
   },
   {
     "context": "*",
     "msgid": "Viewport HUD display scale",
-    "ja_JP": "3D ビューポート HUD の表示スケール"
+    "zh_Hant": "視圖區 HUD 顯示縮放"
   },
   {
     "context": "*",
     "msgid": "Accent Color",
-    "ja_JP": "アクセントカラー"
+    "zh_Hant": "強調色"
   },
   {
     "context": "*",
     "msgid": "Accent color for the viewport HUD and pickers",
-    "ja_JP": "3D ビューポート HUD とピッカーのアクセントカラー"
+    "zh_Hant": "視圖區 HUD 與選擇面板的強調色"
   },
   {
     "context": "*",
     "msgid": "Custom Accent",
-    "ja_JP": "カスタムアクセント"
+    "zh_Hant": "自定義強調色"
   },
   {
     "context": "*",
     "msgid": "Custom HUD accent color",
-    "ja_JP": "カスタム HUD アクセントカラー"
+    "zh_Hant": "自定義 HUD 強調色"
   },
   {
     "context": "*",
     "msgid": "Green",
-    "ja_JP": "緑"
+    "zh_Hant": "綠色"
   },
   {
     "context": "*",
     "msgid": "Default green accent",
-    "ja_JP": "デフォルトの緑アクセント"
+    "zh_Hant": "預設綠色強調"
   },
   {
     "context": "*",
     "msgid": "Blue",
-    "ja_JP": "青"
+    "zh_Hant": "藍色"
   },
   {
     "context": "*",
     "msgid": "Blue accent",
-    "ja_JP": "青アクセント"
+    "zh_Hant": "藍色強調"
   },
   {
     "context": "*",
     "msgid": "Orange",
-    "ja_JP": "オレンジ"
+    "zh_Hant": "橙色"
   },
   {
     "context": "*",
     "msgid": "Orange accent",
-    "ja_JP": "オレンジアクセント"
+    "zh_Hant": "橙色強調"
   },
   {
     "context": "*",
     "msgid": "Purple",
-    "ja_JP": "紫"
+    "zh_Hant": "紫色"
   },
   {
     "context": "*",
     "msgid": "Purple accent",
-    "ja_JP": "紫アクセント"
+    "zh_Hant": "紫色強調"
   },
   {
     "context": "*",
     "msgid": "Pink",
-    "ja_JP": "ピンク"
+    "zh_Hant": "粉色"
   },
   {
     "context": "*",
     "msgid": "Pink accent",
-    "ja_JP": "ピンクアクセント"
+    "zh_Hant": "粉色強調"
   },
   {
     "context": "*",
     "msgid": "Cyan",
-    "ja_JP": "シアン"
+    "zh_Hant": "青色"
   },
   {
     "context": "*",
     "msgid": "Cyan accent",
-    "ja_JP": "シアンアクセント"
+    "zh_Hant": "青色強調"
   },
   {
     "context": "*",
     "msgid": "Custom",
-    "ja_JP": "カスタム"
+    "zh_Hant": "自定義"
   },
   {
     "context": "*",
     "msgid": "Use the custom color below",
-    "ja_JP": "下のカスタムカラーを使用"
+    "zh_Hant": "使用下方自定義顏色"
   },
   {
     "context": "*",
     "msgid": "Style",
-    "ja_JP": "スタイル"
+    "zh_Hant": "樣式"
   },
   {
     "context": "*",
     "msgid": "Body",
-    "ja_JP": "本文"
+    "zh_Hant": "正文"
   },
   {
     "context": "*",
     "msgid": "Heading",
-    "ja_JP": "見出し"
+    "zh_Hant": "標題"
   },
   {
     "context": "*",
     "msgid": "Subheading",
-    "ja_JP": "小見出し"
+    "zh_Hant": "副標題"
   },
   {
     "context": "*",
     "msgid": "Caption",
-    "ja_JP": "キャプション"
+    "zh_Hant": "說明"
   },
   {
     "context": "Operator",
     "msgid": "Add Text",
-    "ja_JP": "テキストを追加"
+    "zh_Hant": "新增文字"
   },
   {
     "context": "Operator",
     "msgid": "Clear Text",
-    "ja_JP": "クリア"
+    "zh_Hant": "清空"
   },
   {
     "context": "Operator",
     "msgid": "Paste into Text",
-    "ja_JP": "貼り付け"
+    "zh_Hant": "貼上"
   },
   {
     "context": "Operator",
     "msgid": "Import Text File",
-    "ja_JP": "テキストファイルをインポート"
+    "zh_Hant": "匯入文字"
   },
   {
     "context": "Operator",
     "msgid": "Toggle Text Style",
-    "ja_JP": "テキストスタイルを切り替え"
+    "zh_Hant": "切換文字樣式"
   },
   {
     "context": "Operator",
     "msgid": "Set Text Alignment",
-    "ja_JP": "整列を設定"
+    "zh_Hant": "設定對齊"
   },
   {
     "context": "Operator",
     "msgid": "Add Text Frame",
-    "ja_JP": "テキスト枠を追加"
+    "zh_Hant": "新增文字框"
   },
   {
     "context": "Operator",
     "msgid": "Could not add layout frame — select a text object with a 3D View open",
-    "ja_JP": "レイアウト枠を追加できません — テキストオブジェクトを選択し、3D ビューを開いてください"
+    "zh_Hant": "無法新增排版框 — 請選中文字物件並確保已開啟 3D 視圖區"
   },
   {
     "context": "Operator",
     "msgid": "Toggle Text Overflow",
-    "ja_JP": "テキストオーバーフローを切り替え"
+    "zh_Hant": "切換溢位模式"
   },
   {
     "context": "*",
     "msgid": "Bold",
-    "ja_JP": "太字"
+    "zh_Hant": "粗體"
   },
   {
     "context": "*",
     "msgid": "Italic",
-    "ja_JP": "斜体"
+    "zh_Hant": "斜體"
   },
   {
     "context": "*",
     "msgid": "Underline",
-    "ja_JP": "下線"
+    "zh_Hant": "下劃線"
   },
   {
     "context": "*",
     "msgid": "Strikethrough",
-    "ja_JP": "取り消し線"
+    "zh_Hant": "刪除線"
   },
   {
     "context": "Operator",
     "msgid": "Set Text Case",
-    "ja_JP": "文字ケースを設定"
+    "zh_Hant": "設定字母大小寫"
   },
   {
     "context": "*",
     "msgid": "Default case",
-    "ja_JP": "デフォルトのケース"
+    "zh_Hant": "預設大小寫"
   },
   {
     "context": "*",
     "msgid": "Uppercase",
-    "ja_JP": "大文字"
+    "zh_Hant": "全部大寫"
   },
   {
     "context": "*",
     "msgid": "Lowercase",
-    "ja_JP": "小文字"
+    "zh_Hant": "全部小寫"
   },
   {
     "context": "*",
     "msgid": "Left",
-    "ja_JP": "左"
+    "zh_Hant": "左"
   },
   {
     "context": "*",
     "msgid": "Center",
-    "ja_JP": "中央"
+    "zh_Hant": "中"
   },
   {
     "context": "*",
     "msgid": "Right",
-    "ja_JP": "右"
+    "zh_Hant": "右"
   },
   {
     "context": "*",
     "msgid": "Justify",
-    "ja_JP": "両端揃え"
+    "zh_Hant": "兩端"
   },
   {
     "context": "*",
     "msgid": "Paste",
-    "ja_JP": "貼り付け"
+    "zh_Hant": "貼上"
   },
   {
     "context": "*",
     "msgid": "Clear",
-    "ja_JP": "クリア"
+    "zh_Hant": "清空"
   },
   {
     "context": "*",
     "msgid": "Import",
-    "ja_JP": "インポート"
+    "zh_Hant": "匯入"
   },
   {
     "context": "*",
     "msgid": "System fonts",
-    "ja_JP": "システムフォント"
+    "zh_Hant": "系統字型"
   },
   {
     "context": "*",
     "msgid": "Search fonts…",
-    "ja_JP": "フォントを検索…"
+    "zh_Hant": "搜尋字型…"
   },
   {
     "context": "*",
     "msgid": "Search Fonts",
-    "ja_JP": "フォントを検索"
+    "zh_Hant": "搜尋字型"
   },
   {
     "context": "*",
     "msgid": "Filter the system font list",
-    "ja_JP": "システムフォント一覧をフィルター"
+    "zh_Hant": "篩選系統字型列表"
   },
   {
     "context": "*",
     "msgid": "Current: {}",
-    "ja_JP": "現在：{}"
+    "zh_Hant": "當前：{}"
   },
   {
     "context": "*",
     "msgid": "Browse other font file…",
-    "ja_JP": "他のフォントファイルを参照…"
+    "zh_Hant": "瀏覽其他字型檔案…"
   },
   {
     "context": "Operator",
     "msgid": "Refresh Font List",
-    "ja_JP": "フォント一覧を更新"
+    "zh_Hant": "重新整理字型列表"
   },
   {
     "context": "Operator",
     "msgid": "Rescan system font folders",
-    "ja_JP": "システムフォントフォルダーを再スキャン"
+    "zh_Hant": "重新掃描系統字型資料夾"
   },
   {
     "context": "Operator",
     "msgid": "Found {:d} fonts",
-    "ja_JP": "{:d} 個のフォントが見つかりました"
+    "zh_Hant": "找到 {:d} 個字型"
   },
   {
     "context": "Operator",
     "msgid": "Apply Font",
-    "ja_JP": "フォントを適用"
+    "zh_Hant": "應用字型"
   },
   {
     "context": "Operator",
     "msgid": "Apply this font to the selected text",
-    "ja_JP": "このフォントを選択したテキストに適用"
+    "zh_Hant": "將此字型應用到選中文字"
   },
   {
     "context": "*",
     "msgid": "Click refresh to load system fonts",
-    "ja_JP": "更新をクリックしてシステムフォントを読み込み"
+    "zh_Hant": "點選重新整理按鈕載入系統字型"
   },
   {
     "context": "*",
     "msgid": "Type in search to narrow results…",
-    "ja_JP": "検索ボックスに入力して絞り込み…"
+    "zh_Hant": "繼續在搜尋框輸入以縮小範圍…"
   },
   {
     "context": "*",
     "msgid": "No fonts match filter",
-    "ja_JP": "条件に一致するフォントがありません"
+    "zh_Hant": "沒有匹配的字型"
   },
   {
     "context": "*",
     "msgid": "Language",
-    "ja_JP": "言語"
+    "zh_Hant": "語言"
   },
   {
     "context": "*",
     "msgid": "Language: {}",
-    "ja_JP": "言語：{}"
+    "zh_Hant": "語言：{}"
   },
   {
     "context": "*",
     "msgid": "All",
-    "ja_JP": "すべて"
+    "zh_Hant": "全部"
   },
   {
     "context": "*",
     "msgid": "English",
-    "ja_JP": "英語"
+    "zh_Hant": "英語"
   },
   {
     "context": "*",
     "msgid": "Latin",
-    "ja_JP": "ラテン"
+    "zh_Hant": "拉丁"
   },
   {
     "context": "*",
     "msgid": "Chinese",
-    "ja_JP": "中国語"
+    "zh_Hant": "中文"
   },
   {
     "context": "*",
     "msgid": "Japanese",
-    "ja_JP": "日本語"
+    "zh_Hant": "日文"
   },
   {
     "context": "*",
     "msgid": "Korean",
-    "ja_JP": "韓国語"
+    "zh_Hant": "韓文"
   },
   {
     "context": "*",
     "msgid": "Russian",
-    "ja_JP": "ロシア語"
+    "zh_Hant": "俄語"
   },
   {
     "context": "*",
     "msgid": "Arabic",
-    "ja_JP": "アラビア"
+    "zh_Hant": "阿拉伯"
   },
   {
     "context": "*",
     "msgid": "Greek",
-    "ja_JP": "ギリシャ"
+    "zh_Hant": "希臘"
   },
   {
     "context": "*",
     "msgid": "Hebrew",
-    "ja_JP": "ヘブライ"
+    "zh_Hant": "希伯來"
   },
   {
     "context": "*",
     "msgid": "Thai",
-    "ja_JP": "タイ"
+    "zh_Hant": "泰文"
   },
   {
     "context": "*",
     "msgid": "Filter fonts by supported writing system",
-    "ja_JP": "対応する文字体系でフォントをフィルター"
+    "zh_Hant": "按字型支援的書寫系統篩選"
   },
   {
     "context": "*",
     "msgid": "Enter preview text…",
-    "ja_JP": "プレビューテキストを入力…"
+    "zh_Hant": "請輸入預覽文字…"
   },
   {
     "context": "*",
     "msgid": "Font Sort",
-    "ja_JP": "フォントの並べ替え"
+    "zh_Hant": "字型排序"
   },
   {
     "context": "*",
     "msgid": "Sort order for the system font list",
-    "ja_JP": "システムフォント一覧の並べ替え順"
+    "zh_Hant": "系統字型列表的排序方式"
   },
   {
     "context": "*",
     "msgid": "Name A-Z",
-    "ja_JP": "名前 A-Z"
+    "zh_Hant": "名稱 A-Z"
   },
   {
     "context": "*",
     "msgid": "Sort fonts by name ascending",
-    "ja_JP": "名前の昇順で並べ替え"
+    "zh_Hant": "按名稱升序排列"
   },
   {
     "context": "*",
     "msgid": "Name Z-A",
-    "ja_JP": "名前 Z-A"
+    "zh_Hant": "名稱 Z-A"
   },
   {
     "context": "*",
     "msgid": "Sort fonts by name descending",
-    "ja_JP": "名前の降順で並べ替え"
+    "zh_Hant": "按名稱降序排列"
   },
   {
     "context": "*",
     "msgid": "List Preview Scale",
-    "ja_JP": "一覧プレビュースケール"
+    "zh_Hant": "列表預覽縮放"
   },
   {
     "context": "*",
     "msgid": "How large each font preview appears in the sidebar list",
-    "ja_JP": "サイドバー一覧の各フォントプレビューの表示サイズ"
+    "zh_Hant": "側邊欄列表中每條字型預覽的顯示大小"
   },
   {
     "context": "*",
     "msgid": "Maximum point size used when rendering the thumbnail image",
-    "ja_JP": "サムネイル画像レンダリング時の最大ポイントサイズ"
+    "zh_Hant": "渲染縮圖時使用的最大字號"
   },
   {
     "context": "*",
     "msgid": "Font preview cache cleared — reopen the font list to rebuild",
-    "ja_JP": "フォントプレビューキャッシュをクリアしました — フォント一覧を再度開いて再構築してください"
+    "zh_Hant": "字型預覽快取已清除 — 請重新開啟字型列表以重建"
   },
   {
     "context": "*",
     "msgid": "Font Preview Icons",
-    "ja_JP": "フォントプレビューアイコン"
+    "zh_Hant": "字型預覽縮圖"
   },
   {
     "context": "*",
     "msgid": "Show rendered font thumbnails beside each name in the font list",
-    "ja_JP": "フォント一覧の各名前の横にレンダリング済みサムネイルを表示"
+    "zh_Hant": "在字型列表名稱旁顯示渲染預覽圖"
   },
   {
     "context": "*",
     "msgid": "Preview While Browsing",
-    "ja_JP": "閲覧中にプレビュー"
+    "zh_Hant": "瀏覽時實時預覽"
   },
   {
     "context": "*",
     "msgid": "Apply the highlighted list font to the text object while navigating the list",
-    "ja_JP": "一覧を移動中、ハイライトされたフォントをテキストオブジェクトにリアルタイム適用"
+    "zh_Hant": "在列表中切換選中項時，將字型實時應用到文字物件"
   },
   {
     "context": "*",
     "msgid": "Preview Text",
-    "ja_JP": "プレビューテキスト"
+    "zh_Hant": "預覽文字"
   },
   {
     "context": "*",
     "msgid": "Characters rendered inside each font thumbnail",
-    "ja_JP": "各フォントサムネイル内にレンダリングする文字"
+    "zh_Hant": "渲染在縮圖裡的字元"
   },
   {
     "context": "*",
     "msgid": "Preview Content",
-    "ja_JP": "プレビュー内容"
+    "zh_Hant": "預覽內容"
   },
   {
     "context": "*",
     "msgid": "Text Object",
-    "ja_JP": "テキストオブジェクト"
+    "zh_Hant": "文字物件"
   },
   {
     "context": "*",
     "msgid": "Use characters from the active text object",
-    "ja_JP": "アクティブなテキストオブジェクトの文字を使用"
+    "zh_Hant": "使用當前文字物件中的文字"
   },
   {
     "context": "*",
     "msgid": "Custom Text",
-    "ja_JP": "カスタムテキスト"
+    "zh_Hant": "自定義文字"
   },
   {
     "context": "*",
     "msgid": "Use the preview text below",
-    "ja_JP": "下のプレビューテキストを使用"
+    "zh_Hant": "使用下方自定義預覽文字"
   },
   {
     "context": "*",
     "msgid": "Font Name",
-    "ja_JP": "フォント名"
+    "zh_Hant": "字型名稱"
   },
   {
     "context": "*",
     "msgid": "Use the font file display name",
-    "ja_JP": "フォントファイルの表示名を使用"
+    "zh_Hant": "使用字型檔名"
   },
   {
     "context": "*",
     "msgid": "Preview Font Size",
-    "ja_JP": "プレビューフォントサイズ"
+    "zh_Hant": "預覽字號"
   },
   {
     "context": "*",
     "msgid": "Point size used when rendering the thumbnail image",
-    "ja_JP": "サムネイル画像レンダリング時のポイントサイズ"
+    "zh_Hant": "生成縮圖時使用的字號"
   },
   {
     "context": "*",
     "msgid": "Thumbnail Width",
-    "ja_JP": "サムネイル幅"
+    "zh_Hant": "縮圖寬度"
   },
   {
     "context": "*",
     "msgid": "Generated preview image width in pixels",
-    "ja_JP": "生成されるプレビュー画像の幅（ピクセル）"
+    "zh_Hant": "預覽圖寬度（畫素）"
   },
   {
     "context": "*",
     "msgid": "Thumbnail Height",
-    "ja_JP": "サムネイル高さ"
+    "zh_Hant": "縮圖高度"
   },
   {
     "context": "*",
     "msgid": "Generated preview image height in pixels",
-    "ja_JP": "生成されるプレビュー画像の高さ（ピクセル）"
+    "zh_Hant": "預覽圖高度（畫素）"
   },
   {
     "context": "*",
     "msgid": "List Icon Scale",
-    "ja_JP": "一覧アイコンスケール"
+    "zh_Hant": "列表圖示縮放"
   },
   {
     "context": "*",
     "msgid": "How large previews appear in the sidebar font list",
-    "ja_JP": "サイドバーフォント一覧のプレビュー表示サイズ"
+    "zh_Hant": "側邊欄字型列表中預覽圖的顯示大小"
   },
   {
     "context": "*",
     "msgid": "Preview Banner Scale",
-    "ja_JP": "プレビューバナースケール"
+    "zh_Hant": "預覽條縮放"
   },
   {
     "context": "*",
     "msgid": "How large the preview banner appears above the font list",
-    "ja_JP": "フォント一覧上部のプレビューバナーの表示サイズ"
+    "zh_Hant": "字型列表上方預覽條的顯示大小"
   },
   {
     "context": "*",
     "msgid": "Preview loading…",
-    "ja_JP": "プレビュー読み込み中…"
+    "zh_Hant": "預覽載入中…"
   },
   {
     "context": "*",
     "msgid": "Regenerate Font Previews",
-    "ja_JP": "フォントプレビューを再生成"
+    "zh_Hant": "重新生成字型預覽"
   },
   {
     "context": "*",
     "msgid": "Clear cached thumbnails and rebuild them with current preview settings",
-    "ja_JP": "キャッシュされたサムネイルをクリアし、現在のプレビュー設定で再構築"
+    "zh_Hant": "清除快取並按當前設定重新生成縮圖"
   },
   {
     "context": "*",
     "msgid": "Font preview cache cleared",
-    "ja_JP": "フォントプレビューキャッシュをクリアしました"
+    "zh_Hant": "字型預覽快取已清除"
   },
   {
     "context": "*",
     "msgid": "Blender font browser…",
-    "ja_JP": "Blender フォントブラウザー…"
+    "zh_Hant": "Blender 字型瀏覽器…"
   },
   {
     "context": "*",
     "msgid": "Loaded fonts",
-    "ja_JP": "読み込み済みフォント"
+    "zh_Hant": "已載入字型"
   },
   {
     "context": "*",
     "msgid": "Style slots (bold / italic)",
-    "ja_JP": "スタイルスロット（太字 / 斜体）"
+    "zh_Hant": "樣式槽（粗體 / 斜體）"
   },
   {
     "context": "*",
     "msgid": "Bold Italic Font",
-    "ja_JP": "太字斜体フォント"
+    "zh_Hant": "粗斜體字型"
   },
   {
     "context": "*",
     "msgid": "Font loaded: {}",
-    "ja_JP": "フォントを読み込み：{}"
+    "zh_Hant": "已載入字型：{}"
   },
   {
     "context": "*",
     "msgid": "Font file not found",
-    "ja_JP": "フォントファイルが見つかりません"
+    "zh_Hant": "找不到字型檔案"
   },
   {
     "context": "*",
     "msgid": "No font data available",
-    "ja_JP": "利用可能なフォントデータがありません"
+    "zh_Hant": "無可用字型資料"
   },
   {
     "context": "*",
     "msgid": "Open a 3D Viewport and try again",
-    "ja_JP": "3D ビューポートを開いてから再試行してください"
+    "zh_Hant": "請開啟 3D 視圖區後重試"
   },
   {
     "context": "*",
     "msgid": "Font browser cannot open in the current context",
-    "ja_JP": "現在のコンテキストではフォントブラウザーを開けません"
+    "zh_Hant": "當前環境無法開啟字型瀏覽器"
   },
   {
     "context": "*",
     "msgid": "Tip: set default folder in Edit → Preferences → File Paths → Data",
-    "ja_JP": "ヒント：編集 → プリファレンス → ファイルパス → データ でデフォルトフォルダーを設定できます"
+    "zh_Hant": "提示：可在 編輯 → 偏好設定 → 檔案路徑 → 資料 中設定預設字型目錄"
   },
   {
     "context": "Operator",
     "msgid": "Browse Font File",
-    "ja_JP": "フォントファイルを参照"
+    "zh_Hant": "瀏覽字型檔案"
   },
   {
     "context": "Operator",
     "msgid": "Load a .ttf/.otf font from disk (e.g. Windows Fonts folder) and assign it to the text",
-    "ja_JP": "ディスクから .ttf/.otf フォントを読み込み（例：Windows フォントフォルダー）、テキストに割り当て"
+    "zh_Hant": "從磁碟載入 .ttf/.otf 字型（如 Windows 字型資料夾）並應用到文字"
   },
   {
     "context": "*",
     "msgid": "Open Font Picker",
-    "ja_JP": "フォントピッカーを開く"
+    "zh_Hant": "開啟字型選擇器"
   },
   {
     "context": "Operator",
     "msgid": "Font Picker",
-    "ja_JP": "フォントピッカー"
+    "zh_Hant": "字型選擇器"
   },
   {
     "context": "Operator",
     "msgid": "Open or close the viewport GPU font picker",
-    "ja_JP": "3D ビューポート GPU フォントピッカーを開くまたは閉じる"
+    "zh_Hant": "開啟或關閉視圖區 GPU 字型選擇器"
   },
   {
     "context": "*",
     "msgid": "{:d} fonts · scroll wheel",
-    "ja_JP": "{:d} フォント · スクロールホイール"
+    "zh_Hant": "{:d} 個字型 · 滾輪滾動"
   },
   {
     "context": "*",
     "msgid": "{:d} fonts · □ = missing glyph",
-    "ja_JP": "{:d} フォント · □ = 欠落グリフ"
+    "zh_Hant": "{:d} 個字型 · □ = 缺失字形"
   },
   {
     "context": "*",
     "msgid": "{:d} supported fonts · □ = missing glyph",
-    "ja_JP": "{:d} 対応フォント · □ = 欠落グリフ"
+    "zh_Hant": "{:d} 個支援字型 · □ = 缺失字形"
   },
   {
     "context": "*",
     "msgid": "{:d} fonts · □ = missing",
-    "ja_JP": "{:d} フォント · □ = 欠字"
+    "zh_Hant": "{:d} 個字型 · □ = 缺字"
   },
   {
     "context": "*",
     "msgid": "{:d} supported · □ = missing",
-    "ja_JP": "{:d} 対応 · □ = 欠字"
+    "zh_Hant": "{:d} 個支援 · □ = 缺字"
   },
   {
     "context": "*",
     "msgid": "Missing {:d}",
-    "ja_JP": "欠落 {:d}"
+    "zh_Hant": "缺失 {:d}"
   },
   {
     "context": "*",
     "msgid": "Preview: {}",
-    "ja_JP": "プレビュー：{}"
+    "zh_Hant": "預覽：{}"
   },
   {
     "context": "*",
     "msgid": "Hide unsupported",
-    "ja_JP": "非対応を非表示"
+    "zh_Hant": "隱藏不支援"
   },
   {
     "context": "*",
     "msgid": "Multi-weight only",
-    "ja_JP": "複数ウェイトのみ"
+    "zh_Hant": "僅多字重"
   },
   {
     "context": "*",
     "msgid": "All font families",
-    "ja_JP": "すべてのフォントファミリー"
+    "zh_Hant": "全部字族"
   },
   {
     "context": "*",
     "msgid": "Multi-Weight Fonts Only",
-    "ja_JP": "複数ウェイトフォントのみ"
+    "zh_Hant": "僅多字重字型"
   },
   {
     "context": "*",
     "msgid": "Only list font families that have more than one weight on disk",
-    "ja_JP": "ディスク上に複数のウェイトがあるフォントファミリーのみ一覧表示"
+    "zh_Hant": "僅列出磁碟上有多種字重的字族"
   },
   {
     "context": "*",
     "msgid": "Weights",
-    "ja_JP": "ウェイト"
+    "zh_Hant": "字重"
   },
   {
     "context": "*",
     "msgid": "Font Weight",
-    "ja_JP": "フォントウェイト"
+    "zh_Hant": "字型字重"
   },
   {
     "context": "*",
     "msgid": "Switch font weight",
-    "ja_JP": "フォントウェイトを切り替え"
+    "zh_Hant": "切換字型字重"
   },
   {
     "context": "*",
     "msgid": "Font Weight Picker",
-    "ja_JP": "フォントウェイトピッカー"
+    "zh_Hant": "字型字重選擇器"
   },
   {
     "context": "*",
     "msgid": "Open or close the viewport font weight picker",
-    "ja_JP": "3D ビューポート フォントウェイトピッカーを開くまたは閉じる"
+    "zh_Hant": "開啟或關閉視圖區字型字重選擇器"
   },
   {
     "context": "*",
     "msgid": "No alternate weights found for this font",
-    "ja_JP": "このフォントに代替ウェイトが見つかりません"
+    "zh_Hant": "此字型沒有其他字重"
   },
   {
     "context": "*",
     "msgid": "No font weight information available",
-    "ja_JP": "フォントウェイト情報を取得できません"
+    "zh_Hant": "無法獲取字型字重資訊"
   },
   {
     "context": "*",
     "msgid": "Weight",
-    "ja_JP": "ウェイト"
+    "zh_Hant": "字重"
   },
   {
     "context": "*",
     "msgid": "{:d} families · □ = missing",
-    "ja_JP": "{:d} ファミリー · □ = 欠字"
+    "zh_Hant": "{:d} 字族 · □ = 缺字"
   },
   {
     "context": "*",
     "msgid": "Show all fonts",
-    "ja_JP": "すべてのフォントを表示"
+    "zh_Hant": "顯示全部字型"
   },
   {
     "context": "*",
     "msgid": "Fonts",
-    "ja_JP": "フォント"
+    "zh_Hant": "字型"
   },
   {
     "context": "*",
     "msgid": "Font",
-    "ja_JP": "フォント"
+    "zh_Hant": "字型"
   },
   {
     "context": "*",
     "msgid": "Bold Font",
-    "ja_JP": "太字フォント"
+    "zh_Hant": "粗體字型"
   },
   {
     "context": "*",
     "msgid": "Italic Font",
-    "ja_JP": "斜体フォント"
+    "zh_Hant": "斜體字型"
   },
   {
     "context": "*",
     "msgid": "Wrap",
-    "ja_JP": "折り返し"
+    "zh_Hant": "換行"
   },
   {
     "context": "*",
     "msgid": "Truncate",
-    "ja_JP": "切り捨て"
+    "zh_Hant": "截斷"
   },
   {
     "context": "*",
     "msgid": "Add Frame",
-    "ja_JP": "枠を追加"
+    "zh_Hant": "新增框"
   },
   {
     "context": "*",
     "msgid": "Double-click text in the viewport to edit",
-    "ja_JP": "3D ビューポートでテキストをダブルクリックして編集"
+    "zh_Hant": "在視圖區中雙擊文字即可編輯"
   },
   {
     "context": "*",
     "msgid": "Editing in viewport",
-    "ja_JP": "3D ビューポート内で編集中"
+    "zh_Hant": "視圖區內編輯中"
   },
   {
     "context": "*",
     "msgid": "Double-click empty space to exit edit mode",
-    "ja_JP": "編集モード中、空白をダブルクリックして終了"
+    "zh_Hant": "編輯模式下雙擊空白處退出"
   },
   {
     "context": "*",
     "msgid": "Show HUD",
-    "ja_JP": "HUD を表示"
+    "zh_Hant": "顯示 HUD"
   },
   {
     "context": "*",
     "msgid": "Show the floating toolbar for this text object in the viewport",
-    "ja_JP": "3D ビューポートでこのテキストオブジェクトのフローティングツールバーを表示"
+    "zh_Hant": "在視圖區中顯示此文字物件的浮動工具欄"
   },
   {
     "context": "Operator",
     "msgid": "Hide Floating Toolbar",
-    "ja_JP": "フローティングツールバーを非表示"
+    "zh_Hant": "隱藏浮動工具欄"
   },
   {
     "context": "Operator",
     "msgid": "Hide the floating toolbar for this text object",
-    "ja_JP": "このテキストオブジェクトのフローティングツールバーを非表示"
+    "zh_Hant": "隱藏此文字物件的浮動工具欄"
   },
   {
     "context": "*",
     "msgid": "Show Frame Bounds",
-    "ja_JP": "枠の境界を表示"
+    "zh_Hant": "顯示排版框"
   },
   {
     "context": "*",
     "msgid": "Show the green layout frame overlay for this text object",
-    "ja_JP": "このテキストオブジェクトの緑色レイアウト枠オーバーレイを表示"
+    "zh_Hant": "顯示此文字物件的綠色排版框疊加層"
   },
   {
     "context": "Operator",
     "msgid": "Toggle Frame Bounds",
-    "ja_JP": "枠の境界を切り替え"
+    "zh_Hant": "切換排版框顯示"
   },
   {
     "context": "Operator",
     "msgid": "Show or hide the green layout frame overlay",
-    "ja_JP": "緑色レイアウト枠オーバーレイを表示または非表示"
+    "zh_Hant": "顯示或隱藏綠色排版框疊加層"
   },
   {
     "context": "*",
     "msgid": "HUD",
-    "ja_JP": "HUD"
+    "zh_Hant": "HUD"
   },
   {
     "context": "Operator",
     "msgid": "Edit Text",
-    "ja_JP": "テキストを編集"
+    "zh_Hant": "編輯文字"
   },
   {
     "context": "Operator",
     "msgid": "Enter in-viewport text editing mode",
-    "ja_JP": "3D ビューポート内テキスト編集モードに入る"
+    "zh_Hant": "進入視圖區內文字編輯模式"
   },
   {
     "context": "Operator",
     "msgid": "Select a text object first",
-    "ja_JP": "先にテキストオブジェクトを選択してください"
+    "zh_Hant": "請先選擇文字物件"
   },
   {
     "context": "*",
     "msgid": "Shear",
-    "ja_JP": "シアー"
+    "zh_Hant": "切變"
   },
   {
     "context": "*",
     "msgid": "Adjust text shear (↺ resets to preset default)",
-    "ja_JP": "テキストのシアーを調整（↺ でプリセットのデフォルトにリセット）"
+    "zh_Hant": "調整切變（↺ 恢復為預設預設值）"
   },
   {
     "context": "*",
     "msgid": "Char Spacing",
-    "ja_JP": "字間"
+    "zh_Hant": "字距"
   },
   {
     "context": "*",
     "msgid": "Word Spacing",
-    "ja_JP": "語間"
+    "zh_Hant": "詞距"
   },
   {
     "context": "*",
     "msgid": "Line Height",
-    "ja_JP": "行の高さ"
+    "zh_Hant": "行高"
   },
   {
     "context": "*",
     "msgid": "Spacing",
-    "ja_JP": "間隔"
+    "zh_Hant": "間距"
   },
   {
     "context": "*",
     "msgid": "Font Size",
-    "ja_JP": "フォントサイズ"
+    "zh_Hant": "字號"
   },
   {
     "context": "*",
     "msgid": "Strikethrough Position",
-    "ja_JP": "取り消し線の位置"
+    "zh_Hant": "刪除線位置"
   },
   {
     "context": "*",
     "msgid": "Adjust strikethrough line position (↺ resets to default)",
-    "ja_JP": "取り消し線の位置を調整（↺ でデフォルトにリセット）"
+    "zh_Hant": "調整刪除線位置（↺ 恢復預設）"
   },
   {
     "context": "*",
     "msgid": "Reset",
-    "ja_JP": "リセット"
+    "zh_Hant": "重置"
   },
   {
     "context": "*",
     "msgid": "Drag to reposition the toolbar",
-    "ja_JP": "ドラッグしてツールバーの位置を移動"
+    "zh_Hant": "拖動以移動工具欄位置"
   },
   {
     "context": "*",
     "msgid": "Show or hide layout frame bounds",
-    "ja_JP": "レイアウト枠の境界を表示または非表示"
+    "zh_Hant": "顯示或隱藏排版框邊界"
   },
   {
     "context": "*",
     "msgid": "Style preset",
-    "ja_JP": "スタイルプリセット"
+    "zh_Hant": "樣式預設"
   },
   {
     "context": "*",
     "msgid": "Open style preset picker",
-    "ja_JP": "スタイルプリセットピッカーを開く"
+    "zh_Hant": "開啟樣式預設選擇器"
   },
   {
     "context": "*",
     "msgid": "Style Preset",
-    "ja_JP": "スタイルプリセット"
+    "zh_Hant": "樣式預設"
   },
   {
     "context": "*",
     "msgid": "Open font picker",
-    "ja_JP": "フォントピッカーを開く"
+    "zh_Hant": "開啟字型選擇器"
   },
   {
     "context": "*",
     "msgid": "Align left",
-    "ja_JP": "左揃え"
+    "zh_Hant": "左對齊"
   },
   {
     "context": "*",
     "msgid": "Align center",
-    "ja_JP": "中央揃え"
+    "zh_Hant": "居中對齊"
   },
   {
     "context": "*",
     "msgid": "Align right",
-    "ja_JP": "右揃え"
+    "zh_Hant": "右對齊"
   },
   {
     "context": "*",
     "msgid": "Adjust font size (↺ resets to preset default)",
-    "ja_JP": "フォントサイズを調整（↺ でプリセットのデフォルトにリセット）"
+    "zh_Hant": "調整字號（↺ 恢復為預設預設值）"
   },
   {
     "context": "*",
     "msgid": "Adjust character spacing (↺ resets to preset default)",
-    "ja_JP": "字間を調整（↺ でプリセットのデフォルトにリセット）"
+    "zh_Hant": "調整字距（↺ 恢復為預設預設值）"
   },
   {
     "context": "*",
     "msgid": "Adjust word spacing (↺ resets to preset default)",
-    "ja_JP": "語間を調整（↺ でプリセットのデフォルトにリセット）"
+    "zh_Hant": "調整詞距（↺ 恢復為預設預設值）"
   },
   {
     "context": "*",
     "msgid": "Adjust line height (↺ resets to preset default)",
-    "ja_JP": "行の高さを調整（↺ でプリセットのデフォルトにリセット）"
+    "zh_Hant": "調整行高（↺ 恢復為預設預設值）"
   },
   {
     "context": "*",
     "msgid": "Adjust paragraph spacing (↺ resets to preset default)",
-    "ja_JP": "段落間隔を調整（↺ でプリセットのデフォルトにリセット）"
+    "zh_Hant": "調整段落間距（↺ 恢復為預設預設值）"
   },
   {
     "context": "*",
     "msgid": "Hide floating toolbar",
-    "ja_JP": "フローティングツールバーを非表示"
+    "zh_Hant": "隱藏浮動工具欄"
   },
   {
     "context": "Operator",
     "msgid": "Hide floating toolbar",
-    "ja_JP": "フローティングツールバーを非表示"
+    "zh_Hant": "隱藏浮動工具欄"
   },
   {
     "context": "*",
     "msgid": "Strikethrough is not supported by Blender text objects",
-    "ja_JP": "Blender のテキストオブジェクトは取り消し線に対応していません"
+    "zh_Hant": "Blender 文字物件不支援刪除線"
   },
   {
     "context": "*",
     "msgid": "Character Spacing",
-    "ja_JP": "字間"
+    "zh_Hant": "字距"
   },
   {
     "context": "Operator",
     "msgid": "Strikethrough is not supported by Blender text objects",
-    "ja_JP": "Blender のテキストオブジェクトは取り消し線に対応していません"
+    "zh_Hant": "Blender 文字物件不支援刪除線"
   },
   {
     "context": "*",
     "msgid": "Line Spacing",
-    "ja_JP": "行間"
+    "zh_Hant": "行距"
   },
   {
     "context": "*",
     "msgid": "Offset Y",
-    "ja_JP": "Y オフセット"
+    "zh_Hant": "Y 偏移"
   },
   {
     "context": "Operator",
     "msgid": "Regenerate Font Previews",
-    "ja_JP": "フォントプレビューを再生成"
+    "zh_Hant": "重新生成字型預覽"
   },
   {
     "context": "Operator",
     "msgid": "Clear cached thumbnails and rebuild them with current preview settings",
-    "ja_JP": "キャッシュされたサムネイルをクリアし、現在のプレビュー設定で再構築"
+    "zh_Hant": "清除快取並按當前設定重新生成縮圖"
   },
   {
     "context": "Operator",
     "msgid": "Adjust Spacing",
-    "ja_JP": "間隔を調整"
+    "zh_Hant": "調整間距"
   },
   {
     "context": "Operator",
     "msgid": "Apply Text Preset",
-    "ja_JP": "テキストプリセットを適用"
+    "zh_Hant": "應用文字預設"
   },
   {
     "context": "Operator",
     "msgid": "Ensure HUD Modal",
-    "ja_JP": "HUD モーダルを確保"
+    "zh_Hant": "確保 HUD 模態"
   },
   {
     "context": "Operator",
     "msgid": "Reset Format Value",
-    "ja_JP": "書式値をリセット"
+    "zh_Hant": "重置格式數值"
   },
   {
     "context": "Operator",
     "msgid": "Reset font size or spacing to the current style preset default",
-    "ja_JP": "フォントサイズまたは間隔を現在のスタイルプリセットのデフォルトにリセット"
+    "zh_Hant": "將字號或間距重置為當前樣式預設預設值"
   },
   {
     "context": "Operator",
     "msgid": "Set Font Language Filter",
-    "ja_JP": "フォント言語フィルターを設定"
+    "zh_Hant": "設定字型語言篩選"
   },
   {
     "context": "Operator",
     "msgid": "Set Spacing Value",
-    "ja_JP": "間隔値を設定"
+    "zh_Hant": "設定間距數值"
   },
   {
     "context": "Operator",
     "msgid": "Set Vertical Alignment",
-    "ja_JP": "垂直整列を設定"
+    "zh_Hant": "設定垂直對齊"
   },
   {
     "context": "Operator",
     "msgid": "Style Preset Picker",
-    "ja_JP": "スタイルプリセットピッカー"
+    "zh_Hant": "樣式預設選擇器"
   },
   {
     "context": "Operator",
     "msgid": "Open or close the viewport GPU style preset picker",
-    "ja_JP": "3D ビューポート GPU スタイルプリセットピッカーを開くまたは閉じる"
+    "zh_Hant": "開啟或關閉視圖區 GPU 樣式預設選擇器"
   },
   {
     "context": "Operator",
     "msgid": "Text Helper HUD",
-    "ja_JP": "テキストヘルパー HUD"
+    "zh_Hant": "Text Helper HUD"
   },
   {
     "context": "Operator",
     "msgid": "Text Helper Preferences",
-    "ja_JP": "テキストヘルパー プリファレンス"
+    "zh_Hant": "Text Helper 偏好設定"
   },
   {
     "context": "Operator",
     "msgid": "Text Style Preset",
-    "ja_JP": "テキストスタイルプリセット"
+    "zh_Hant": "文字樣式預設"
   },
   {
     "context": "Operator",
     "msgid": "Transform text to default, uppercase, or lowercase",
-    "ja_JP": "テキストをデフォルト、大文字、小文字に変換"
+    "zh_Hant": "將文字轉換為預設、全大寫或全小寫"
   },
   {
     "context": "Operator",
     "msgid": "Unlink Font",
-    "ja_JP": "フォントのリンク解除"
+    "zh_Hant": "取消連結字型"
   },
   {
     "context": "Operator",
     "msgid": "Open Font (Blender)",
-    "ja_JP": "フォントを開く（Blender）"
+    "zh_Hant": "開啟字型（Blender）"
   },
   {
     "context": "Operator",
     "msgid": "Load a .ttf/.otf font from disk and assign it to the text",
-    "ja_JP": "ディスクから .ttf/.otf フォントを読み込み、テキストに割り当て"
+    "zh_Hant": "從磁碟載入 .ttf/.otf 字型並應用到文字"
   },
   {
     "context": "Operator",
     "msgid": "Font: {}",
-    "ja_JP": "フォント：{}"
+    "zh_Hant": "字型：{}"
   },
   {
     "context": "Operator",
     "msgid": "Bold Font",
-    "ja_JP": "太字フォント"
+    "zh_Hant": "粗體字型"
   },
   {
     "context": "Operator",
     "msgid": "Italic Font",
-    "ja_JP": "斜体フォント"
+    "zh_Hant": "斜體字型"
   },
   {
     "context": "*",
     "msgid": "Show the floating toolbar near selected text in the 3D viewport",
-    "ja_JP": "3D ビューポートで選択したテキスト付近にフローティングツールバーを表示"
+    "zh_Hant": "在 3D 視圖區中於選中文字附近顯示浮動工具欄"
   },
   {
     "context": "*",
     "msgid": "Apply the highlighted font while hovering or navigating the font list",
-    "ja_JP": "フォント一覧をホバーまたは移動中、ハイライトされたフォントをリアルタイム適用"
+    "zh_Hant": "在列表中懸停或瀏覽時將高亮字型實時應用到文字"
   },
   {
     "context": "*",
     "msgid": "What to render inside the thumbnail",
-    "ja_JP": "サムネイル内にレンダリングする内容"
+    "zh_Hant": "縮圖內渲染的內容"
   },
   {
     "context": "*",
     "msgid": "HUD Offset X",
-    "ja_JP": "HUD X オフセット"
+    "zh_Hant": "HUD X 偏移"
   },
   {
     "context": "*",
     "msgid": "HUD Offset Y",
-    "ja_JP": "HUD Y オフセット"
+    "zh_Hant": "HUD Y 偏移"
   },
   {
     "context": "*",
     "msgid": "User drag offset for the floating toolbar (screen pixels)",
-    "ja_JP": "フローティングツールバーのユーザーによるドラッグオフセット（スクリーンピクセル）"
+    "zh_Hant": "浮動工具欄的使用者拖動偏移（螢幕畫素）"
   },
   {
     "context": "*",
     "msgid": "Hide Unsupported Fonts",
-    "ja_JP": "非対応フォントを非表示"
+    "zh_Hant": "隱藏不支援的字型"
   },
   {
     "context": "*",
     "msgid": "Only list fonts that contain every non-space character in the preview text",
-    "ja_JP": "プレビューテキスト内のすべての非スペース文字を含むフォントのみ一覧表示"
+    "zh_Hant": "僅列出預覽文字中每個非空格字元都有字形的字型"
   },
   {
     "context": "*",
     "msgid": "HUD Expand Panel",
-    "ja_JP": "HUD 展開パネル"
+    "zh_Hant": "HUD 展開面板"
   },
   {
     "context": "*",
     "msgid": "Expanded slider row below the floating toolbar",
-    "ja_JP": "フローティングツールバー下の展開スライダー行"
+    "zh_Hant": "浮動工具欄下方展開的滑塊行"
   },
   {
     "context": "*",
     "msgid": "Font Index",
-    "ja_JP": "フォントインデックス"
+    "zh_Hant": "字型索引"
   },
   {
     "context": "*",
     "msgid": "Font Picker Preview",
-    "ja_JP": "フォントピッカープレビュー"
+    "zh_Hant": "字型選擇器預覽"
   },
   {
     "context": "*",
     "msgid": "Custom preview phrase shown in the viewport font picker",
-    "ja_JP": "3D ビューポート フォントピッカーに表示するカスタムプレビューフレーズ"
+    "zh_Hant": "視圖區字型選擇器中顯示的自定義預覽文字"
   },
   {
     "context": "*",
     "msgid": "Script Filter",
-    "ja_JP": "文字体系フィルター"
+    "zh_Hant": "書寫系統篩選"
   },
   {
     "context": "*",
     "msgid": "Text Case",
-    "ja_JP": "文字ケース"
+    "zh_Hant": "字母大小寫"
   },
   {
     "context": "*",
     "msgid": "Letter case transform for the text content",
-    "ja_JP": "テキスト内容の文字ケース変換"
+    "zh_Hant": "文字內容的字母大小寫轉換"
   },
   {
     "context": "*",
     "msgid": "Text Case Snapshot",
-    "ja_JP": "文字ケーススナップショット"
+    "zh_Hant": "大小寫快照"
   },
   {
     "context": "*",
     "msgid": "Stored original text before case transform",
-    "ja_JP": "ケース変換前に保存された元のテキスト"
+    "zh_Hant": "大小寫轉換前儲存的原始文字"
   },
   {
     "context": "*",
     "msgid": "Text Orientation",
-    "ja_JP": "文字方向"
+    "zh_Hant": "文字方向"
   },
   {
     "context": "*",
     "msgid": "Horizontal rows or vertical columns (transposed in body)",
-    "ja_JP": "横方向の行または縦方向の列（本文内で転置）"
+    "zh_Hant": "橫向行或豎向列（在正文中轉置儲存）"
   },
   {
     "context": "*",
     "msgid": "Where the first typed column appears; Enter adds the next column",
-    "ja_JP": "最初に入力した列の位置；Enter で次の列を追加"
+    "zh_Hant": "首列出現位置；回車新增下一列"
   },
   {
     "context": "*",
     "msgid": "Vertical Source",
-    "ja_JP": "縦書きソース"
+    "zh_Hant": "豎向源文字"
   },
   {
     "context": "*",
     "msgid": "Horizontal input in N-panel: each line is one vertical column",
-    "ja_JP": "N パネル横書き入力：各行が 1 つの縦列に対応"
+    "zh_Hant": "N 面板橫向輸入：每行對應一個豎列"
   },
   {
     "context": "*",
     "msgid": "Underline Enabled",
-    "ja_JP": "下線が有効"
+    "zh_Hant": "下劃線已啟用"
   },
   {
     "context": "*",
     "msgid": "Logical underline toggle (mutually exclusive with strikethrough)",
-    "ja_JP": "論理下線トグル（取り消し線と排他的）"
+    "zh_Hant": "邏輯下劃線開關（與刪除線互斥）"
   },
   {
     "context": "*",
     "msgid": "Strikethrough Enabled",
-    "ja_JP": "取り消し線が有効"
+    "zh_Hant": "刪除線已啟用"
   },
   {
     "context": "*",
     "msgid": "Logical strikethrough toggle (mutually exclusive with underline)",
-    "ja_JP": "論理取り消し線トグル（下線と排他的）"
+    "zh_Hant": "邏輯刪除線開關（與下劃線互斥）"
   },
   {
     "context": "*",
     "msgid": "Vertical line position used when strikethrough is enabled",
-    "ja_JP": "取り消し線有効時の線の垂直位置"
+    "zh_Hant": "啟用刪除線時的線條垂直位置"
   },
   {
     "context": "*",
     "msgid": "Pre Bold Size",
-    "ja_JP": "太字前サイズ"
+    "zh_Hant": "加粗前字號"
   },
   {
     "context": "*",
     "msgid": "Stored size before faux-bold enlargement",
-    "ja_JP": "疑似太字拡大前に保存されたサイズ"
+    "zh_Hant": "偽加粗放大前儲存的字號"
   },
   {
     "context": "*",
     "msgid": "Name",
-    "ja_JP": "名前"
+    "zh_Hant": "名稱"
   },
   {
     "context": "*",
     "msgid": "Path",
-    "ja_JP": "パス"
+    "zh_Hant": "路徑"
   },
   {
     "context": "*",
     "msgid": "Original letter casing",
-    "ja_JP": "元の文字ケースを保持"
+    "zh_Hant": "保持原始大小寫"
   },
   {
     "context": "*",
     "msgid": "All uppercase letters",
-    "ja_JP": "すべて大文字"
+    "zh_Hant": "全部大寫字母"
   },
   {
     "context": "*",
     "msgid": "All lowercase letters",
-    "ja_JP": "すべて小文字"
+    "zh_Hant": "全部小寫字母"
   },
   {
     "context": "*",
     "msgid": "First line is rightmost; Enter adds a column to the left",
-    "ja_JP": "最初の行が最右列；Enter で左方向に列を追加"
+    "zh_Hant": "首行在最右列；回車向左新增列"
   },
   {
     "context": "*",
     "msgid": "First line is leftmost; Enter adds a column to the right",
-    "ja_JP": "最初の行が最左列；Enter で右方向に列を追加"
+    "zh_Hant": "首行在最左列；回車向右新增列"
   },
   {
     "context": "*",
     "msgid": "Top",
-    "ja_JP": "上"
+    "zh_Hant": "頂"
   },
   {
     "context": "*",
     "msgid": "Top Baseline",
-    "ja_JP": "上ベースライン"
+    "zh_Hant": "頂基線"
   },
   {
     "context": "*",
     "msgid": "Bottom Baseline",
-    "ja_JP": "下ベースライン"
+    "zh_Hant": "底基線"
   },
   {
     "context": "*",
     "msgid": "Bottom",
-    "ja_JP": "下"
+    "zh_Hant": "底"
   },
   {
     "context": "*",
     "msgid": "Character",
-    "ja_JP": "文字"
+    "zh_Hant": "字元"
   },
   {
     "context": "*",
     "msgid": "Line",
-    "ja_JP": "行"
+    "zh_Hant": "行"
   },
   {
     "context": "*",
     "msgid": "Paragraph",
-    "ja_JP": "段落"
+    "zh_Hant": "段落"
   },
   {
     "context": "*",
     "msgid": "Size",
-    "ja_JP": "サイズ"
+    "zh_Hant": "大小"
   },
   {
     "context": "*",
     "msgid": "All scripts",
-    "ja_JP": "すべての文字体系"
+    "zh_Hant": "全部書寫系統"
   },
   {
     "context": "*",
     "msgid": "All languages",
-    "ja_JP": "すべての言語"
+    "zh_Hant": "全部語言"
   },
   {
     "context": "*",
     "msgid": "English (Latin script)",
-    "ja_JP": "英語（ラテン文字）"
+    "zh_Hant": "英語（拉丁字母）"
   },
   {
     "context": "*",
     "msgid": "Latin script",
-    "ja_JP": "ラテン文字"
+    "zh_Hant": "拉丁字母"
   },
   {
     "context": "*",
     "msgid": "Chinese (Han characters)",
-    "ja_JP": "中国語（漢字）"
+    "zh_Hant": "中文（漢字）"
   },
   {
     "context": "*",
     "msgid": "Japanese (kana and kanji)",
-    "ja_JP": "日本語（かなと漢字）"
+    "zh_Hant": "日文（假名與漢字）"
   },
   {
     "context": "*",
     "msgid": "Korean (Hangul)",
-    "ja_JP": "韓国語（ハングル）"
+    "zh_Hant": "韓文（諺文）"
   },
   {
     "context": "*",
     "msgid": "Russian (Cyrillic script)",
-    "ja_JP": "ロシア語（キリル文字）"
+    "zh_Hant": "俄語（西裡爾字母）"
   },
   {
     "context": "*",
     "msgid": "Arabic script",
-    "ja_JP": "アラビア文字"
+    "zh_Hant": "阿拉伯字母"
   },
   {
     "context": "*",
     "msgid": "Greek script",
-    "ja_JP": "ギリシャ文字"
+    "zh_Hant": "希臘字母"
   },
   {
     "context": "*",
     "msgid": "Hebrew script",
-    "ja_JP": "ヘブライ文字"
+    "zh_Hant": "希伯來字母"
   },
   {
     "context": "*",
     "msgid": "Thai script",
-    "ja_JP": "タイ文字"
+    "zh_Hant": "泰文字母"
   },
   {
     "context": "*",
     "msgid": "Type or paste multi-line text…",
-    "ja_JP": "複数行テキストを入力または貼り付け…"
+    "zh_Hant": "輸入或貼上多行文字…"
   },
   {
     "context": "*",
     "msgid": "# Title\n**bold** *italic* `code`",
-    "ja_JP": "# タイトル\n**太字** *斜体* `コード`"
+    "zh_Hant": "# 標題\n**粗體** *斜體* `程式碼`"
   },
   {
     "context": "*",
     "msgid": "Loading fonts…",
-    "ja_JP": "フォントを読み込み中…"
+    "zh_Hant": "正在載入字型…"
   },
   {
     "context": "Operator",
     "msgid": "Text Helper is not ready yet",
-    "ja_JP": "Text Helper の準備ができていません"
+    "zh_Hant": "Text Helper 尚未就緒"
   },
   {
     "context": "Operator",
     "msgid": "Preferences unavailable",
-    "ja_JP": "環境設定を利用できません"
+    "zh_Hant": "偏好設定不可用"
   },
   {
     "context": "*",
     "msgid": "Default",
-    "ja_JP": "デフォルト"
+    "zh_Hant": "預設"
   },
   {
     "context": "*",
     "msgid": "Default visible line count for the N-panel textbox (you can still drag the bottom edge to resize)",
-    "ja_JP": "Nパネル文字ボックスの既定表示行数（下端をドラッグしてサイズ変更も可能）"
+    "zh_Hant": "N 面板文字框預設可見行數（仍可拖動底邊調整大小）"
   }
 ]
