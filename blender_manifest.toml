@@ -2,7 +2,7 @@ schema_version = "1.0.0"
 id = "TextHelper"
 name = "Text Helper"
 tagline = "Easy text input & font management"
-version = "1.7.1"
+version = "1.7.2"
 type = "add-on"
 maintainer = "ACGGIT"
 
@@ -22,8 +22,11 @@ clipboard = "Paste text into the active text object"
 paths_exclude_pattern = [
     "__pycache__/",
     "/.git/",
+    "githooks/",
     ".gitignore",
     ".gitattributes",
+    "README.md",
+    "README.zh-CN.md",
     "/*.zip",
     "*.blend1",
     ".vscode/",

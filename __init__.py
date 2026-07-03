@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Text Helper",
     "author": "ACGGIT",
-    "version": (1, 7, 1),
+    "version": (1, 7, 2),
     "blender": (5, 2, 0),
     "location": "View3D > Sidebar > Text Helper",
     "description": "Easy text input & font management",
