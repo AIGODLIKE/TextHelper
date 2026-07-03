@@ -1,16 +1,19 @@
+# 请务必在Blender 5.2以上版本运行
+
 # Text Helper 文本助手
 
-**版本 1.8.5** · 适用于 Blender **5.2+** · [GPL-3.0-or-later](LICENSE)
+这是一个能够让你像喝水那样编辑3D文本的Blender工具。
+你想要的**多行文本输入**、**字体实时预览**、**无效字体排除**、**字族字重选择**、**横竖排版一键切换**、**极致舒适的UI**等现在全部都在这里！
 
-Text Helper 让 Blender 文本对象更好用：侧边栏多行编辑、视口浮动工具栏、系统字体浏览与实时预览，以及竖排文本工作流。
-
-维护者：**ACGGIT**
+<img width="2560" height="1380" alt="image" src="https://github.com/user-attachments/assets/b7cd58c7-2943-4c40-840e-67e30e1009b1" />
 
 ---
 
 ## 功能概览
 
 ### 侧边栏（N 面板）
+
+https://github.com/user-attachments/assets/3369a3c5-3ce4-4c22-87bd-4387a4477f73
 
 - 多行 **textbox**（Blender 5.2+），可设置可见行数
 - 横排 / **竖排** 模式，列顺序（从右到左 / 从左到右）
