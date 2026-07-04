@@ -2,7 +2,7 @@ schema_version = "1.0.0"
 id = "TextHelper"
 name = "Text Helper"
 tagline = "Easy text input & font management"
-version = "1.8.6"
+version = "1.9.0"
 type = "add-on"
 maintainer = "ACGGIT"
 

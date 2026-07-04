@@ -351,7 +351,7 @@ def ensure_font_catalog(wm):
 
 
 def _do_deferred_catalog_load():
-    global _catalog_timer_registered
+    global _catalog_scan_done, _catalog_timer_registered
 
     _catalog_timer_registered = False
     wm = bpy.context.window_manager

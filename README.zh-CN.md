@@ -81,14 +81,15 @@ blender --command extension validate
 blender --command extension build
 ```
 
-生成：`TextHelper-1.8.6.zip`
+生成：`TextHelper-1.9.0.zip`
 
 上级 `DATA` 目录中的 `_build_texthelper_zip.py` 可用于快速本地复制；提交 Extension Store 请使用 Blender CLI 生成的 zip。
 
 ---
 
-## 近期更新（1.8.x）
+## 近期更新（1.8.x / 1.9.x）
 
+- **1.9.0** — 修复延迟加载字体目录时的崩溃（macOS `UnboundLocalError`）
 - **1.8.6** — README 重写，亮点功能说明与演示视频
 - **1.8.5** — 更新字体预览默认示例文字
 - **1.8.4** — 繁体中文界面（`zh_Hant`），用语对齐 Blender 繁体（如 視圖區）
