@@ -15,6 +15,8 @@
 
 https://github.com/user-attachments/assets/b7d06527-94dc-4f77-ae7a-d5b3cc7e12ba
 
+<img width="1920" height="1034" alt="Multi-line textinput" src="https://github.com/user-attachments/assets/78887700-2bcb-40a7-a76e-1fc7cc98ee75" />
+
 - 多行文本输入（至少需要Blender 5.2+）
 - 换行=Shift+Enter | 确认=Enter
 
@@ -36,15 +38,24 @@ https://github.com/user-attachments/assets/adf5a290-0b00-45e4-88f3-e48734f28172
 
 https://github.com/user-attachments/assets/c6e7aafe-1c71-4a4c-872e-7ea1068af498
 
+<img width="1920" height="1034" alt="Horizontal  vertical text modes" src="https://github.com/user-attachments/assets/87920b34-dda8-4bbe-b8af-ce882137bcb4" />
+
+
 - **横排** / **竖排**:一键转换，竖排模式支持从左到右与从右到左的排布
 
 - **全角修复(对齐修复)**：检测半角字符，一键转为全角，解决字体字符对齐问题(注意：部分字体包含特殊字符可能表现不佳)
 
 https://github.com/user-attachments/assets/b02935a9-20d5-4253-bfa8-67867faa306c
 
+<img width="1920" height="1034" alt="FixFont" src="https://github.com/user-attachments/assets/cc8c8ab1-de71-4907-a78f-6d6798205a0b" />
+
+
 ### 视口浮动工具栏（HUD）
 
 https://github.com/user-attachments/assets/df5342b7-7d49-47f3-ab6a-f1b6f32632e4
+
+<img width="1920" height="1034" alt="TextEdit" src="https://github.com/user-attachments/assets/32b73339-c424-47e8-a28f-6f0b3badc31a" />
+
 
 - 可拖拽，显示在选中文字附近
 - 样式预设、**GPU 字体选择器**、粗体 / 斜体 / 下划线 / 删除线
