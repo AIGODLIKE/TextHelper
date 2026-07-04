@@ -1,34 +1,50 @@
+# Please use Blender 5.2 or newer
+
 # Text Helper
 
-**Version 1.8.5** · Blender **5.2+** · [GPL-3.0-or-later](LICENSE)
-
-Text Helper makes working with Blender text objects faster: multi-line editing in the sidebar, a floating viewport toolbar, system font browsing with live previews, and vertical (column) text workflows.
-
-Maintainer: **ACGGIT**
+A Blender add-on that lets you edit 3D text as naturally as drinking water.
+**Multi-line text input**, **live font preview**, **invalid font exclusion**, **font family weight selection**, **one-click horizontal/vertical layout**, and an **ultra-comfortable UI** — it's all here!
 
 ---
 
-## Features
+## Highlights
 
-### Sidebar (N-panel)
+### Multi-line text
 
-- Multi-line **textbox** (Blender 5.2+) with configurable visible line count
-- Horizontal / **vertical** text modes with column order (RTL / LTR)
-- Paste and clear actions (clipboard permission)
-- Halfwidth-character warnings and one-click fullwidth fix for vertical text
+https://github.com/user-attachments/assets/b7d06527-94dc-4f77-ae7a-d5b3cc7e12ba
 
-### Floating viewport toolbar (HUD)
-
-- Draggable toolbar below the selected text object
-- Style presets, **GPU font picker**, bold / italic / underline / strikethrough
-- Case toggles, alignment, spacing sliders (size, character, word, line height, shear)
-- Double-click empty space to enter / exit text edit mode
+- Multi-line text input (requires Blender 5.2+)
+- New line = Shift+Enter · Confirm = Enter
 
 ### Fonts
 
-- Scan **system fonts** on Windows, macOS, and Linux
-- Search, sort, script/language filter, **font weight picker**, thumbnail previews
-- Browse custom `.ttf` / `.otf` files; optional live preview on hover
+https://github.com/user-attachments/assets/adf5a290-0b00-45e4-88f3-e48734f28172
+
+- **Live preview**: Preview font and weight in real time; use the current input as preview text (or the font name / a custom string)
+- **Live apply**: Change font and weight on hover
+- **Invalid font exclusion**: Automatically match fonts that support your input (tip: when text turns into “□”, open the font library to fix — works great!)
+- **Weight merging**: Merge weights within the same font family
+- **Filters**: Filter by language, support status, or multi-weight families
+- **Search**: Search fonts (English input only for now; paste other languages to search)
+- **Cross-platform**: Scan **system fonts** (Windows / macOS / Linux)
+
+### Horizontal & vertical layout
+
+https://github.com/user-attachments/assets/c6e7aafe-1c71-4a4c-872e-7ea1068af498
+
+- **Horizontal** / **Vertical**: One-click switch; vertical mode supports left-to-right and right-to-left column order
+- **Fullwidth fix (alignment fix)**: Detect halfwidth characters and convert to fullwidth to fix alignment (note: some fonts with special glyphs may look odd)
+
+https://github.com/user-attachments/assets/b02935a9-20d5-4253-bfa8-67867faa306c
+
+### Floating viewport toolbar (HUD)
+
+https://github.com/user-attachments/assets/df5342b7-7d49-47f3-ab6a-f1b6f32632e4
+
+- Draggable; appears near the selected text
+- Style presets, **GPU font picker**, bold / italic / underline / strikethrough
+- Case toggles, alignment, spacing sliders (size, character, word, line height, shear, etc.)
+- Double-click empty space to enter / exit text edit mode
 
 ### Other
 
@@ -41,9 +57,9 @@ Maintainer: **ACGGIT**
 
 ## Installation
 
-### Blender Extensions (recommended)
+### Extension platform (recommended)
 
-1. Download `TextHelper-1.8.5.zip` from [Releases](https://github.com/AIGODLIKE/TextHelper/releases) (when published), or build locally (see below).
+1. Download `TextHelper-X.X.X.zip` from [Releases](https://github.com/AIGODLIKE/TextHelper/releases), or build locally (see below).
 2. In Blender: **Edit → Preferences → Get Extensions → Install from Disk…**
 3. Select the zip and enable **Text Helper**.
 
@@ -102,7 +118,7 @@ Preferences: **Edit → Preferences → Add-ons → Text Helper**.
 ## Requirements
 
 - Blender **5.2.0** or newer
-- Multi-line sidebar textbox requires Blender **5.2+** (`UILayout.textbox`)
+- Multi-line sidebar textbox requires Blender **5.2+**
 
 ---
 
