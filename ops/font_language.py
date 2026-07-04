@@ -13,6 +13,7 @@ from ..utils.text_frame import tag_view3d_redraw
 class TH_OT_set_font_language(WindowManagerPollMixin, Operator):
     bl_idname = "font.texthelper_set_font_language"
     bl_label = "Set Font Language Filter"
+    bl_description = "Filter the font list by script or language"
     bl_options = {"INTERNAL"}
 
     language: bpy.props.EnumProperty(items=LANGUAGE_FILTER_ITEMS)

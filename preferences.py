@@ -198,7 +198,11 @@ class TH_Preferences(AddonPreferences):
             row.prop(self, "font_preview_height")
             sub.prop(self, "font_preview_size")
             sub.prop(self, "font_preview_ui_scale")
-            sub.operator("font.texthelper_regenerate_font_previews", icon="FILE_REFRESH")
+            sub.operator(
+                "font.texthelper_refresh_system_fonts",
+                text=_("Force Refresh Previews"),
+                icon="FILE_REFRESH",
+            )
         box.prop(self, "font_preview_on_select")
 
 

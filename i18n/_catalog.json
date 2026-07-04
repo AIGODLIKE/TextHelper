@@ -636,13 +636,33 @@
   },
   {
     "context": "Operator",
-    "msgid": "Rescan system font folders",
-    "zh_HANS": "重新扫描系统字体文件夹"
+    "msgid": "Force Refresh Previews",
+    "zh_HANS": "强制刷新预览"
+  },
+  {
+    "context": "*",
+    "msgid": "Force Refresh",
+    "zh_HANS": "强制刷新"
+  },
+  {
+    "context": "*",
+    "msgid": "Rescan system fonts and rebuild preview thumbnails",
+    "zh_HANS": "重新扫描系统字体并重建预览缩略图"
   },
   {
     "context": "Operator",
-    "msgid": "Found {:d} fonts",
-    "zh_HANS": "找到 {:d} 个字体"
+    "msgid": "Font information refreshed",
+    "zh_HANS": "字体信息已刷新"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Rescan system font folders, clear failed-load caches, and rebuild font preview thumbnails",
+    "zh_HANS": "重新扫描系统字体、清除加载失败缓存并重建预览缩略图"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Found {:d} fonts — rebuilding previews",
+    "zh_HANS": "找到 {:d} 个字体，正在重建预览"
   },
   {
     "context": "Operator",
@@ -791,8 +811,8 @@
   },
   {
     "context": "*",
-    "msgid": "Font preview cache cleared — reopen the font list to rebuild",
-    "zh_HANS": "字体预览缓存已清除 — 请重新打开字体列表以重建"
+    "msgid": "Font preview cache cleared — rebuilding thumbnails",
+    "zh_HANS": "字体预览缓存已清除，正在重建缩略图"
   },
   {
     "context": "*",
@@ -1223,6 +1243,26 @@
     "context": "Operator",
     "msgid": "Select a text object first",
     "zh_HANS": "请先选择文字对象"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Active object is not a text object",
+    "zh_HANS": "当前对象不是文字对象"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Select the text object",
+    "zh_HANS": "请选择该文字对象"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text data is unavailable",
+    "zh_HANS": "文字数据不可用"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Select a text object or open add-on preferences",
+    "zh_HANS": "请选择文字对象，或打开插件偏好设置"
   },
   {
     "context": "*",
@@ -1808,5 +1848,105 @@
     "context": "*",
     "msgid": "Default visible line count for the N-panel textbox (you can still drag the bottom edge to resize)",
     "zh_HANS": "N 面板文本框默认可见行数（仍可拖动底边调整大小）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add a new text object in the 3D viewport with optional layout frame",
+    "zh_HANS": "在 3D 视口中添加新文本对象，可选自动创建排版框"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear all characters from the active text object",
+    "zh_HANS": "清空当前文本对象的所有字符"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Replace text content with the system clipboard",
+    "zh_HANS": "用系统剪贴板内容替换文本"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Load text from a .txt file into the active text object",
+    "zh_HANS": "从 .txt 文件导入文本到当前文本对象"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Switch between horizontal and vertical text layout",
+    "zh_HANS": "切换横排或竖排文本布局"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set whether new vertical columns are added left or right",
+    "zh_HANS": "设置竖排新列添加在左侧还是右侧"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Start a new column in vertical text layout",
+    "zh_HANS": "在竖排布局中开始新列"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply a typography preset to font size, spacing, and alignment",
+    "zh_HANS": "应用排版预设（字号、间距和对齐）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open Blender's font browser when the 3D View context is required",
+    "zh_HANS": "在需要 3D 视图上下文时打开 Blender 字体浏览器"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Restore the default Bfont when no custom font is linked",
+    "zh_HANS": "未链接自定义字体时恢复默认 Bfont"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle bold, italic, underline, or strikethrough on selected text",
+    "zh_HANS": "切换所选文本的粗体、斜体、下划线或删除线"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set horizontal text alignment (left, center, right, or justify)",
+    "zh_HANS": "设置水平对齐（左、居中、右或两端对齐）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set vertical text alignment within the object bounds",
+    "zh_HANS": "设置文本在对象范围内的垂直对齐"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Increase or decrease character, word, line, or paragraph spacing",
+    "zh_HANS": "增大或减小字距、词距、行距或段距"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set font size, spacing, shear, or strikethrough position to an exact value",
+    "zh_HANS": "将字号、间距、倾斜或删除线位置设为精确值"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add a layout frame for wrapping and truncating text",
+    "zh_HANS": "添加排版框以换行或截断文本"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle text overflow between clip and expand to fit",
+    "zh_HANS": "在裁剪溢出与扩展适应之间切换"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Run the viewport HUD modal handler for toolbar and pickers",
+    "zh_HANS": "运行视口 HUD 模态处理器（工具栏与选择器）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Ensure the HUD modal operator is running",
+    "zh_HANS": "确保 HUD 模态操作符正在运行"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Filter the font list by script or language",
+    "zh_HANS": "按书写系统或语言筛选字体列表"
   }
 ]

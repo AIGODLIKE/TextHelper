@@ -90,6 +90,11 @@ def blf_load(filepath: str) -> int:
     if not font_magic_ok(abs_path):
         _FAILED_PATHS.add(key)
         return -1
+    # Drop stale BLF handles when font files were replaced on disk while Blender is open.
+    try:
+        blf.unload(abs_path)
+    except Exception:
+        pass
     font_id = blf.load(abs_path)
     if font_id == -1:
         _FAILED_PATHS.add(key)

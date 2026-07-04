@@ -30,7 +30,8 @@ from ..utils.font_preview_draw import draw_blf_preview
 from ..utils.font_preview_text import get_font_preview_text
 from ..utils.text_format import get_active_text_data
 from . import layout as layout_mod
-from .gpu_primitives import draw_rounded_rect
+from .gpu_primitives import draw_refresh_icon, draw_rounded_rect
+from .tooltip import draw_hud_tooltip
 from .blf_layout import draw_centered_glyph
 
 _UI_FONT = 0
@@ -264,6 +265,18 @@ def _hover_apply_enabled(context):
     return getattr(prefs, "font_preview_on_select", True)
 
 
+def _invoke_refresh_system_fonts(context):
+    from ..utils.font_refresh import perform_font_system_refresh
+    from ..utils.operator_report import queue_operator_report
+
+    try:
+        perform_font_system_refresh(context)
+    except Exception:
+        return False
+    queue_operator_report(context.window_manager, "Font information refreshed")
+    return True
+
+
 def _invoke_apply_system_font(context, filepath, catalog_index=-1, *, keep_picker_open=False):
     from ..utils.text_format import get_active_text
 
@@ -351,6 +364,10 @@ def close_picker(context):
     state.th_font_picker_search_focus = False
     state.th_font_picker_scroll_drag = False
     state.th_font_picker_hover = -1
+    state.th_font_picker_chip_hover = ""
+    state.th_font_picker_chip_press = ""
+    state.th_font_picker_pointer_x = -1.0
+    state.th_font_picker_pointer_y = -1.0
     try:
         from .language_picker import close_picker as close_language_picker
 
@@ -358,6 +375,25 @@ def close_picker(context):
     except Exception:
         pass
     release_blf_cache()
+
+
+def _chip_button_bg(theme, *, hovered=False, pressed=False, active=False):
+    if pressed:
+        return (0.14, 0.14, 0.16, 1.0)
+    if active:
+        return theme["row_active"]
+    if hovered:
+        return theme["row_hover"]
+    return theme["field_bg"]
+
+
+def _draw_icon_button(shader, hit, theme, scale, *, hovered, pressed, icon_draw):
+    bg = _chip_button_bg(theme, hovered=hovered, pressed=pressed)
+    draw_rounded_rect(shader, hit.x, hit.y, hit.w, hit.h, bg, 5.0 * scale)
+    icon_color = theme["text"] if (hovered or pressed) else theme["muted"]
+    cx = hit.x + hit.w * 0.5
+    cy = hit.y + hit.h * 0.5
+    icon_draw(shader, cx, cy, min(hit.w, hit.h) * 0.72, icon_color)
 
 
 def _scrollbar_geometry(layout):
@@ -440,6 +476,8 @@ def layout_picker(context):
     filter_row2_y = filter_y + filter_row_h + filter_row_gap + chip_inset
     hide_chip_w = 118.0 * scale
     multi_chip_w = 132.0 * scale
+    refresh_btn_w = chip_h
+    refresh_pad = 2.0 * scale
     chip_gap = 6.0 * scale
 
     hits = []
@@ -474,6 +512,17 @@ def layout_picker(context):
             filter_row1_y,
             multi_chip_w,
             chip_h,
+        )
+    )
+    refresh_x = list_x + hide_chip_w + chip_gap + multi_chip_w + chip_gap
+    refresh_draw = PickerHit("refresh_draw", refresh_x, filter_row1_y, refresh_btn_w, chip_h)
+    hits.append(
+        PickerHit(
+            "refresh_previews",
+            refresh_x - refresh_pad,
+            filter_row1_y - refresh_pad,
+            refresh_btn_w + refresh_pad * 2.0,
+            chip_h + refresh_pad * 2.0,
         )
     )
     hits.append(
@@ -547,6 +596,7 @@ def layout_picker(context):
         "hits": hits,
         "row_hits": row_hits,
         "scrollbar": sb,
+        "refresh_draw": refresh_draw,
     }
     return _LAST_LAYOUT
 
@@ -561,9 +611,29 @@ def get_picker_hits():
     return _LAST_LAYOUT.get("hits", [])
 
 
+_CHIP_HIT_KINDS = frozenset(
+    {
+        "close",
+        "search",
+        "filter_toggle",
+        "multi_weight_toggle",
+        "refresh_previews",
+        "language_menu",
+        "scroll_thumb",
+        "scroll_track",
+    }
+)
+
+
 def hit_test_picker(context, mx, my):
     layout_picker(context)
     hits = get_picker_hits()
+    for hit in reversed(hits):
+        if hit.kind in _CHIP_HIT_KINDS and hit.contains(mx, my):
+            return hit
+    for hit in reversed(hits):
+        if hit.kind == "row" and hit.contains(mx, my):
+            return hit
     for hit in reversed(hits):
         if hit.kind != "panel" and hit.contains(mx, my):
             return hit
@@ -745,6 +815,9 @@ def draw_font_picker(context):
         query = wm.th_state.font_filter or ""
         _draw_field(shader, search_hit, scale, theme, query, _("Search fonts…"), search_focus, accent)
 
+    chip_hover = getattr(state, "th_font_picker_chip_hover", "") if state else ""
+    chip_press = getattr(state, "th_font_picker_chip_press", "") if state else ""
+
     filter_hit = next((h for h in layout["hits"] if h.kind == "filter_toggle"), None)
     if filter_hit:
         hide_unsupported = bool(state and getattr(state, "th_font_picker_hide_unsupported", True))
@@ -778,6 +851,18 @@ def draw_font_picker(context):
         blf.color(_UI_FONT, *(theme["text"] if lang_active else theme["muted"]))
         blf.position(_UI_FONT, language_hit.x + 8.0 * scale, language_hit.y + language_hit.h * 0.5 - 5.0 * scale, 0)
         blf.draw(_UI_FONT, chip_label)
+
+    refresh_hit = layout.get("refresh_draw")
+    if refresh_hit:
+        _draw_icon_button(
+            shader,
+            refresh_hit,
+            theme,
+            scale,
+            hovered=chip_hover == "refresh_previews",
+            pressed=chip_press == "refresh_previews",
+            icon_draw=draw_refresh_icon,
+        )
 
     draw_rounded_rect(
         shader,
@@ -857,6 +942,27 @@ def draw_font_picker(context):
     blf.position(_UI_FONT, px + pad, footer_y, 0)
     blf.draw(_UI_FONT, count_text)
 
+    refresh_hit = layout.get("refresh_draw")
+    if refresh_hit:
+        pointer_x = float(getattr(state, "th_font_picker_pointer_x", -1.0)) if state else -1.0
+        pointer_y = float(getattr(state, "th_font_picker_pointer_y", -1.0)) if state else -1.0
+        show_refresh_tip = chip_hover == "refresh_previews"
+        if not show_refresh_tip and pointer_x >= 0.0:
+            padded = next((h for h in layout["hits"] if h.kind == "refresh_previews"), None)
+            if padded is not None and padded.contains(pointer_x, pointer_y):
+                show_refresh_tip = True
+        if show_refresh_tip:
+            region_w = context.region.width if context.region else 1920
+            draw_hud_tooltip(
+                shader,
+                _UI_FONT,
+                refresh_hit,
+                _("Rescan system fonts and rebuild preview thumbnails"),
+                scale,
+                region_w,
+                accent,
+            )
+
     gpu.state.blend_set("NONE")
 
 
@@ -909,6 +1015,12 @@ def handle_picker_click(context, hit, mx=0.0, my=0.0):
         state.th_font_picker_scroll = 0
         state.th_font_picker_search_focus = False
         _stop_caret_timer()
+        return True
+    if hit.kind == "refresh_previews":
+        state.th_font_picker_search_focus = False
+        _stop_caret_timer()
+        state.th_font_picker_chip_press = "refresh_previews"
+        _invoke_refresh_system_fonts(context)
         return True
     if hit.kind == "language_menu":
         state.th_font_picker_search_focus = False
@@ -973,18 +1085,28 @@ def handle_picker_release(context):
     state = _state(context)
     if state is None:
         return False
+    changed = False
+    if getattr(state, "th_font_picker_chip_press", ""):
+        state.th_font_picker_chip_press = ""
+        changed = True
     if getattr(state, "th_font_picker_scroll_drag", False):
         state.th_font_picker_scroll_drag = False
-        return True
-    return False
+        changed = True
+    return changed
 
 
 def handle_picker_hover(context, mx, my):
     state = _state(context)
     if state is None:
         return False
+    state.th_font_picker_pointer_x = float(mx)
+    state.th_font_picker_pointer_y = float(my)
     hit = hit_test_picker(context, mx, my)
     applied = False
+    chip_kind = ""
+    if hit and hit.kind in _CHIP_HIT_KINDS:
+        chip_kind = hit.kind
+    state.th_font_picker_chip_hover = chip_kind
     if hit and hit.kind == "row":
         state.th_font_picker_hover = hit.index
         applied = _try_hover_apply_font(context, hit.index)

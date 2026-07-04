@@ -636,13 +636,33 @@
   },
   {
     "context": "Operator",
-    "msgid": "Rescan system font folders",
-    "ja_JP": "システムフォントフォルダーを再スキャン"
+    "msgid": "Force Refresh Previews",
+    "ja_JP": "プレビューを強制更新"
+  },
+  {
+    "context": "*",
+    "msgid": "Force Refresh",
+    "ja_JP": "強制更新"
+  },
+  {
+    "context": "*",
+    "msgid": "Rescan system fonts and rebuild preview thumbnails",
+    "ja_JP": "システムフォントを再スキャンし、プレビューサムネイルを再生成"
   },
   {
     "context": "Operator",
-    "msgid": "Found {:d} fonts",
-    "ja_JP": "{:d} 個のフォントが見つかりました"
+    "msgid": "Font information refreshed",
+    "ja_JP": "フォント情報を更新しました"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Rescan system font folders, clear failed-load caches, and rebuild font preview thumbnails",
+    "ja_JP": "システムフォントを再スキャンし、読み込み失敗キャッシュを消去してプレビューを再生成"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Found {:d} fonts — rebuilding previews",
+    "ja_JP": "フォントを {:d} 件見つけました — プレビューを再生成中"
   },
   {
     "context": "Operator",
@@ -791,8 +811,8 @@
   },
   {
     "context": "*",
-    "msgid": "Font preview cache cleared — reopen the font list to rebuild",
-    "ja_JP": "フォントプレビューキャッシュをクリアしました — フォント一覧を再度開いて再構築してください"
+    "msgid": "Font preview cache cleared — rebuilding thumbnails",
+    "ja_JP": "フォントプレビューキャッシュをクリアしました — サムネイルを再生成中"
   },
   {
     "context": "*",
@@ -1223,6 +1243,26 @@
     "context": "Operator",
     "msgid": "Select a text object first",
     "ja_JP": "先にテキストオブジェクトを選択してください"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Active object is not a text object",
+    "ja_JP": "アクティブオブジェクトはテキストではありません"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Select the text object",
+    "ja_JP": "テキストオブジェクトを選択してください"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text data is unavailable",
+    "ja_JP": "テキストデータを利用できません"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Select a text object or open add-on preferences",
+    "ja_JP": "テキストオブジェクトを選択するか、アドオン設定を開いてください"
   },
   {
     "context": "*",
@@ -1808,5 +1848,105 @@
     "context": "*",
     "msgid": "Default visible line count for the N-panel textbox (you can still drag the bottom edge to resize)",
     "ja_JP": "Nパネル文字ボックスの既定表示行数（下端をドラッグしてサイズ変更も可能）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add a new text object in the 3D viewport with optional layout frame",
+    "ja_JP": "3D ビューポートに新しいテキストオブジェクトを追加（レイアウト枠を任意で作成）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear all characters from the active text object",
+    "ja_JP": "アクティブなテキストオブジェクトの文字をすべて削除"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Replace text content with the system clipboard",
+    "ja_JP": "システムクリップボードの内容でテキストを置き換え"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Load text from a .txt file into the active text object",
+    "ja_JP": ".txt ファイルからアクティブなテキストオブジェクトに読み込み"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Switch between horizontal and vertical text layout",
+    "ja_JP": "横書きと縦書きのレイアウトを切り替え"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set whether new vertical columns are added left or right",
+    "ja_JP": "縦書きの新しい列を左または右に追加するか設定"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Start a new column in vertical text layout",
+    "ja_JP": "縦書きレイアウトで新しい列を開始"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply a typography preset to font size, spacing, and alignment",
+    "ja_JP": "書体サイズ、間隔、配置のプリセットを適用"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open Blender's font browser when the 3D View context is required",
+    "ja_JP": "3D ビューのコンテキストが必要な場合に Blender のフォントブラウザを開く"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Restore the default Bfont when no custom font is linked",
+    "ja_JP": "カスタムフォントがリンクされていない場合にデフォルトの Bfont に戻す"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle bold, italic, underline, or strikethrough on selected text",
+    "ja_JP": "選択したテキストの太字、斜体、下線、取り消し線を切り替え"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set horizontal text alignment (left, center, right, or justify)",
+    "ja_JP": "水平方向の配置（左、中央、右、両端揃え）を設定"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set vertical text alignment within the object bounds",
+    "ja_JP": "オブジェクト内での垂直方向の配置を設定"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Increase or decrease character, word, line, or paragraph spacing",
+    "ja_JP": "文字、単語、行、段落の間隔を増減"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set font size, spacing, shear, or strikethrough position to an exact value",
+    "ja_JP": "フォントサイズ、間隔、シアー、取り消し線位置を指定値に設定"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add a layout frame for wrapping and truncating text",
+    "ja_JP": "テキストを折り返しまたは切り詰めるためのレイアウト枠を追加"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle text overflow between clip and expand to fit",
+    "ja_JP": "テキストのオーバーフローをクリップと拡張の間で切り替え"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Run the viewport HUD modal handler for toolbar and pickers",
+    "ja_JP": "ビューポート HUD モーダル（ツールバーとピッカー）を実行"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Ensure the HUD modal operator is running",
+    "ja_JP": "HUD モーダルオペレーターが実行中であることを確認"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Filter the font list by script or language",
+    "ja_JP": "文字体系または言語でフォント一覧を絞り込み"
   }
 ]

@@ -25,6 +25,7 @@ class TEXTHELPER_MT_style_preset(Menu):
 class TH_OT_apply_preset(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_apply_preset"
     bl_label = "Apply Text Preset"
+    bl_description = "Apply a typography preset to font size, spacing, and alignment"
     bl_options = {"REGISTER", "UNDO"}
 
     preset_id: bpy.props.StringProperty(default="BODY")

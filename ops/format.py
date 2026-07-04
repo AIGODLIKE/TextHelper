@@ -19,6 +19,7 @@ from ..utils.text_frame import add_layout_frame, ensure_layout_frame, tag_view3d
 class TH_OT_style_toggle(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_style_toggle"
     bl_label = "Toggle Text Style"
+    bl_description = "Toggle bold, italic, underline, or strikethrough on selected text"
     bl_options = {"REGISTER", "UNDO"}
 
     style: bpy.props.EnumProperty(
@@ -38,6 +39,7 @@ class TH_OT_style_toggle(ActiveFontDataPollMixin, Operator):
 class TH_OT_set_align(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_set_align"
     bl_label = "Set Text Alignment"
+    bl_description = "Set horizontal text alignment (left, center, right, or justify)"
     bl_options = {"REGISTER", "UNDO"}
 
     align: bpy.props.EnumProperty(
@@ -62,6 +64,7 @@ class TH_OT_set_align(ActiveFontDataPollMixin, Operator):
 class TH_OT_set_align_y(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_set_align_y"
     bl_label = "Set Vertical Alignment"
+    bl_description = "Set vertical text alignment within the object bounds"
     bl_options = {"REGISTER", "UNDO"}
 
     align: bpy.props.EnumProperty(
@@ -87,6 +90,7 @@ class TH_OT_set_align_y(ActiveFontDataPollMixin, Operator):
 class TH_OT_adjust_spacing(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_adjust_spacing"
     bl_label = "Adjust Spacing"
+    bl_description = "Increase or decrease character, word, line, or paragraph spacing"
     bl_options = {"REGISTER", "UNDO"}
 
     mode: bpy.props.EnumProperty(
@@ -124,6 +128,7 @@ class TH_OT_adjust_spacing(ActiveFontDataPollMixin, Operator):
 class TH_OT_set_spacing_value(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_set_spacing_value"
     bl_label = "Set Spacing Value"
+    bl_description = "Set font size, spacing, shear, or strikethrough position to an exact value"
     bl_options = {"REGISTER", "UNDO"}
 
     mode: bpy.props.EnumProperty(
@@ -216,6 +221,7 @@ class TH_OT_reset_format_value(ActiveFontDataPollMixin, Operator):
 class TH_OT_textbox_add(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_textbox_add"
     bl_label = "Add Text Frame"
+    bl_description = "Add a layout frame for wrapping and truncating text"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
@@ -230,6 +236,7 @@ class TH_OT_textbox_add(ActiveFontDataPollMixin, Operator):
 class TH_OT_overflow_toggle(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_overflow_toggle"
     bl_label = "Toggle Text Overflow"
+    bl_description = "Toggle text overflow between clip and expand to fit"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):

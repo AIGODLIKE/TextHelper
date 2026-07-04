@@ -81,7 +81,7 @@ blender --command extension validate
 blender --command extension build
 ```
 
-Output: `TextHelper-1.9.2.zip`
+Output: `TextHelper-1.9.6.zip`
 
 A helper script `_build_texthelper_zip.py` is also available in the parent `DATA` folder for quick local copies; use the Blender CLI output for Extension Store submissions.
 
@@ -89,6 +89,10 @@ A helper script `_build_texthelper_zip.py` is also available in the parent `DATA
 
 ## Recent changes (1.8.x / 1.9.x)
 
+- **1.9.6** — Refresh icon tooltip on hover; status message "Font information refreshed" after click
+- **1.9.5** — Viewport font picker refresh control is a compact icon button (slot 3) with hover and press feedback
+- **1.9.4** — Visible **Force Refresh Previews** button in viewport font picker, font menu, and add-on preferences
+- **1.9.3** — Fix font previews stopping after manual font file replacement; refresh button now clears load-failure caches and rebuilds thumbnails
 - **1.9.2** — New text objects default text box size and offsets to zero
 - **1.9.1** — Extension store compliance: maintainer email, remove legacy bl_info, safer preview cache init, lazy msgbus/load_post subscribers
 - **1.9.0** — Fix deferred font catalog load crash (`UnboundLocalError` on macOS)

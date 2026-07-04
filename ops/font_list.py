@@ -14,7 +14,6 @@ from ..utils.font_loader import (
     is_current_font,
     queue_font_catalog,
     refresh_font_catalog,
-    reset_font_catalog_scan,
 )
 from ..utils.font_language import catalog_item_passes_language, catalog_item_passes_name, get_language_filter, get_language_label
 from ..utils.font_preview import get_font_icon, invalidate_font_previews, queue_font_preview, tag_ui_redraw
@@ -125,7 +124,11 @@ def _draw_font_list_header(layout, context, wm):
 def _draw_font_filter_row(layout, wm):
     row = layout.row(align=True)
     row.prop(wm.th_state, "font_filter", text="", icon="VIEWZOOM", placeholder=_("Search fonts…"))
-    row.operator("font.texthelper_refresh_system_fonts", text="", icon="FILE_REFRESH")
+    row.operator(
+        "font.texthelper_refresh_system_fonts",
+        text=_("Force Refresh Previews"),
+        icon="FILE_REFRESH",
+    )
 
 
 def _draw_font_catalog_status(layout, wm):
@@ -206,26 +209,22 @@ def draw_system_font_list(layout, context, rows=6, list_id="th_font_sidebar"):
 
 class TH_OT_refresh_system_fonts(WindowManagerPollMixin, Operator):
     bl_idname = "font.texthelper_refresh_system_fonts"
-    bl_label = "Refresh Font List"
-    bl_description = "Rescan system font folders"
-    bl_options = {"INTERNAL"}
+    bl_label = "Force Refresh Previews"
+    bl_description = (
+        "Rescan system font folders, clear failed-load caches, "
+        "and rebuild font preview thumbnails"
+    )
+    bl_options = {"REGISTER"}
 
     def execute(self, context):
-        reset_font_catalog_scan()
-        invalidate_font_previews()
-        try:
-            from ..utils.font_language import invalidate_font_language_cache
+        from ..utils.font_refresh import perform_font_system_refresh
 
-            invalidate_font_language_cache()
-        except Exception:
-            pass
         try:
-            count = refresh_font_catalog(context.window_manager, force=True)
+            perform_font_system_refresh(context)
         except Exception as exc:
             self.report({"ERROR"}, str(exc))
             return {"CANCELLED"}
-        tag_ui_redraw(context)
-        self.report({"INFO"}, _("Found {:d} fonts").format(count))
+        self.report({"INFO"}, _("Font information refreshed"))
         return {"FINISHED"}
 
 
@@ -239,7 +238,7 @@ class TH_OT_regenerate_font_previews(WindowManagerPollMixin, Operator):
         from ..utils.font_preview import invalidate_and_rebuild_font_previews
 
         invalidate_and_rebuild_font_previews(context, clear_files=True)
-        self.report({"INFO"}, _("Font preview cache cleared — reopen the font list to rebuild"))
+        self.report({"INFO"}, _("Font preview cache cleared — rebuilding thumbnails"))
         return {"FINISHED"}
 
 

@@ -31,6 +31,7 @@ class TH_OT_enter_text_edit(ActiveFontPollMixin, Operator):
 class TH_OT_text_add(TextHelperOperatorMixin, Operator):
     bl_idname = "font.texthelper_text_add"
     bl_label = "Add Text"
+    bl_description = "Add a new text object in the 3D viewport with optional layout frame"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
@@ -60,6 +61,7 @@ class TH_OT_text_add(TextHelperOperatorMixin, Operator):
 class TH_OT_clear_body(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_clear_body"
     bl_label = "Clear Text"
+    bl_description = "Clear all characters from the active text object"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
@@ -78,6 +80,7 @@ class TH_OT_clear_body(ActiveFontDataPollMixin, Operator):
 class TH_OT_paste_body(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_paste_body"
     bl_label = "Paste into Text"
+    bl_description = "Replace text content with the system clipboard"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
@@ -96,6 +99,7 @@ class TH_OT_paste_body(ActiveFontDataPollMixin, Operator):
 class TH_OT_import_txt(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_import_txt"
     bl_label = "Import Text File"
+    bl_description = "Load text from a .txt file into the active text object"
     bl_options = {"REGISTER", "UNDO"}
 
     filepath: bpy.props.StringProperty(subtype="FILE_PATH")

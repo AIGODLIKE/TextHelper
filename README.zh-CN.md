@@ -81,7 +81,7 @@ blender --command extension validate
 blender --command extension build
 ```
 
-生成：`TextHelper-1.9.2.zip`
+生成：`TextHelper-1.9.6.zip`
 
 上级 `DATA` 目录中的 `_build_texthelper_zip.py` 可用于快速本地复制；提交 Extension Store 请使用 Blender CLI 生成的 zip。
 
@@ -89,6 +89,10 @@ blender --command extension build
 
 ## 近期更新（1.8.x / 1.9.x）
 
+- **1.9.6** — 刷新图标悬停显示说明；点击后提示「字体信息已刷新」
+- **1.9.5** — 视口字体选择器刷新改为第 3 位图标按钮，带悬停与按下反馈
+- **1.9.4** — 视口字体选择器、字体菜单与偏好设置中新增可见的 **「强制刷新预览」** 按钮
+- **1.9.3** — 修复手动替换字体文件后预览全部失效；刷新按钮现会清除加载失败缓存并重建缩略图
 - **1.9.2** — 添加文本时文本框尺寸与偏移量默认为 0
 - **1.9.1** — 扩展商店合规：补全 maintainer 邮箱、移除 bl_info、预览缓存初始化更安全、msgbus/load_post 按需注册
 - **1.9.0** — 修复延迟加载字体目录时的崩溃（macOS `UnboundLocalError`）

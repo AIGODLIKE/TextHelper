@@ -636,13 +636,33 @@
   },
   {
     "context": "Operator",
-    "msgid": "Rescan system font folders",
-    "zh_Hant": "重新掃描系統字型資料夾"
+    "msgid": "Force Refresh Previews",
+    "zh_Hant": "強制重新整理預覽"
+  },
+  {
+    "context": "*",
+    "msgid": "Force Refresh",
+    "zh_Hant": "強制重新整理"
+  },
+  {
+    "context": "*",
+    "msgid": "Rescan system fonts and rebuild preview thumbnails",
+    "zh_Hant": "重新掃描系統字型並重建預覽縮圖"
   },
   {
     "context": "Operator",
-    "msgid": "Found {:d} fonts",
-    "zh_Hant": "找到 {:d} 個字型"
+    "msgid": "Font information refreshed",
+    "zh_Hant": "字型資訊已重新整理"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Rescan system font folders, clear failed-load caches, and rebuild font preview thumbnails",
+    "zh_Hant": "重新掃描系統字型、清除載入失敗快取並重建預覽縮圖"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Found {:d} fonts — rebuilding previews",
+    "zh_Hant": "找到 {:d} 個字型，正在重建預覽"
   },
   {
     "context": "Operator",
@@ -791,8 +811,8 @@
   },
   {
     "context": "*",
-    "msgid": "Font preview cache cleared — reopen the font list to rebuild",
-    "zh_Hant": "字型預覽快取已清除 — 請重新開啟字型列表以重建"
+    "msgid": "Font preview cache cleared — rebuilding thumbnails",
+    "zh_Hant": "字型預覽快取已清除，正在重建縮圖"
   },
   {
     "context": "*",
@@ -1223,6 +1243,26 @@
     "context": "Operator",
     "msgid": "Select a text object first",
     "zh_Hant": "請先選擇文字物件"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Active object is not a text object",
+    "zh_Hant": "當前物件不是文字物件"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Select the text object",
+    "zh_Hant": "請選擇該文字物件"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Text data is unavailable",
+    "zh_Hant": "文字資料不可用"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Select a text object or open add-on preferences",
+    "zh_Hant": "請選擇文字物件，或開啟外掛偏好設定"
   },
   {
     "context": "*",
@@ -1808,5 +1848,105 @@
     "context": "*",
     "msgid": "Default visible line count for the N-panel textbox (you can still drag the bottom edge to resize)",
     "zh_Hant": "N 面板文字框預設可見行數（仍可拖動底邊調整大小）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add a new text object in the 3D viewport with optional layout frame",
+    "zh_Hant": "在 3D 視圖區中新增新文字物件，可選自動建立排版框"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear all characters from the active text object",
+    "zh_Hant": "清空當前文字物件的所有字元"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Replace text content with the system clipboard",
+    "zh_Hant": "用系統剪貼簿內容替換文字"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Load text from a .txt file into the active text object",
+    "zh_Hant": "從 .txt 檔案匯入文字到當前文字物件"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Switch between horizontal and vertical text layout",
+    "zh_Hant": "切換橫排或豎排文字佈局"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set whether new vertical columns are added left or right",
+    "zh_Hant": "設定豎排新列新增在左側還是右側"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Start a new column in vertical text layout",
+    "zh_Hant": "在豎排佈局中開始新列"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Apply a typography preset to font size, spacing, and alignment",
+    "zh_Hant": "應用排版預設（字號、間距和對齊）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Open Blender's font browser when the 3D View context is required",
+    "zh_Hant": "在需要 3D 檢視上下文時開啟 Blender 字型瀏覽器"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Restore the default Bfont when no custom font is linked",
+    "zh_Hant": "未連結自定義字型時恢復預設 Bfont"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle bold, italic, underline, or strikethrough on selected text",
+    "zh_Hant": "切換所選文字的粗體、斜體、下劃線或刪除線"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set horizontal text alignment (left, center, right, or justify)",
+    "zh_Hant": "設定水平對齊（左、居中、右或兩端對齊）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set vertical text alignment within the object bounds",
+    "zh_Hant": "設定文字在物件範圍內的垂直對齊"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Increase or decrease character, word, line, or paragraph spacing",
+    "zh_Hant": "增大或減小字距、詞距、行距或段距"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Set font size, spacing, shear, or strikethrough position to an exact value",
+    "zh_Hant": "將字號、間距、傾斜或刪除線位置設為精確值"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add a layout frame for wrapping and truncating text",
+    "zh_Hant": "新增排版框以換行或截斷文字"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle text overflow between clip and expand to fit",
+    "zh_Hant": "在裁剪溢位與擴充套件適應之間切換"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Run the viewport HUD modal handler for toolbar and pickers",
+    "zh_Hant": "執行視圖區 HUD 模態處理器（工具欄與選擇器）"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Ensure the HUD modal operator is running",
+    "zh_Hant": "確保 HUD 模態運算子正在執行"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Filter the font list by script or language",
+    "zh_Hant": "按書寫系統或語言篩選字型列表"
   }
 ]

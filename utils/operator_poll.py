@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from ..i18n import _
 from .text_format import get_active_text, get_active_text_data
 
 
@@ -18,13 +19,13 @@ def poll_active_font(context):
 def poll_active_font_message(cls, context):
     obj = context.active_object
     if obj is None:
-        cls.poll_message_set("Select a text object first")
+        cls.poll_message_set(_("Select a text object first"))
         return False
     if obj.type != "FONT":
-        cls.poll_message_set("Active object is not a text object")
+        cls.poll_message_set(_("Active object is not a text object"))
         return False
     if not obj.select_get():
-        cls.poll_message_set("Select the text object")
+        cls.poll_message_set(_("Select the text object"))
         return False
     return True
 
@@ -37,7 +38,7 @@ def poll_active_font_data_message(cls, context):
     if not poll_active_font_message(cls, context):
         return False
     if get_active_text_data(context) is None:
-        cls.poll_message_set("Text data is unavailable")
+        cls.poll_message_set(_("Text data is unavailable"))
         return False
     return True
 
@@ -65,7 +66,7 @@ class WindowManagerPollMixin(TextHelperOperatorMixin):
     def poll(cls, context):
         wm = context.window_manager
         if wm is None or getattr(wm, "th_state", None) is None:
-            cls.poll_message_set("Text Helper is not ready yet")
+            cls.poll_message_set(_("Text Helper is not ready yet"))
             return False
         return True
 
@@ -76,6 +77,6 @@ class PreferencesPollMixin(TextHelperOperatorMixin):
     @classmethod
     def poll(cls, context):
         if context.preferences is None:
-            cls.poll_message_set("Preferences unavailable")
+            cls.poll_message_set(_("Preferences unavailable"))
             return False
         return True

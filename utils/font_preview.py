@@ -91,10 +91,17 @@ def preview_collection():
     return _PREVIEW_COLLECTION
 
 
+def _file_mtime_token(filepath):
+    try:
+        return str(os.path.getmtime(filepath))
+    except OSError:
+        return "0"
+
+
 def _preview_key(filepath, settings_hash):
-    digest = hashlib.md5(
-        (settings_hash + "|" + os.path.normcase(bpy.path.abspath(filepath))).encode("utf-8", errors="surrogateescape")
-    ).hexdigest()
+    abs_path = os.path.normcase(bpy.path.abspath(filepath))
+    payload = "|".join((settings_hash, abs_path, _file_mtime_token(abs_path)))
+    digest = hashlib.md5(payload.encode("utf-8", errors="surrogateescape")).hexdigest()
     return "thf_" + digest[:24]
 
 
@@ -318,8 +325,8 @@ def init_font_preview_cache():
     """Strip legacy ICC chunks from cached preview PNGs once per session."""
     try:
         _ensure_clean_cache()
-    except OSError as exc:
-        print(f"Text Helper: font preview cache cleanup failed ({exc})")
+    except OSError:
+        pass
 
 
 def queue_font_preview(context, filepath, display_name=""):
@@ -418,8 +425,18 @@ def warm_font_preview_queue(context, limit=16):
         queue_font_preview(context, item.filepath, item.display_name)
 
 
+def reset_font_load_caches():
+    """Clear session caches that block previews after font files change on disk."""
+    from .font_blf import clear_font_failure_cache
+    from .font_glyph import invalidate_glyph_cache
+
+    clear_font_failure_cache()
+    invalidate_glyph_cache()
+
+
 def invalidate_font_previews(clear_files=False):
     global _ACTIVE_SETTINGS_HASH, _PREVIEW_QUEUE, _QUEUE_KEYS, _FAILED_KEYS
+    reset_font_load_caches()
     _ACTIVE_SETTINGS_HASH = ""
     _PREVIEW_QUEUE.clear()
     _QUEUE_KEYS.clear()

@@ -10,6 +10,7 @@ from ..utils.text_orientation import apply_column_order, apply_orientation, inse
 class TH_OT_set_text_orientation(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_set_text_orientation"
     bl_label = "Set Text Orientation"
+    bl_description = "Switch between horizontal and vertical text layout"
     bl_options = {"REGISTER", "UNDO"}
 
     orientation: bpy.props.EnumProperty(
@@ -31,6 +32,7 @@ class TH_OT_set_text_orientation(ActiveFontDataPollMixin, Operator):
 class TH_OT_set_column_order(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_set_column_order"
     bl_label = "Set Column Order"
+    bl_description = "Set whether new vertical columns are added left or right"
     bl_options = {"REGISTER", "UNDO"}
 
     order: bpy.props.EnumProperty(
@@ -52,6 +54,7 @@ class TH_OT_set_column_order(ActiveFontDataPollMixin, Operator):
 class TH_OT_insert_column_break(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_insert_column_break"
     bl_label = "Insert Column Break"
+    bl_description = "Start a new column in vertical text layout"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):

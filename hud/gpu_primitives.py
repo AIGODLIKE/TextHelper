@@ -36,3 +36,40 @@ def draw_rounded_rect(shader, x, y, w, h, color, radius=6.0):
     shader.bind()
     shader.uniform_float("color", color)
     batch.draw(shader)
+
+
+def draw_line_segments(shader, segments, color):
+    if len(segments) < 2:
+        return
+    batch = batch_for_shader(shader, "LINES", {"pos": segments})
+    shader.bind()
+    shader.uniform_float("color", color)
+    batch.draw(shader)
+
+
+def draw_refresh_icon(shader, cx, cy, size, color):
+    """Circular refresh arrow for HUD icon buttons."""
+    radius = max(3.0, size * 0.38)
+    start = math.radians(130.0)
+    sweep = math.radians(300.0)
+    steps = 20
+    arc = []
+    for i in range(steps + 1):
+        ang = start + sweep * (i / steps)
+        arc.append((cx + math.cos(ang) * radius, cy + math.sin(ang) * radius))
+    segments = []
+    for i in range(len(arc) - 1):
+        segments.extend((arc[i], arc[i + 1]))
+    tip = arc[-1]
+    tip_ang = start + sweep
+    arm = max(2.5, size * 0.22)
+    left = (
+        tip[0] + math.cos(tip_ang + math.radians(135.0)) * arm,
+        tip[1] + math.sin(tip_ang + math.radians(135.0)) * arm,
+    )
+    right = (
+        tip[0] + math.cos(tip_ang + math.radians(95.0)) * arm,
+        tip[1] + math.sin(tip_ang + math.radians(95.0)) * arm,
+    )
+    segments.extend((tip, left, tip, right))
+    draw_line_segments(shader, segments, color)

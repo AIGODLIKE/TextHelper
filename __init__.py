@@ -1,4 +1,4 @@
-ADDON_PACKAGE = __name__
+ADDON_PACKAGE = __package__
 
 import bpy
 

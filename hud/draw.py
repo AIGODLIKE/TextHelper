@@ -10,6 +10,7 @@ from ..utils.text_bounds import get_toolbar_anchor
 from ..utils.text_format import get_active_text, is_strike_active, is_underline_active
 from ..hud.hit_test import hud_enabled
 from .gpu_primitives import draw_rounded_rect
+from .tooltip import draw_hud_tooltip
 from . import layout as layout_mod
 from .layout import (
     layout_toolbar,
@@ -187,30 +188,6 @@ def _tip_for_item(item):
     if item.tip_key:
         return _(item.tip_key)
     return ""
-
-
-def _draw_tooltip(shader, rect, text, scale, region_w, accent):
-    if not text:
-        return
-    tip_size = int(11 * scale)
-    blf.size(_FONT_ID, tip_size)
-    tw, th = blf.dimensions(_FONT_ID, text)
-    pad_x = 10.0 * scale
-    pad_y = 8.0 * scale
-    box_w = tw + pad_x * 2.0
-    box_h = th + pad_y * 2.0
-    cx = rect.x + rect.w * 0.5
-    margin = 4.0 * scale
-    tip_x = max(margin, min(region_w - box_w - margin, cx - box_w * 0.5))
-    tip_y = rect.y - box_h - 8.0 * scale
-    if tip_y < margin:
-        tip_y = rect.y + rect.h + 8.0 * scale
-
-    draw_rounded_rect(shader, tip_x, tip_y, box_w, box_h, (0.05, 0.05, 0.06, 0.97), 4.0 * scale)
-    draw_rounded_rect(shader, tip_x, tip_y, 2.0 * scale, box_h, (*accent[:3], 0.95), 2.0 * scale)
-    blf.color(_FONT_ID, 0.95, 0.95, 0.96, 1.0)
-    blf.position(_FONT_ID, tip_x + pad_x, tip_y + pad_y, 0)
-    blf.draw(_FONT_ID, text)
 
 
 def _draw_spacing_slider(shader, rect, item, text_data, scale, accent, muted, text_col):
@@ -415,7 +392,7 @@ def draw_hud():
             tip = _tip_for_item(hover_rect.item)
             if tip:
                 region_w = context.region.width if context.region else 1920
-                _draw_tooltip(shader, hover_rect, tip, scale, region_w, accent)
+                draw_hud_tooltip(shader, _FONT_ID, hover_rect, tip, scale, region_w, accent)
 
     gpu.state.blend_set("NONE")
 

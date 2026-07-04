@@ -6,6 +6,7 @@ from bpy.types import Operator
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs, prefs_are_editable
 from ..utils.operator_poll import ActiveFontPollMixin, TextHelperOperatorMixin
+from ..utils.operator_report import flush_pending_report
 from ..utils.view3d_context import (
     find_view3d_area_region,
     mouse_in_view3d_ui,
@@ -352,6 +353,7 @@ class _HudPointerEvent:
 class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
     bl_idname = "wm.texthelper_hud_modal"
     bl_label = "Text Helper HUD"
+    bl_description = "Run the viewport HUD modal handler for toolbar and pickers"
     bl_options = {"INTERNAL"}
 
     def modal(self, context, event):
@@ -491,6 +493,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                     font_hit = hit_test_font_picker(context, mx, my)
                     if font_hit is not None:
                         handle_font_picker_click(context, font_hit, mx, my)
+                        flush_pending_report(self, state)
                         tag_redraw()
                         return {"RUNNING_MODAL"}
 
@@ -606,6 +609,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
 class TH_OT_hud_ensure_modal(TextHelperOperatorMixin, Operator):
     bl_idname = "wm.texthelper_hud_ensure_modal"
     bl_label = "Ensure HUD Modal"
+    bl_description = "Ensure the HUD modal operator is running"
     bl_options = {"INTERNAL"}
 
     def execute(self, context):
@@ -671,7 +675,7 @@ class TH_OT_toggle_floating_toolbar(TextHelperOperatorMixin, Operator):
         prefs = get_addon_prefs(context)
         if prefs_are_editable(prefs):
             return True
-        cls.poll_message_set("Select a text object or open add-on preferences")
+        cls.poll_message_set(_("Select a text object or open add-on preferences"))
         return False
 
     def execute(self, context):

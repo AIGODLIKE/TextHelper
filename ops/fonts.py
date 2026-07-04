@@ -57,10 +57,9 @@ class TH_OT_browse_font(ActiveFontDataPollMixin, Operator):
 
 
 class TH_OT_open_font_safe(ActiveFontDataPollMixin, Operator):
-    """Fallback wrapper for Blender's font.open with 3D View context."""
-
     bl_idname = "font.texthelper_open_font_safe"
     bl_label = "Open Font (Blender)"
+    bl_description = "Open Blender's font browser when the 3D View context is required"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
@@ -89,6 +88,7 @@ class TH_OT_open_font_safe(ActiveFontDataPollMixin, Operator):
 class TH_OT_unlink_font(ActiveFontDataPollMixin, Operator):
     bl_idname = "font.texthelper_unlink_font"
     bl_label = "Unlink Font"
+    bl_description = "Restore the default Bfont when no custom font is linked"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
