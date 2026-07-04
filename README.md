@@ -78,7 +78,7 @@ blender --command extension validate
 blender --command extension build
 ```
 
-Output: `TextHelper-1.8.5.zip`
+Output: `TextHelper-1.8.6.zip`
 
 A helper script `_build_texthelper_zip.py` is also available in the parent `DATA` folder for quick local copies; use the Blender CLI output for Extension Store submissions.
 
@@ -86,6 +86,7 @@ A helper script `_build_texthelper_zip.py` is also available in the parent `DATA
 
 ## Recent changes (1.8.x)
 
+- **1.8.6** — README rewrite with feature highlights and demo videos
 - **1.8.5** — Default font preview sample text updated
 - **1.8.4** — Traditional Chinese (`zh_Hant`) UI; Blender TW phrasing (e.g. 視圖區)
 - **1.8.2** — Operator poll / i18n compliance fixes
