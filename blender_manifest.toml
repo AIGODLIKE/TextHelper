@@ -2,9 +2,9 @@ schema_version = "1.0.0"
 id = "TextHelper"
 name = "Text Helper"
 tagline = "Easy text input & font management"
-version = "1.9.0"
+version = "1.9.1"
 type = "add-on"
-maintainer = "ACGGIT"
+maintainer = "ACGGIT <1132692358@qq.com>"
 
 blender_version_min = "5.2.0"
 

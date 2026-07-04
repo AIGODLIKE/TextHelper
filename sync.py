@@ -3,6 +3,7 @@
 import bpy
 
 _MSG_BUS_OWNER = object()
+_subscribers_active = False
 
 
 def _on_text_changed():
@@ -39,7 +40,13 @@ def _load_post(_dummy):
     bpy.app.timers.register(_deferred, first_interval=0.1)
 
 
-def register():
+def ensure_subscribers():
+    """Register msgbus and load_post when Text Helper is first used."""
+    global _subscribers_active
+    if _subscribers_active:
+        return
+    _subscribers_active = True
+
     bpy.msgbus.subscribe_rna(
         key=(bpy.types.TextCurve, "body"),
         owner=_MSG_BUS_OWNER,
@@ -57,8 +64,23 @@ def register():
         bpy.app.handlers.load_post.append(_load_post)
 
 
+def register():
+    """Intentionally empty — subscribers attach lazily via ensure_subscribers()."""
+    pass
+
+
 def unregister():
+    global _subscribers_active
+    if not _subscribers_active:
+        return
+
     bpy.msgbus.clear_by_owner(_MSG_BUS_OWNER)
 
     if _load_post in bpy.app.handlers.load_post:
         bpy.app.handlers.load_post.remove(_load_post)
+
+    _subscribers_active = False
+
+
+def is_subscribers_active():
+    return _subscribers_active

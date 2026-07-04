@@ -316,7 +316,10 @@ def _schedule_queue():
 
 def init_font_preview_cache():
     """Strip legacy ICC chunks from cached preview PNGs once per session."""
-    _ensure_clean_cache()
+    try:
+        _ensure_clean_cache()
+    except OSError as exc:
+        print(f"Text Helper: font preview cache cleanup failed ({exc})")
 
 
 def queue_font_preview(context, filepath, display_name=""):

@@ -1,17 +1,3 @@
-bl_info = {
-    "name": "Text Helper",
-    "author": "ACGGIT",
-    "version": (1, 9, 0),
-    "blender": (5, 2, 0),
-    "location": "View3D > Sidebar > Text Helper",
-    "description": "Easy text input & font management",
-    "doc_url": "https://github.com/AIGODLIKE/TextHelper",
-    "tracker_url": "https://github.com/AIGODLIKE/TextHelper/issues",
-    "support": "COMMUNITY",
-    "category": "Object",
-    "license": "GPL-3.0-or-later",
-}
-
 ADDON_PACKAGE = __name__
 
 import bpy
@@ -26,12 +12,9 @@ def register():
     sync.register()
     ops.register()
     panels.register()
-    try:
-        from .utils.font_preview import init_font_preview_cache
+    from .utils.font_preview import init_font_preview_cache
 
-        init_font_preview_cache()
-    except Exception:
-        pass
+    init_font_preview_cache()
 
 
 def unregister():
@@ -51,10 +34,7 @@ def unregister():
     from .utils.font_preview import release_font_previews
 
     release_font_previews()
-    try:
-        from .utils.font_blf import clear_font_failure_cache
+    from .utils.font_blf import clear_font_failure_cache
 
-        clear_font_failure_cache()
-    except Exception:
-        pass
+    clear_font_failure_cache()
     i18n.unregister()

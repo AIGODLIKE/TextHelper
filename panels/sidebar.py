@@ -206,6 +206,9 @@ class VIEW3D_PT_text_helper_empty(Panel):
 
     @classmethod
     def poll(cls, context):
+        from ..sync import ensure_subscribers
+
+        ensure_subscribers()
         return get_active_text(context) is None
 
     def draw_header(self, context):

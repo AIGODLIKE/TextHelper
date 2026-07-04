@@ -16,8 +16,11 @@ def ensure(context=None):
 
     import bpy
 
+    from .sync import ensure_subscribers
     from .hud.draw import register as register_draw
     from .utils.text_format import get_active_text
+
+    ensure_subscribers()
 
     ctx = context or bpy.context
     if get_active_text(ctx) is None:
@@ -36,7 +39,10 @@ def request_ensure(context=None):
 
     import bpy
 
+    from .sync import ensure_subscribers
     from .utils.text_format import get_active_text
+
+    ensure_subscribers()
 
     ctx = context or bpy.context
     if get_active_text(ctx) is None:
