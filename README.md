@@ -15,12 +15,16 @@ Everything you want — **multi-line text input**, **live font preview**, **inva
 
 https://github.com/user-attachments/assets/b7d06527-94dc-4f77-ae7a-d5b3cc7e12ba
 
+<img width="1920" height="1034" alt="Multi-line textinput" src="https://github.com/user-attachments/assets/78887700-2bcb-40a7-a76e-1fc7cc98ee75" />
+
 - Multi-line text input (requires Blender 5.2+)
 - New line = Shift+Enter | Confirm = Enter
 
 ### Fonts
 
 https://github.com/user-attachments/assets/adf5a290-0b00-45e4-88f3-e48734f28172
+
+<img width="1920" height="1034" alt="FontSelector" src="https://github.com/user-attachments/assets/435197f9-1233-4d37-a79d-b1412a803869" />
 
 - **Live preview**: Preview font and weight in real time; use the current input as preview text (or the font name / a custom string)
 - **Live apply**: Change font and weight on hover
@@ -34,15 +38,24 @@ https://github.com/user-attachments/assets/adf5a290-0b00-45e4-88f3-e48734f28172
 
 https://github.com/user-attachments/assets/c6e7aafe-1c71-4a4c-872e-7ea1068af498
 
+<img width="1920" height="1034" alt="Horizontal  vertical text modes" src="https://github.com/user-attachments/assets/87920b34-dda8-4bbe-b8af-ce882137bcb4" />
+
+
 - **Horizontal** / **Vertical**: One-click switch; vertical mode supports left-to-right and right-to-left column order
 
 - **Fullwidth fix (alignment fix)**: Detect halfwidth characters and convert to fullwidth to fix alignment (note: some fonts with special glyphs may look odd)
 
 https://github.com/user-attachments/assets/b02935a9-20d5-4253-bfa8-67867faa306c
 
+<img width="1920" height="1034" alt="FixFont" src="https://github.com/user-attachments/assets/cc8c8ab1-de71-4907-a78f-6d6798205a0b" />
+
+
 ### Floating viewport toolbar (HUD)
 
 https://github.com/user-attachments/assets/df5342b7-7d49-47f3-ab6a-f1b6f32632e4
+
+<img width="1920" height="1034" alt="TextEdit" src="https://github.com/user-attachments/assets/32b73339-c424-47e8-a28f-6f0b3badc31a" />
+
 
 - Draggable; appears near the selected text
 - Style presets, **GPU font picker**, bold / italic / underline / strikethrough
@@ -86,6 +99,13 @@ Output: `TextHelper-1.9.6.zip`
 A helper script `_build_texthelper_zip.py` is also available in the parent `DATA` folder for quick local copies; use the Blender CLI output for Extension Store submissions.
 
 ---
+
+## Known limitations
+
+- For performance, font glyph matching samples only the first line of characters. If unknown characters appear, place them on the first line first to help font matching.
+- Vertical text: fullwidth fix does not work for fonts that lack fullwidth glyphs.
+- Vertical text: fullwidth fix may look poor on special symbols in some non-standard fonts.
+
 
 ## Recent changes (1.8.x / 1.9.x)
 
