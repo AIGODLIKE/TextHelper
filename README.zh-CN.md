@@ -22,6 +22,8 @@ https://github.com/user-attachments/assets/b7d06527-94dc-4f77-ae7a-d5b3cc7e12ba
 
 https://github.com/user-attachments/assets/adf5a290-0b00-45e4-88f3-e48734f28172
 
+<img width="1920" height="1034" alt="FontSelector" src="https://github.com/user-attachments/assets/435197f9-1233-4d37-a79d-b1412a803869" />
+
 - **实时预览**：实时预览字体/字重效果，支持当前输入内容用作预览（也可以使用字体名称或者自定义字符串）
 - **实时生效**：悬停时实时更换字体/字重
 - **无效字体排除**：支持根据输入内容**自动匹配**支持的字体（小提示，当输入内容变为“□”时,可以直接展开字体库修复，超级好用啊~）
