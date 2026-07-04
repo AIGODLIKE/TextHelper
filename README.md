@@ -3,7 +3,9 @@
 # Text Helper
 
 A Blender add-on that lets you edit 3D text as naturally as drinking water.
-**Multi-line text input**, **live font preview**, **invalid font exclusion**, **font family weight selection**, **one-click horizontal/vertical layout**, and an **ultra-comfortable UI** — it's all here!
+Everything you want — **multi-line text input**, **live font preview**, **invalid font exclusion**, **font family weight selection**, **one-click horizontal/vertical layout**, and an **ultra-comfortable UI** — is here!
+
+<img width="2560" height="1380" alt="image" src="https://github.com/user-attachments/assets/b7cd58c7-2943-4c40-840e-67e30e1009b1" />
 
 ---
 
@@ -14,7 +16,7 @@ A Blender add-on that lets you edit 3D text as naturally as drinking water.
 https://github.com/user-attachments/assets/b7d06527-94dc-4f77-ae7a-d5b3cc7e12ba
 
 - Multi-line text input (requires Blender 5.2+)
-- New line = Shift+Enter · Confirm = Enter
+- New line = Shift+Enter | Confirm = Enter
 
 ### Fonts
 
@@ -33,6 +35,7 @@ https://github.com/user-attachments/assets/adf5a290-0b00-45e4-88f3-e48734f28172
 https://github.com/user-attachments/assets/c6e7aafe-1c71-4a4c-872e-7ea1068af498
 
 - **Horizontal** / **Vertical**: One-click switch; vertical mode supports left-to-right and right-to-left column order
+
 - **Fullwidth fix (alignment fix)**: Detect halfwidth characters and convert to fullwidth to fix alignment (note: some fonts with special glyphs may look odd)
 
 https://github.com/user-attachments/assets/b02935a9-20d5-4253-bfa8-67867faa306c
