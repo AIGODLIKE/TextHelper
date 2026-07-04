@@ -21,26 +21,12 @@ def tag_all_areas_redraw(context=None):
             area.tag_redraw()
 
 
-def _bounds_from_object(obj):
-    bb = obj.bound_box
-    xs = [corner[0] for corner in bb]
-    ys = [corner[1] for corner in bb]
-    x0, x1 = min(xs), max(xs)
-    y0, y1 = min(ys), max(ys)
-    width = max(x1 - x0, 1.0)
-    height = max(y1 - y0, 0.5)
-    return x0, y0, width, height
-
-
-def normalize_frame_size(obj, tb):
-    """Ensure a text box has non-zero size (some ops leave 0×0 frames)."""
-    if tb.width > 0.0 and tb.height > 0.0:
-        return
-    _x0, _y0, width, height = _bounds_from_object(obj)
-    if tb.width <= 0.0:
-        tb.width = width
-    if tb.height <= 0.0:
-        tb.height = height
+def _reset_textbox_defaults(tb):
+    """Default layout frame: zero size and zero offset (Blender Text Boxes panel)."""
+    tb.width = 0.0
+    tb.height = 0.0
+    tb.x = 0.0
+    tb.y = 0.0
 
 
 def _run_textbox_add(context, obj):
@@ -77,13 +63,7 @@ def add_layout_frame(context, obj=None):
         return None
 
     tb = text_data.text_boxes[-1]
-    if len(text_data.text_boxes) > count_before:
-        _x0, _y0, width, height = _bounds_from_object(obj)
-        if tb.width <= 0.0:
-            tb.width = width
-        if tb.height <= 0.0:
-            tb.height = height
-    normalize_frame_size(obj, tb)
+    _reset_textbox_defaults(tb)
     text_data.update_tag()
     obj.update_tag()
     return tb
@@ -98,8 +78,5 @@ def ensure_layout_frame(context, obj=None):
 
     text_data = obj.data
     if text_data.text_boxes:
-        tb = text_data.text_boxes[0]
-        normalize_frame_size(obj, tb)
-        text_data.update_tag()
-        return tb
+        return text_data.text_boxes[0]
     return add_layout_frame(context, obj)

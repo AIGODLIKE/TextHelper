@@ -81,7 +81,7 @@ blender --command extension validate
 blender --command extension build
 ```
 
-生成：`TextHelper-1.9.1.zip`
+生成：`TextHelper-1.9.2.zip`
 
 上级 `DATA` 目录中的 `_build_texthelper_zip.py` 可用于快速本地复制；提交 Extension Store 请使用 Blender CLI 生成的 zip。
 
@@ -89,6 +89,7 @@ blender --command extension build
 
 ## 近期更新（1.8.x / 1.9.x）
 
+- **1.9.2** — 添加文本时文本框尺寸与偏移量默认为 0
 - **1.9.1** — 扩展商店合规：补全 maintainer 邮箱、移除 bl_info、预览缓存初始化更安全、msgbus/load_post 按需注册
 - **1.9.0** — 修复延迟加载字体目录时的崩溃（macOS `UnboundLocalError`）
 - **1.8.6** — README 重写，亮点功能说明与演示视频
