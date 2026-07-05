@@ -213,7 +213,7 @@ class TH_TextCurveProps(PropertyGroup):
         default=False,
     )
     th_strike_position: FloatProperty(
-        name="Strikethrough Position",
+        name="Strike Pos",
         description="Vertical line position used when strikethrough is enabled",
         default=0.4,
         min=-0.2,

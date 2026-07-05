@@ -139,7 +139,7 @@ class TH_OT_set_spacing_value(ActiveFontDataPollMixin, Operator):
             ("SHEAR", "Shear", ""),
             ("LINE", "Line", ""),
             ("PARA", "Paragraph", ""),
-            ("STRIKE_POS", "Strikethrough Position", ""),
+            ("STRIKE_POS", "Strike Pos", ""),
         ],
     )
     value: bpy.props.FloatProperty(default=0.0)
@@ -186,7 +186,7 @@ class TH_OT_reset_format_value(ActiveFontDataPollMixin, Operator):
             ("SHEAR", "Shear", ""),
             ("LINE", "Line", ""),
             ("PARA", "Paragraph", ""),
-            ("STRIKE_POS", "Strikethrough Position", ""),
+            ("STRIKE_POS", "Strike Pos", ""),
         ],
     )
 

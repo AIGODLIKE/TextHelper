@@ -399,7 +399,7 @@ def layout_strike_panel(_anchor_x, _tool_row_y, _row_h, scale, text_data, tool_r
         width=_STRIKE_PANEL_WIDTH,
         op="font.texthelper_set_spacing_value",
         op_kwargs={"mode": "STRIKE_POS"},
-        title_key="Strikethrough Position",
+        title_key="Strike Pos",
         tip_key="Adjust strikethrough line position (↺ resets to default)",
         reset_mode="STRIKE_POS",
     )
