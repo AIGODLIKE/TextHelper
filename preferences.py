@@ -49,6 +49,10 @@ def _invalidate_font_previews(_self, context):
     invalidate_and_rebuild_font_previews(context, clear_files=True)
 
 
+def _auto_show_floating_toolbar_changed(_self, context):
+    _tag_hud_redraw(_self, context)
+
+
 class TH_Preferences(AddonPreferences):
     bl_idname = "TextHelper"
 
@@ -57,6 +61,12 @@ class TH_Preferences(AddonPreferences):
         description="Show the floating toolbar near selected text in the 3D viewport",
         default=True,
         update=_tag_hud_redraw,
+    )
+    auto_show_floating_toolbar: BoolProperty(
+        name="Auto-Show Floating Toolbar",
+        description="Automatically display the floating toolbar when a text object is selected",
+        default=True,
+        update=_auto_show_floating_toolbar_changed,
     )
     show_header_toolbar: BoolProperty(
         name="Header Toolbar",
@@ -266,6 +276,7 @@ class TH_Preferences(AddonPreferences):
         box = layout.box()
         box.label(text=_("Viewport"), icon="VIEW3D")
         box.prop(self, "show_floating_toolbar")
+        box.prop(self, "auto_show_floating_toolbar")
         box.prop(self, "show_header_toolbar")
         box.prop(self, "auto_layout_frame")
         box.prop(self, "toolbar_offset")

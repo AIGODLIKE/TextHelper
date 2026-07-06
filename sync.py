@@ -73,11 +73,12 @@ def _on_active_object_changed():
     from .runtime import request_ensure
     from .utils.font_loader import prefetch_font_catalog
 
-    request_ensure()
     context = bpy.context
     obj = context.active_object if context is not None else None
     if obj is not None and obj.type == "FONT":
         prefetch_font_catalog(context)
+
+    request_ensure(context)
 
 
 @bpy.app.handlers.persistent
@@ -146,6 +147,12 @@ def ensure_subscribers():
 
     if _load_post not in bpy.app.handlers.load_post:
         bpy.app.handlers.load_post.append(_load_post)
+
+    def _bootstrap_hud():
+        _on_active_object_changed()
+        return None
+
+    bpy.app.timers.register(_bootstrap_hud, first_interval=0.0)
 
 
 def register():

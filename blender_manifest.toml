@@ -2,7 +2,7 @@ schema_version = "1.0.0"
 id = "TextHelper"
 name = "Text Helper"
 tagline = "Easy text input & font management"
-version = "2.0.0"
+version = "2.0.2"
 type = "add-on"
 maintainer = "ACGGIT <1132692358@qq.com>"
 
@@ -27,6 +27,7 @@ paths_exclude_pattern = [
     ".gitattributes",
     "README.md",
     "README.zh-CN.md",
+    "RELEASE_NOTES*.md",
     "/*.zip",
     "*.blend1",
     ".vscode/",

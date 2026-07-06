@@ -74,14 +74,9 @@ def _case_pressed(text_data, case: str) -> bool:
 
 
 def floating_toolbar_pressed(context, text_data=None):
-    from ..utils.addon_prefs import get_addon_prefs
+    from ..hud.hit_test import hud_enabled
 
-    prefs = get_addon_prefs(context)
-    if not getattr(prefs, "show_floating_toolbar", True):
-        return False
-    if text_data is not None:
-        return getattr(text_data.text_helper, "th_hud_visible", True)
-    return True
+    return hud_enabled(context, text_data)
 
 
 def _draw_header_controls(row, context, text_data):

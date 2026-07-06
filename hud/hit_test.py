@@ -5,7 +5,15 @@ from ..utils.font_context import is_font_edit_mode
 from ..utils.text_format import get_active_text
 from ..utils.view3d_context import view3d_override
 
-__all__ = ["hit_test", "slider_value_from_mouse", "get_last_rects", "get_rects_for_context", "get_hud_hit_rects", "hud_enabled"]
+__all__ = [
+    "hit_test",
+    "slider_value_from_mouse",
+    "get_last_rects",
+    "get_rects_for_context",
+    "get_hud_hit_rects",
+    "hud_enabled",
+    "set_hud_visibility",
+]
 
 
 def hud_enabled(context, text_data=None):
@@ -17,9 +25,18 @@ def hud_enabled(context, text_data=None):
     if text_data is None:
         obj = get_active_text(context)
         text_data = obj.data if obj else None
-    if text_data is not None and not getattr(text_data.text_helper, "th_hud_visible", True):
+    if text_data is None:
         return False
-    return True
+    helper = text_data.text_helper
+    if getattr(prefs, "auto_show_floating_toolbar", True):
+        return bool(getattr(helper, "th_hud_visible", True))
+    return bool(getattr(helper, "th_hud_user_shown", False))
+
+
+def set_hud_visibility(text_helper, visible: bool) -> None:
+    """Persist floating-toolbar visibility without selection-time RNA side effects."""
+    text_helper.th_hud_visible = visible
+    text_helper.th_hud_user_shown = visible
 
 
 def get_last_rects():

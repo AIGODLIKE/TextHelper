@@ -12,9 +12,6 @@ def register():
     sync.register()
     ops.register()
     panels.register()
-    from .utils.font_preview import init_font_preview_cache
-
-    init_font_preview_cache()
 
 
 def unregister():

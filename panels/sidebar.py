@@ -173,9 +173,9 @@ class VIEW3D_PT_text_helper(Panel):
     def poll(cls, context):
         if get_active_text(context) is None:
             return False
-        from ..runtime import request_ensure
+        from ..sync import ensure_subscribers
 
-        request_ensure()
+        ensure_subscribers()
         return True
 
     def draw_header(self, context):

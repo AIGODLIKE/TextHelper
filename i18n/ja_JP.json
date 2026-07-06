@@ -341,6 +341,16 @@
   },
   {
     "context": "*",
+    "msgid": "Auto-Show Floating Toolbar",
+    "ja_JP": "テキスト選択時に自動表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Automatically display the floating toolbar when a text object is selected",
+    "ja_JP": "テキストオブジェクト選択時にフローティングツールバーを自動表示"
+  },
+  {
+    "context": "*",
     "msgid": "Shows below selected text in the 3D viewport",
     "ja_JP": "3D ビューポートで選択したテキストの下に表示"
   },

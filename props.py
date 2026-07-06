@@ -183,6 +183,12 @@ class TH_TextCurveProps(PropertyGroup):
         description="Show the floating toolbar for this text object in the viewport",
         default=True,
     )
+    th_hud_user_shown: BoolProperty(
+        name="HUD User Shown",
+        description="User explicitly enabled the floating toolbar while auto-show is off",
+        default=False,
+        options={"HIDDEN"},
+    )
     th_pre_bold_size: FloatProperty(
         name="Pre Bold Size",
         description="Stored size before faux-bold enlargement",

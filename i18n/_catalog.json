@@ -341,6 +341,16 @@
   },
   {
     "context": "*",
+    "msgid": "Auto-Show Floating Toolbar",
+    "zh_HANS": "选中文字时自动显示浮动工具栏"
+  },
+  {
+    "context": "*",
+    "msgid": "Automatically display the floating toolbar when a text object is selected",
+    "zh_HANS": "选中文字对象时自动显示浮动工具栏"
+  },
+  {
+    "context": "*",
     "msgid": "Shows below selected text in the 3D viewport",
     "zh_HANS": "显示在 3D 视口中选中文字的下方"
   },

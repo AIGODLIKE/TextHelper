@@ -26,6 +26,11 @@ def ensure(context=None):
     if get_active_text(ctx) is None:
         return False
 
+    from .hud.hit_test import hud_enabled
+
+    if not hud_enabled(ctx):
+        return False
+
     if not _draw_registered:
         register_draw()
         _draw_registered = True
@@ -50,6 +55,11 @@ def request_ensure(context=None):
 
     ctx = context or bpy.context
     if get_active_text(ctx) is None:
+        return
+
+    from .hud.hit_test import hud_enabled
+
+    if not hud_enabled(ctx):
         return
 
     if _ensure_timer is not None:

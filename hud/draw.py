@@ -229,12 +229,6 @@ def draw_hud():
     if not _is_view3d_draw_context(context):
         return
 
-    from ..ops.hud_modal import modal_running
-    from ..runtime import request_ensure
-
-    if not modal_running():
-        request_ensure()
-
     obj = get_active_text(context)
     if obj is None:
         layout_mod._LAST_RECTS = []

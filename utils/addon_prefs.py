@@ -5,6 +5,7 @@ import sys
 
 class _DefaultPrefs:
     show_floating_toolbar = True
+    auto_show_floating_toolbar = True
     show_header_toolbar = True
     auto_layout_frame = True
     toolbar_offset = 100.0

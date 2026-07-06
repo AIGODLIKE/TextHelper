@@ -719,7 +719,9 @@ class TH_OT_hide_hud(ActiveFontPollMixin, Operator):
         obj = get_active_text(context)
         if obj is None:
             return {"CANCELLED"}
-        obj.data.text_helper.th_hud_visible = False
+        from ..hud.hit_test import set_hud_visibility
+
+        set_hud_visibility(obj.data.text_helper, False)
         tag_redraw()
         return {"FINISHED"}
 
@@ -739,7 +741,9 @@ class TH_OT_show_hud(ActiveFontPollMixin, Operator):
             self.report({"INFO"}, _("Enable Floating Toolbar in add-on preferences"))
             return {"CANCELLED"}
         obj = get_active_text(context)
-        obj.data.text_helper.th_hud_visible = True
+        from ..hud.hit_test import set_hud_visibility
+
+        set_hud_visibility(obj.data.text_helper, True)
         bpy.ops.wm.texthelper_hud_ensure_modal()
         tag_redraw()
         self.report({"INFO"}, _("Floating toolbar shown — look below the text in the 3D viewport"))
@@ -774,9 +778,12 @@ class TH_OT_toggle_floating_toolbar(TextHelperOperatorMixin, Operator):
             if not getattr(prefs, "show_floating_toolbar", True):
                 self.report({"INFO"}, _("Enable Floating Toolbar in add-on preferences"))
                 return {"CANCELLED"}
+            from ..hud.hit_test import hud_enabled, set_hud_visibility
+
             text_data = obj.data
-            text_data.text_helper.th_hud_visible = not getattr(text_data.text_helper, "th_hud_visible", True)
-            if text_data.text_helper.th_hud_visible:
+            visible = not hud_enabled(context, text_data)
+            set_hud_visibility(text_data.text_helper, visible)
+            if visible:
                 bpy.ops.wm.texthelper_hud_ensure_modal()
         else:
             if not prefs_are_editable(prefs):
