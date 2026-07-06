@@ -68,6 +68,15 @@ https://github.com/user-attachments/assets/df5342b7-7d49-47f3-ab6a-f1b6f32632e4
 - 繁体中文界面（`zh_Hant`）
 - 日文界面（`ja_JP`）
 - 可自定义 HUD 强调色与缩放
+- 跟随系统配色-支持自适应主题颜色
+
+
+https://github.com/user-attachments/assets/65228869-fa4b-4cf9-bce6-9cc9a0790229
+
+
+
+
+
 
 ---
 
