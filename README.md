@@ -31,7 +31,7 @@ https://github.com/user-attachments/assets/adf5a290-0b00-45e4-88f3-e48734f28172
 - **Invalid font exclusion**: Automatically match fonts that support your input (tip: when text turns into “□”, open the font library to fix — works great!)
 - **Weight merging**: Merge weights within the same font family
 - **Filters**: Filter by language, support status, or multi-weight families
-- **Search**: Search by display name, filename, PostScript name, CJK family names; pinyin and kana helpers for Chinese/Japanese
+- **Search**: Search fonts (English keyboard input only for now; paste text in other scripts to search)
 - **Cross-platform**: Scan **system fonts** (Windows / macOS / Linux)
 
 ### Horizontal & vertical layout
@@ -94,25 +94,22 @@ https://github.com/user-attachments/assets/df5342b7-7d49-47f3-ab6a-f1b6f32632e4
 | 15 | Character count & configurable text length limit | ✗ | ✓ |
 | 16 | Localized UI (zh_Hans / zh_Hant / ja_JP) for text tools | ✗ | ✓ |
 | 17 | In-viewport text edit mode (EDIT_FONT) | ✓ | ✓ |
-| 18 | No add-on install required | ✓ | ✗ |
 
 ### Text Helper 1.9 vs 2.0
 
 | | Improvement | 1.9.x | 2.0 |
 |---:|---|:---:|:---:|
-| 1 | **Font picker opens with list visible immediately** (async catalog prefetch) | ✗ | ✓ |
-| 2 | **Non-blocking font scan** — UI stays responsive while catalog loads | ✗ | ✓ |
+| 1 | **Fast loading** (async font catalog prefetch) | ✗ | ✓ |
+| 2 | **Non-blocking scan** — UI stays responsive while catalog loads | ✗ | ✓ |
 | 3 | Filter / search result cache (reopen picker without rescanning) | ✗ | ✓ |
 | 4 | **“Hide unsupported” uses chunked per-frame glyph refine** (list first, filter later) | ✗ | ✓ |
 | 5 | Family-level glyph checks before per-file work (fewer redundant tests) | ✗ | ✓ |
 | 6 | Viewport **header toolbar** (formatting without floating HUD) | partial | ✓ |
 | 7 | HUD spacing sliders: click-to-type, drag-select, clipboard shortcuts | ✗ | ✓ |
 | 8 | Multi-select batch editing with undo | ✗ | ✓ |
-| 9 | Theme-aware HUD colors (light / dark Blender themes) | ✗ | ✓ |
-| 10 | Configurable multi-line limit (default **20,000** chars) | ✗ | ✓ |
-| 11 | OpenType weight grouping preference (family name vs file name) | ✗ | ✓ |
-| 12 | Operator tooltips fully translated (ja / zh_Hant) | partial | ✓ |
-| 13 | Extension-platform packaging & lazy handler registration | partial | ✓ |
+| 9 | Theme-adaptive HUD colors (light / dark Blender themes) | ✗ | ✓ |
+| 10 | OpenType weight grouping preference (family name vs file name) | ✗ | ✓ |
+| 11 | Operator tooltips fully translated (ja / zh_Hant) | partial | ✓ |
 
 > **Font picker performance (2.0):** opening the list no longer waits for a full system-font scan or a complete glyph audit. The catalog loads in the background, cached filters reuse previous work, and unsupported fonts are removed incrementally across frames so you can scroll and pick fonts right away.
 
