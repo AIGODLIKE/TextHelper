@@ -109,6 +109,7 @@ A helper script `_build_texthelper_zip.py` is also available in the parent `DATA
 
 ## Recent changes (1.8.x / 1.9.x)
 
+- **1.9.17** — Shorten Japanese strikethrough slider label to「取消位置」
 - **1.9.16** — Shorten strikethrough slider label to "Strike Pos" in the viewport HUD
 - **1.9.6** — Refresh icon tooltip on hover; status message "Font information refreshed" after click
 - **1.9.5** — Viewport font picker refresh control is a compact icon button (slot 3) with hover and press feedback
