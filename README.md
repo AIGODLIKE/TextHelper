@@ -71,6 +71,53 @@ https://github.com/user-attachments/assets/df5342b7-7d49-47f3-ab6a-f1b6f32632e4
 
 ---
 
+## Comparison
+
+### Blender native vs Text Helper
+
+| | Feature | Blender native | Text Helper |
+|---:|---|:---:|:---:|
+| 1 | Multi-line text editor in N-panel (Blender 5.2+) | ✓ | ✓ |
+| 2 | Edit while seeing full paragraph layout in sidebar | ✗ | ✓ |
+| 3 | Browse & search **system fonts** (not just fonts already in the .blend) | ✗ | ✓ |
+| 4 | Live font / weight **preview on hover** | ✗ | ✓ |
+| 5 | Live font / weight **apply on hover** | ✗ | ✓ |
+| 6 | Filter fonts by glyph support for your text | ✗ | ✓ |
+| 7 | Pinyin / kana assisted font search (CJK) | ✗ | ✓ |
+| 8 | Font favorites, recents, family weight picker | ✗ | ✓ |
+| 9 | Floating viewport toolbar next to selected text | ✗ | ✓ |
+| 10 | Viewport header formatting toolbar | ✗ | ✓ |
+| 11 | One-click horizontal ↔ vertical layout + column order | ✗ | ✓ |
+| 12 | Fullwidth fix for vertical CJK alignment | ✗ | ✓ |
+| 13 | Style presets + spacing sliders with inline numeric edit | ✗ | ✓ |
+| 14 | Multi-select batch text formatting | ✗ | ✓ |
+| 15 | Character count & configurable text length limit | ✗ | ✓ |
+| 16 | Localized UI (zh_Hans / zh_Hant / ja_JP) for text tools | ✗ | ✓ |
+| 17 | In-viewport text edit mode (EDIT_FONT) | ✓ | ✓ |
+| 18 | No add-on install required | ✓ | ✗ |
+
+### Text Helper 1.9 vs 2.0
+
+| | Improvement | 1.9.x | 2.0 |
+|---:|---|:---:|:---:|
+| 1 | **Font picker opens with list visible immediately** (async catalog prefetch) | ✗ | ✓ |
+| 2 | **Non-blocking font scan** — UI stays responsive while catalog loads | ✗ | ✓ |
+| 3 | Filter / search result cache (reopen picker without rescanning) | ✗ | ✓ |
+| 4 | **“Hide unsupported” uses chunked per-frame glyph refine** (list first, filter later) | ✗ | ✓ |
+| 5 | Family-level glyph checks before per-file work (fewer redundant tests) | ✗ | ✓ |
+| 6 | Viewport **header toolbar** (formatting without floating HUD) | partial | ✓ |
+| 7 | HUD spacing sliders: click-to-type, drag-select, clipboard shortcuts | ✗ | ✓ |
+| 8 | Multi-select batch editing with undo | ✗ | ✓ |
+| 9 | Theme-aware HUD colors (light / dark Blender themes) | ✗ | ✓ |
+| 10 | Configurable multi-line limit (default **20,000** chars) | ✗ | ✓ |
+| 11 | OpenType weight grouping preference (family name vs file name) | ✗ | ✓ |
+| 12 | Operator tooltips fully translated (ja / zh_Hant) | partial | ✓ |
+| 13 | Extension-platform packaging & lazy handler registration | partial | ✓ |
+
+> **Font picker performance (2.0):** opening the list no longer waits for a full system-font scan or a complete glyph audit. The catalog loads in the background, cached filters reuse previous work, and unsupported fonts are removed incrementally across frames so you can scroll and pick fonts right away.
+
+---
+
 ## Installation
 
 ### Extension platform (recommended)
@@ -106,98 +153,6 @@ A helper script `_build_texthelper_zip.py` is also available in the parent `DATA
 - Vertical text: fullwidth fix does not work for fonts that lack fullwidth glyphs.
 - Vertical text: fullwidth fix may look poor on special symbols in some non-standard fonts.
 
-
-## Recent changes
-
-### 2.0.0
-
-- **Multi-line character limit**: default 20,000 characters; configurable in add-on preferences (256–50,000; Blender hard cap 50,000). Sidebar shows `current / limit` while editing.
-- **Extension compliance**: undo/redo handlers register lazily on first use; text limits enforced consistently in horizontal and vertical modes; official `blender --command extension build` packaging.
-- **Add Text**: creates FONT curves via low-level API instead of wrapping `bpy.ops.object.text_add`.
-- **Manifest**: extension tag set to `User Interface`.
-- Cumulative improvements since **1.9.17** (header toolbar, font search/favorites/filters, HUD inline slider editing, multi-select batch editing, theme-aware HUD, ja/zh_Hant i18n, and fixes through 1.9.99) — see 1.9.x entries below.
-
-### 1.9.x (1.8.x–1.9.x history)
-
-- **1.9.86** — Weight grouping: PostScript prefix (GenYoGothic2) merges CJK/English name-table splits; abbrev suffixes (B, EL, …)
-- **1.9.85** — Font prefs: Weight Grouping (OpenType family vs file name) for multi-weight merge
-- **1.9.84** — Font picker: chunked async glyph filter when hiding unsupported fonts (fast list first, refine per frame)
-- **1.9.83** — Font picker open perf: async catalog prefetch, filter cache, family-level glyph checks
-- **1.9.82** — Fix operator hover tooltips not translating (description hook + i18n registration)
-- **1.9.81** — HUD/Header ja: shorten slider labels (Font Size → 字級, Line Height → 行高, etc.)
-- **1.9.80** — Header strikethrough position: popover next to S when enabled (not at slider row end)
-- **1.9.79** — Bfont: remove bundled preview workaround; show「内置字体暂不支持」instead of thumbnail/glyph audit
-- **1.9.78** — Bfont: skip false missing-glyph warnings; preview CJK via UI font stack
-- **1.9.77** — Bfont preview: recognize Blender 5.2 `Bfont Regular` datablock name
-- **1.9.76** — Bfont preview via bundled `bfont.ttf`; fix blend-font preview queue for `blend://` paths
-- **1.9.75** — Header sliders read/write the same values as HUD (no RNA max clamp)
-- **1.9.74** — Reload-safe BLF in HUD text fields; safer shutdown when Blender is quitting
-- **1.9.73** — Fix HUD slider `blf` crash; Bfont/blend-embedded font previews; safer add-on shutdown
-- **1.9.72** — HUD numeric fields and font search support drag-select, select-all (Ctrl+A), cut/copy/paste, and arrow-key navigation
-- **1.9.71** — Font picker includes blend-embedded fonts (e.g. Bfont); searchable and applicable without a disk path
-- **1.9.70** — Font search: suffix match (`font` finds `Bfont`); family+weight in index; multi-weight filter ignored while searching
-- **1.9.69** — Font search supports prefix typeahead (`sourc` matches `source`; avoids mid-word hits like `sour` in `resource`)
-- **1.9.68** — Font search excludes copyright/license name-table strings (fixes `source` matching Arial/Calibri via “open source”)
-- **1.9.67** — Tighten font search aliases: no Noto↔思源 cross-match, no generic 黑体/宋体 groups, word-boundary for short English queries
-- **1.9.66** — Font search: cross-language aliases (e.g. 思源 ↔ source/siyuan), index all display-name modes
-- **1.9.65** — Fix add-on load error in N-panel text clamp (`global _module_sync_guard` syntax)
-- **1.9.64** — Font name display preference applies to HUD/header current font; default is Family Name; N-panel text capped at 50,000 chars (Blender limit)
-- **1.9.63** — Fix HUD spacing slider value field crash (`NameError: blf is not defined`)
-- **1.9.62** — Fix OpenType name table parsing so CJK family names (e.g. 思源黑体) display in Family Name mode
-- **1.9.61** — HUD spacing sliders: click value to type; slider max expands when value exceeds default range
-- **1.9.60** — Fix CJK font filtering on Blender 4.2–4.3 (missing blf.NO_FALLBACK); fix Source Han rejected by Chinese script filter
-- **1.9.59** — HUD font picker: hover tooltips for search, filters, sort, language, refresh, clear, favorites, and close
-- **1.9.58** — Fix favorites chip i18n; reset notice when already default; HUD drag no longer undoable
-- **1.9.57** — Filter reset moved to filter row end (× icon); status-bar notice when filters restore to defaults
-- **1.9.56** — HUD toolbar position stored on the text object so font/format undo does not move it
-- **1.9.55** — Font search hover highlight; reset button restores all filters to defaults
-- **1.9.54** — Add-on preference for font name display: file name, family, full name, or PostScript
-- **1.9.53** — HUD font picker: sort chip + clearer compact filter chips (parity with header popover)
-- **1.9.52** — HUD font picker: record Recently Used only when the picker closes, not on hover preview
-- **1.9.51** — Font list sort (Recently Used default); multi-field search with pinyin/kana helpers
-- **1.9.50** — Font picker scrollbar track/thumb adapt to light/dark panel backdrop
-- **1.9.49** — Font picker: search field matches filter chips; list/scrollbar colors adapt to light/dark UI
-- **1.9.48** — Font picker title bar uses same background as outer panel shell
-- **1.9.47** — Font picker outer panel background matches floating toolbar HUD backdrop
-- **1.9.46** — Default HUD scale is 0.8
-- **1.9.45** — Follow System: contrast-safe text colors for light/dark Blender themes (fields, chips, sliders)
-- **1.9.44** — Follow System: sync HUD label/value text colors on toolbar, sliders, and picker panels
-- **1.9.43** — HUD accent default preset is Blue again (Follow System remains available)
-- **1.9.42** — Follow System HUD: hover matches pressed tool color; drag handle uses same base fill as other buttons
-- **1.9.41** — HUD accent: removed Green and Cyan presets
-- **1.9.40** — HUD accent: new “Follow System” preset matches Blender interface theme (tool header colors)
-- **1.9.39** — HUD accent: active toggles use full accent color; default theme blue (#4772B3)
-- **1.9.38** — Header font favorites: SOLO_OFF (unfavorited) / SOLO_ON (favorited)
-- **1.9.37** — Font coverage filter checks all lines of text object body (deduplicated chars), not just the first line
-- **1.9.35** — HUD font picker: chip hover feedback; refresh button moved to language row; equal-width filter chips
-- **1.9.34** — HUD font picker favorite button hover highlight
-- **1.9.33** — Fix header font favorite toggle: use Blender BOOKMARKS icon (Unicode stars do not render in UI)
-- **1.9.31** — Header font list: star favorite toggle, family weight count, grouped rows; filter chips with translated labels
-- **1.9.29** — Font favorites + filters (favorites, multi-weight, variable fonts); header refresh icon-only
-- **1.9.27** — Preserve font weight names from filenames (Normal, Roman, etc.) instead of collapsing to Regular
-- **1.9.25** — Header i18n; floating toolbar toggle before preset; hover preview in font/weight popovers
-- **1.9.24** — Header toolbar: spacing sliders on one row, right-aligned; shorter control labels
-- **1.9.23** — Header toolbar: after active tool settings; hide-unsupported font filter; case toggles; inline size/spacing/shear sliders; strike position
-- **1.9.22** — Header toolbar: append after tool settings; font/weight popovers (text list, no thumbnails)
-- **1.9.21** — Fix header toolbar: inject into viewport header via `VIEW3D_HT_*` hooks
-- **1.9.20** — Viewport header toolbar mirrors HUD formatting when floating toolbar is off
-- **1.9.19** — Fix HUD undo: refresh text curves after undo/redo; sliders apply RNA directly
-- **1.9.18** — Multi-select batch editing; floating toolbar changes support undo
-- **1.9.17** — Shorten Japanese strikethrough slider label to「取消位置」
-- **1.9.16** — Shorten strikethrough slider label to "Strike Pos" in the viewport HUD
-- **1.9.6** — Refresh icon tooltip on hover; status message "Font information refreshed" after click
-- **1.9.5** — Viewport font picker refresh control is a compact icon button (slot 3) with hover and press feedback
-- **1.9.4** — Visible **Force Refresh Previews** button in viewport font picker, font menu, and add-on preferences
-- **1.9.3** — Fix font previews stopping after manual font file replacement; refresh button now clears load-failure caches and rebuilds thumbnails
-- **1.9.2** — New text objects default text box size and offsets to zero
-- **1.9.1** — Extension store compliance: maintainer email, remove legacy bl_info, safer preview cache init, lazy msgbus/load_post subscribers
-- **1.9.0** — Fix deferred font catalog load crash (`UnboundLocalError` on macOS)
-- **1.8.6** — README rewrite with feature highlights and demo videos
-- **1.8.5** — Default font preview sample text updated
-- **1.8.4** — Traditional Chinese (`zh_Hant`) UI; Blender TW phrasing (e.g. 視圖區)
-- **1.8.2** — Operator poll / i18n compliance fixes
-- **1.8.0** — JSON-based i18n (zh_Hans, ja_JP), font weight picker, N-panel layout polish
-
 ---
 
 Declared in `blender_manifest.toml`:
@@ -226,16 +181,3 @@ Preferences: **Edit → Preferences → Add-ons → Text Helper**.
 
 - Blender **5.2.0** or newer
 - Multi-line sidebar textbox requires Blender **5.2+**
-
----
-
-## Links
-
-- [Issues & feedback](https://github.com/AIGODLIKE/TextHelper/issues)
-- [中文说明](README.zh-CN.md)
-
----
-
-## License
-
-This add-on is free software licensed under the **GNU General Public License v3.0 or later**. See [LICENSE](LICENSE).
