@@ -21,10 +21,13 @@ class TH_OT_set_text_orientation(ActiveFontDataPollMixin, Operator):
     )
 
     def execute(self, context):
-        text_data = get_active_text_data(context)
-        if text_data is None:
+        from ..utils.text_format import iter_selected_text_data
+
+        targets = list(iter_selected_text_data(context))
+        if not targets:
             return {"CANCELLED"}
-        apply_orientation(text_data, self.orientation)
+        for text_data in targets:
+            apply_orientation(text_data, self.orientation, context=context)
         tag_view3d_redraw(context)
         return {"FINISHED"}
 
@@ -43,10 +46,13 @@ class TH_OT_set_column_order(ActiveFontDataPollMixin, Operator):
     )
 
     def execute(self, context):
-        text_data = get_active_text_data(context)
-        if text_data is None:
+        from ..utils.text_format import iter_selected_text_data
+
+        targets = list(iter_selected_text_data(context))
+        if not targets:
             return {"CANCELLED"}
-        apply_column_order(text_data, self.order)
+        for text_data in targets:
+            apply_column_order(text_data, self.order, context=context)
         tag_view3d_redraw(context)
         return {"FINISHED"}
 
@@ -61,7 +67,7 @@ class TH_OT_insert_column_break(ActiveFontDataPollMixin, Operator):
         text_data = get_active_text_data(context)
         if text_data is None:
             return {"CANCELLED"}
-        if not insert_column_break(text_data):
+        if not insert_column_break(text_data, context=context):
             return {"CANCELLED"}
         tag_view3d_redraw(context)
         return {"FINISHED"}
@@ -81,7 +87,7 @@ class TH_OT_convert_vertical_fullwidth(ActiveFontDataPollMixin, Operator):
         if text_data is None:
             return {"CANCELLED"}
 
-        count = apply_fullwidth_fix(text_data)
+        count = apply_fullwidth_fix(text_data, context=context)
         if count <= 0:
             self.report({"INFO"}, _("No halfwidth characters to convert"))
             return {"CANCELLED"}

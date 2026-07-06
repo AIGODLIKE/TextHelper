@@ -28,6 +28,20 @@ class TH_OT_enter_text_edit(ActiveFontPollMixin, Operator):
         return {"FINISHED"}
 
 
+def _add_text_object(context):
+    """Create a FONT object at the 3D cursor without bpy.ops.object.text_add()."""
+    curve = bpy.data.curves.new(name="Text", type="FONT")
+    obj = bpy.data.objects.new("Text", curve)
+    context.collection.objects.link(obj)
+    obj.location = context.scene.cursor.location.copy()
+    for other in context.selected_objects:
+        other.select_set(False)
+    obj.select_set(True)
+    context.view_layer.objects.active = obj
+    curve.body = "Text"
+    return obj
+
+
 class TH_OT_text_add(TextHelperOperatorMixin, Operator):
     bl_idname = "font.texthelper_text_add"
     bl_label = "Add Text"
@@ -42,8 +56,7 @@ class TH_OT_text_add(TextHelperOperatorMixin, Operator):
         return True
 
     def execute(self, context):
-        bpy.ops.object.text_add()
-        obj = context.active_object
+        obj = _add_text_object(context)
         if obj and obj.type == "FONT":
             obj.data.body = "Text"
             obj.name = "Text"
@@ -69,7 +82,7 @@ class TH_OT_clear_body(ActiveFontDataPollMixin, Operator):
         if obj is None:
             return {"CANCELLED"}
         if is_vertical(obj.data):
-            clear_vertical_content(obj.data)
+            clear_vertical_content(obj.data, context=context)
         else:
             obj.data.body = ""
             obj.data.update_tag()
@@ -84,15 +97,26 @@ class TH_OT_paste_body(ActiveFontDataPollMixin, Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
+        from ..utils.text_limits import (
+            assign_text_body,
+            clamp_clipboard_text,
+            text_body_max_len,
+            text_was_truncated,
+        )
+        from ..utils.text_orientation import set_vertical_source
+
         obj = get_active_text(context)
         if obj is None:
             return {"CANCELLED"}
-        raw = context.window_manager.clipboard
+        clip = context.window_manager.clipboard or ""
+        raw = clamp_clipboard_text(clip, context=context)
+        if text_was_truncated(clip, raw):
+            self.report({"INFO"}, _("Text truncated to {:d} characters (limit)").format(text_body_max_len(context)))
         if is_vertical(obj.data):
-            set_vertical_source(obj.data, raw)
+            set_vertical_source(obj.data, raw, context=context)
         else:
-            obj.data.body = raw
-            obj.data.update_tag()
+            assign_text_body(obj.data, raw, context=context)
+            sync_panel_textbox_from_canonical(obj.data, vertical=False, context=context, flip_active=True)
         return {"FINISHED"}
 
 
@@ -109,17 +133,27 @@ class TH_OT_import_txt(ActiveFontDataPollMixin, Operator):
         return {"RUNNING_MODAL"}
 
     def execute(self, context):
+        from ..utils.text_limits import (
+            assign_text_body,
+            clamp_multiline_text,
+            text_body_max_len,
+            text_was_truncated,
+        )
+        from ..utils.text_orientation import set_vertical_source
+
         obj = get_active_text(context)
         if obj is None:
             return {"CANCELLED"}
         try:
             with open(self.filepath, "r", encoding="utf-8") as f:
-                raw = f.read()
+                clip = f.read()
+            raw = clamp_multiline_text(clip, context=context)
+            if text_was_truncated(clip, raw):
+                self.report({"INFO"}, _("Text truncated to {:d} characters (limit)").format(text_body_max_len(context)))
             if is_vertical(obj.data):
-                set_vertical_source(obj.data, raw)
+                set_vertical_source(obj.data, raw, context=context)
             else:
-                obj.data.body = raw
-                obj.data.update_tag()
+                assign_text_body(obj.data, raw, context=context)
         except OSError as exc:
             self.report({"ERROR"}, str(exc))
             return {"CANCELLED"}
@@ -143,11 +177,14 @@ class TH_OT_set_text_case(ActiveFontDataPollMixin, Operator):
     def execute(self, context):
         from ..hud.draw import tag_redraw
         from ..utils.text_case import apply_text_case
+        from ..utils.text_format import iter_selected_font_objects
 
-        obj = get_active_text(context)
-        if obj is None:
+        applied = False
+        for obj in iter_selected_font_objects(context):
+            apply_text_case(obj.data, self.case)
+            applied = True
+        if not applied:
             return {"CANCELLED"}
-        apply_text_case(obj.data, self.case)
         tag_view3d_redraw(context)
         tag_redraw()
         return {"FINISHED"}

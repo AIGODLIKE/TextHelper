@@ -57,10 +57,27 @@ UNDERLINE_POS_MIN = -0.2
 UNDERLINE_POS_MAX = 0.8
 
 
+def iter_selected_font_objects(context):
+    """Yield all selected FONT objects."""
+    if context is None:
+        return
+    for obj in getattr(context, "selected_objects", ()):
+        if obj.type == "FONT":
+            yield obj
+
+
+def has_selected_font(context):
+    return any(True for _ in iter_selected_font_objects(context))
+
+
 def get_active_text(context):
-    obj = context.active_object
+    if context is None:
+        return None
+    obj = getattr(context, "active_object", None)
     if obj and obj.type == "FONT" and obj.select_get():
         return obj
+    for candidate in iter_selected_font_objects(context):
+        return candidate
     return None
 
 
@@ -69,6 +86,13 @@ def get_active_text_data(context):
     if obj is None:
         return None
     return obj.data
+
+
+def iter_selected_text_data(context):
+    """Yield TextCurve data for every selected FONT object."""
+    for obj in iter_selected_font_objects(context):
+        if obj.data is not None:
+            yield obj.data
 
 
 def ensure_edit_font_mode(context):
@@ -198,63 +222,95 @@ def apply_strike_position(text_data, value):
         text_data.update_tag()
 
 
-def apply_format_to_range(context, style, *, toggle=True):
-    """Apply BOLD / ITALIC / UNDERLINE / STRIKE via RNA (no bpy.ops.font)."""
-    from .font_context import ensure_text_font
-
-    text_data = get_active_text_data(context)
-    if text_data is None:
-        return {"CANCELLED"}
-    if not ensure_text_font(text_data):
-        return {"CANCELLED"}
-
-    if style in ("UNDERLINE", "STRIKE"):
-        if not _sync_body_format(text_data):
-            return {"CANCELLED"}
-        if style == "UNDERLINE":
-            all_on = is_underline_active(text_data)
-            new_val = (not all_on) if toggle else True
-            apply_underline_state(text_data, new_val)
-        else:
-            all_on = is_strike_active(text_data)
-            new_val = (not all_on) if toggle else True
-            apply_strike_state(text_data, new_val)
-        return {"FINISHED"}
+def _format_toggle_value(text_data, style, *, toggle=True):
+    """Resolve target on/off from the active (reference) text object."""
+    if style == "UNDERLINE":
+        all_on = is_underline_active(text_data)
+        return (not all_on) if toggle else True
+    if style == "STRIKE":
+        all_on = is_strike_active(text_data)
+        return (not all_on) if toggle else True
 
     attr = _STYLE_ATTR.get(style)
     if attr is None:
-        return {"CANCELLED"}
-
-    if not _sync_body_format(text_data):
-        return {"CANCELLED"}
+        return None
 
     fmt = text_data.body_format
     if not fmt:
-        return {"FINISHED"}
-
+        return False
     all_on = all(getattr(item, attr) for item in fmt)
-    new_val = (not all_on) if toggle else True
+    return (not all_on) if toggle else True
+
+
+def _apply_format_style_to_text_data(text_data, style, new_val):
+    if style == "UNDERLINE":
+        apply_underline_state(text_data, new_val)
+        return True
+    if style == "STRIKE":
+        apply_strike_state(text_data, new_val)
+        return True
+
+    attr = _STYLE_ATTR.get(style)
+    if attr is None:
+        return False
+
+    fmt = text_data.body_format
+    if not fmt:
+        return True
+
     _set_format_attr(text_data, attr, new_val)
     if style == "BOLD":
         apply_bold_state(text_data, new_val)
     elif style == "ITALIC":
         text_data.shear = ITALIC_SHEAR if new_val else 0.0
     text_data.update_tag()
-    return {"FINISHED"}
+    return True
 
 
-def apply_preset(context, preset_id):
+def apply_format_to_range(context, style, *, toggle=True):
+    """Apply BOLD / ITALIC / UNDERLINE / STRIKE via RNA (no bpy.ops.font)."""
     from .font_context import ensure_text_font
 
-    text_data = get_active_text_data(context)
-    if text_data is None:
-        return {"CANCELLED"}
-    if not ensure_text_font(text_data):
+    targets = list(iter_selected_text_data(context))
+    if not targets:
         return {"CANCELLED"}
 
+    reference = get_active_text_data(context) or targets[0]
+    if not ensure_text_font(reference):
+        return {"CANCELLED"}
+
+    if style in ("UNDERLINE", "STRIKE"):
+        if not _sync_body_format(reference):
+            return {"CANCELLED"}
+        new_val = _format_toggle_value(reference, style, toggle=toggle)
+    else:
+        attr = _STYLE_ATTR.get(style)
+        if attr is None:
+            return {"CANCELLED"}
+        if not _sync_body_format(reference):
+            return {"CANCELLED"}
+        new_val = _format_toggle_value(reference, style, toggle=toggle)
+        if new_val is None:
+            return {"CANCELLED"}
+
+    applied = False
+    for text_data in targets:
+        if not ensure_text_font(text_data):
+            continue
+        if style in ("UNDERLINE", "STRIKE") and not _sync_body_format(text_data):
+            continue
+        if style not in ("UNDERLINE", "STRIKE") and not _sync_body_format(text_data):
+            continue
+        if _apply_format_style_to_text_data(text_data, style, new_val):
+            applied = True
+
+    return {"FINISHED"} if applied else {"CANCELLED"}
+
+
+def apply_preset_to_text_data(text_data, preset_id):
     preset = STYLE_PRESETS.get(preset_id)
     if preset is None:
-        return {"CANCELLED"}
+        return False
 
     _clear_faux_bold_size(text_data)
     text_data.size = preset["size"]
@@ -274,8 +330,67 @@ def apply_preset(context, preset_id):
     apply_strike_state(text_data, False)
     apply_underline_state(text_data, False)
     text_data.shear = ITALIC_SHEAR if italic else 0.0
+    text_data.text_helper.th_preset = preset_id
     text_data.update_tag()
-    return {"FINISHED"}
+    return True
+
+
+def apply_preset(context, preset_id):
+    from .font_context import ensure_text_font
+
+    targets = list(iter_selected_text_data(context))
+    if not targets:
+        return {"CANCELLED"}
+    if preset_id not in STYLE_PRESETS:
+        return {"CANCELLED"}
+
+    applied = False
+    for text_data in targets:
+        if not ensure_text_font(text_data):
+            continue
+        if apply_preset_to_text_data(text_data, preset_id):
+            applied = True
+
+    return {"FINISHED"} if applied else {"CANCELLED"}
+
+
+def apply_spacing_value(text_data, mode, value):
+    """Set one spacing/size property on a single TextCurve."""
+    if mode == "SIZE":
+        text_data.size = max(SIZE_SLIDER_MIN, float(value))
+    elif mode == "CHAR":
+        text_data.space_character = spacing_from_display_char(int(value))
+    elif mode == "WORD":
+        text_data.space_word = spacing_from_display_word(int(value))
+    elif mode == "SHEAR":
+        text_data.shear = float(value)
+    elif mode == "LINE":
+        text_data.space_line = spacing_from_display_line(text_data, int(value))
+    elif mode == "STRIKE_POS":
+        apply_strike_position(text_data, value)
+    else:
+        text_data.offset_y = value
+    text_data.update_tag()
+
+
+def reset_format_value(text_data, mode):
+    """Reset one spacing/size property to the current preset default."""
+    defaults = preset_format_defaults(text_data)
+    if mode == "SIZE":
+        text_data.size = defaults["size"]
+    elif mode == "CHAR":
+        text_data.space_character = defaults["space_character"]
+    elif mode == "WORD":
+        text_data.space_word = defaults["space_word"]
+    elif mode == "SHEAR":
+        text_data.shear = defaults["shear"]
+    elif mode == "LINE":
+        text_data.space_line = defaults["space_line"]
+    elif mode == "STRIKE_POS":
+        apply_strike_position(text_data, default_strike_position(text_data))
+    else:
+        text_data.offset_y = defaults["offset_y"]
+    text_data.update_tag()
 
 
 def spacing_display_char(space_character):
@@ -293,7 +408,7 @@ def spacing_display_word(space_word):
 
 
 def spacing_from_display_word(display):
-    return max(0.0, min(10.0, 1.0 + display / 100.0))
+    return max(0.0, 1.0 + display / 100.0)
 
 
 def spacing_display_line(text_data):
@@ -305,6 +420,8 @@ LINE_HEIGHT_DISPLAY_MIN = 1
 LINE_HEIGHT_SPACE_LINE_MAX = 10.0
 SIZE_SLIDER_MIN = 0.25
 SIZE_SLIDER_MAX = 4.0
+CHAR_SPACING_DISPLAY_MIN = -50
+CHAR_SPACING_DISPLAY_MAX = 200
 SHEAR_SLIDER_MIN = -1.0
 SHEAR_SLIDER_MAX = 1.0
 ITALIC_SHEAR = 0.4
@@ -357,6 +474,39 @@ def preset_format_defaults(text_data):
     }
 
 
+def size_slider_max(current_size):
+    return max(SIZE_SLIDER_MAX, float(current_size))
+
+
+def char_spacing_display_bounds(current_display):
+    return CHAR_SPACING_DISPLAY_MIN, max(CHAR_SPACING_DISPLAY_MAX, int(current_display))
+
+
+def word_spacing_display_bounds(current_display):
+    return CHAR_SPACING_DISPLAY_MIN, max(CHAR_SPACING_DISPLAY_MAX, int(current_display))
+
+
+def shear_slider_bounds(current_shear):
+    value = float(current_shear)
+    return min(SHEAR_SLIDER_MIN, value), max(SHEAR_SLIDER_MAX, value)
+
+
+def spacing_slider_display_value(text_data, item_id):
+    if text_data is None:
+        return "0"
+    if item_id == "font_size":
+        return format_size_display(text_data.size)
+    if item_id == "char_spacing":
+        return str(spacing_display_char(text_data.space_character))
+    if item_id == "word_spacing":
+        return str(spacing_display_word(text_data.space_word))
+    if item_id == "line_height":
+        return str(spacing_display_line(text_data))
+    if item_id == "shear":
+        return shear_display(text_data.shear)
+    return "0"
+
+
 def shear_display(shear):
     value = round(float(shear), 2)
     text = f"{value:.2f}".rstrip("0").rstrip(".")
@@ -364,15 +514,17 @@ def shear_display(shear):
 
 
 def shear_slider_t(shear):
-    span = SHEAR_SLIDER_MAX - SHEAR_SLIDER_MIN
+    lo, hi = shear_slider_bounds(shear)
+    span = hi - lo
     if span <= 0.0:
         return 0.0
-    return max(0.0, min(1.0, (float(shear) - SHEAR_SLIDER_MIN) / span))
+    return max(0.0, min(1.0, (float(shear) - lo) / span))
 
 
-def shear_from_slider_t(t):
+def shear_from_slider_t(t, current_shear=0.0):
+    lo, hi = shear_slider_bounds(current_shear)
     t = max(0.0, min(1.0, float(t)))
-    return round(SHEAR_SLIDER_MIN + t * (SHEAR_SLIDER_MAX - SHEAR_SLIDER_MIN), 3)
+    return round(lo + t * (hi - lo), 3)
 
 
 def format_size_display(size):
@@ -382,33 +534,34 @@ def format_size_display(size):
 
 
 def format_size_slider_t(size):
-    span = SIZE_SLIDER_MAX - SIZE_SLIDER_MIN
+    hi = size_slider_max(size)
+    span = hi - SIZE_SLIDER_MIN
     if span <= 0.0:
         return 0.0
     return max(0.0, min(1.0, (float(size) - SIZE_SLIDER_MIN) / span))
 
 
-def format_size_from_slider_t(t):
+def format_size_from_slider_t(t, current_size=1.0):
+    hi = size_slider_max(current_size)
     t = max(0.0, min(1.0, float(t)))
-    value = SIZE_SLIDER_MIN + t * (SIZE_SLIDER_MAX - SIZE_SLIDER_MIN)
+    value = SIZE_SLIDER_MIN + t * (hi - SIZE_SLIDER_MIN)
     return round(value, 2)
 
 
 def line_height_display_max(text_data):
-    """Maximum display value allowed for the current text size."""
+    """Maximum display value for the line-height slider (expands with current value)."""
     if text_data is None or text_data.size <= 0.0:
         return 96
-    return max(
+    current = spacing_display_line(text_data)
+    default_max = max(
         LINE_HEIGHT_DISPLAY_MIN + 1,
         round(text_data.size * LINE_HEIGHT_SPACE_LINE_MAX * 10.0),
     )
+    return max(default_max, current)
 
 
 def spacing_from_display_line(text_data, display):
     if text_data.size <= 0.0:
         return 1.0
-    display = max(
-        LINE_HEIGHT_DISPLAY_MIN,
-        min(line_height_display_max(text_data), int(display)),
-    )
-    return max(0.0, min(LINE_HEIGHT_SPACE_LINE_MAX, display / (text_data.size * 10.0)))
+    display = max(LINE_HEIGHT_DISPLAY_MIN, int(display))
+    return max(0.0, display / (text_data.size * 10.0))

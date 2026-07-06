@@ -256,6 +256,16 @@
   },
   {
     "context": "*",
+    "msgid": "Multi-line Character Limit",
+    "ja_JP": "複数行文字数上限"
+  },
+  {
+    "context": "*",
+    "msgid": "Maximum characters for N-panel multi-line text input (Blender hard cap is 50,000)",
+    "ja_JP": "N パネル複数行テキスト入力の最大文字数（Blender の上限は 50,000）"
+  },
+  {
+    "context": "*",
     "msgid": "Select a text object to edit.",
     "ja_JP": "テキストオブジェクトを選択して編集を開始してください。"
   },
@@ -286,6 +296,11 @@
   },
   {
     "context": "*",
+    "msgid": "Header toolbar in the 3D viewport top bar",
+    "ja_JP": "3D ビューポート上部ヘッダーの書式ツールバー"
+  },
+  {
+    "context": "*",
     "msgid": "Style presets, alignment, and spacing controls",
     "ja_JP": "スタイルプリセット、整列、間隔のコントロール"
   },
@@ -298,6 +313,16 @@
     "context": "*",
     "msgid": "Multi-line textbox requires Blender 5.2+",
     "ja_JP": "複数行テキストボックスには Blender 5.2+ が必要です"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} / {:d} chars · {:d} words",
+    "ja_JP": "{:d} / {:d} 文字 · {:d} 語"
+  },
+  {
+    "context": "*",
+    "msgid": "Text truncated to {:d} characters (limit)",
+    "ja_JP": "テキストを {:d} 文字に切り詰めました（上限）"
   },
   {
     "context": "*",
@@ -373,6 +398,16 @@
     "context": "*",
     "msgid": "Accent color for the viewport HUD and pickers",
     "ja_JP": "3D ビューポート HUD とピッカーのアクセントカラー"
+  },
+  {
+    "context": "*",
+    "msgid": "Follow System",
+    "ja_JP": "システムに従う"
+  },
+  {
+    "context": "*",
+    "msgid": "Match Blender interface theme colors (tool header)",
+    "ja_JP": "Blender インターフェーステーマに合わせる（ツールヘッダー）"
   },
   {
     "context": "*",
@@ -611,6 +646,16 @@
   },
   {
     "context": "*",
+    "msgid": "Reset Font Filters",
+    "ja_JP": "フォントフィルターをリセット"
+  },
+  {
+    "context": "*",
+    "msgid": "Clear search text and restore sort, script filter, and filter chips to defaults",
+    "ja_JP": "検索をクリアし、並べ替え・書字系フィルター・チップを既定値に戻す"
+  },
+  {
+    "context": "*",
     "msgid": "Search Fonts",
     "ja_JP": "フォントを検索"
   },
@@ -656,6 +701,16 @@
   },
   {
     "context": "Operator",
+    "msgid": "Font filters restored to defaults",
+    "ja_JP": "フィルター条件を既定値に戻しました"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font filters already at defaults",
+    "ja_JP": "フィルター条件はすでに既定値です"
+  },
+  {
+    "context": "Operator",
     "msgid": "Rescan system font folders, clear failed-load caches, and rebuild font preview thumbnails",
     "ja_JP": "システムフォントを再スキャンし、読み込み失敗キャッシュを消去してプレビューを再生成"
   },
@@ -686,8 +741,8 @@
   },
   {
     "context": "*",
-    "msgid": "No fonts match filter",
-    "ja_JP": "条件に一致するフォントがありません"
+    "msgid": "No matching fonts. Try turning off filters.",
+    "ja_JP": "一致するフォントがありません。フィルターをオフにしてみてください。"
   },
   {
     "context": "*",
@@ -773,6 +828,166 @@
     "context": "*",
     "msgid": "Sort order for the system font list",
     "ja_JP": "システムフォント一覧の並べ替え順"
+  },
+  {
+    "context": "*",
+    "msgid": "Recently Used",
+    "ja_JP": "最近使用"
+  },
+  {
+    "context": "*",
+    "msgid": "Show recently applied font families first",
+    "ja_JP": "最近適用したフォントファミリを優先表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Recent",
+    "ja_JP": "最近"
+  },
+  {
+    "context": "*",
+    "msgid": "A-Z",
+    "ja_JP": "A-Z"
+  },
+  {
+    "context": "*",
+    "msgid": "Z-A",
+    "ja_JP": "Z-A"
+  },
+  {
+    "context": "*",
+    "msgid": "Supported",
+    "ja_JP": "対応のみ"
+  },
+  {
+    "context": "*",
+    "msgid": "All fonts",
+    "ja_JP": "すべて"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-wt",
+    "ja_JP": "多ウェイト"
+  },
+  {
+    "context": "*",
+    "msgid": "Families",
+    "ja_JP": "全ファミリ"
+  },
+  {
+    "context": "*",
+    "msgid": "All favs",
+    "ja_JP": "全お気に入り"
+  },
+  {
+    "context": "*",
+    "msgid": "Variable",
+    "ja_JP": "可変"
+  },
+  {
+    "context": "*",
+    "msgid": "All types",
+    "ja_JP": "全タイプ"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Name Display",
+    "ja_JP": "フォント名の表示"
+  },
+  {
+    "context": "*",
+    "msgid": "How font names appear in lists and the viewport font picker",
+    "ja_JP": "フォント一覧とビューポートのピッカーでの名称表示方法"
+  },
+  {
+    "context": "*",
+    "msgid": "Weight Grouping",
+    "ja_JP": "ウェイト統合"
+  },
+  {
+    "context": "*",
+    "msgid": "How font files are merged into one family with multiple weights. OpenType uses the name-table family (matches Family Name display); File Name parses weight suffixes from file names (-Bold, -Light, etc.)",
+    "ja_JP": "複数ファイルを同一ファミリーのウェイトとして統合する方法。OpenType は名称表のファミリー名（族名表示と一致）、ファイル名は -Bold / -Light 等の接尾辞を解析"
+  },
+  {
+    "context": "*",
+    "msgid": "OpenType First",
+    "ja_JP": "OpenType 優先"
+  },
+  {
+    "context": "*",
+    "msgid": "Group by OpenType family name when available, otherwise parse the file name",
+    "ja_JP": "OpenType ファミリー名があればそれで統合、なければファイル名を解析"
+  },
+  {
+    "context": "*",
+    "msgid": "Prefer PostScript name prefix (e.g. GenYoGothic2), then OpenType family, then file name",
+    "ja_JP": "PostScript 接頭辞（GenYoGothic2 等）→ OpenType ファミリー → ファイル名の順"
+  },
+  {
+    "context": "*",
+    "msgid": "PostScript Prefix",
+    "ja_JP": "PostScript 接頭辞"
+  },
+  {
+    "context": "*",
+    "msgid": "Group by PostScript name before the last hyphen (GenYoGothic2-B → GenYoGothic2)",
+    "ja_JP": "PostScript 名の最後のハイフンより前で統合（GenYoGothic2-B → GenYoGothic2）"
+  },
+  {
+    "context": "*",
+    "msgid": "OpenType Family",
+    "ja_JP": "OpenType ファミリー"
+  },
+  {
+    "context": "*",
+    "msgid": "Always group by OpenType typographic/font family name (name table IDs 16/1)",
+    "ja_JP": "常に OpenType ファミリー名（名称表 ID 16/1）でウェイトを統合"
+  },
+  {
+    "context": "*",
+    "msgid": "Group by file name after stripping -Bold, -Light, and similar suffixes",
+    "ja_JP": "ファイル名から -Bold / -Light 等を除いて統合"
+  },
+  {
+    "context": "*",
+    "msgid": "File Name",
+    "ja_JP": "ファイル名"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the font file name (default)",
+    "ja_JP": "フォントファイル名を使用（既定）"
+  },
+  {
+    "context": "*",
+    "msgid": "Family Name",
+    "ja_JP": "ファミリ名"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the OpenType family name (prefers localized CJK names when available)",
+    "ja_JP": "OpenType ファミリ名を使用（利用可能な場合は CJK ローカル名を優先）"
+  },
+  {
+    "context": "*",
+    "msgid": "Full Name",
+    "ja_JP": "完全名"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the full font name from the name table",
+    "ja_JP": "name テーブルの完全なフォント名を使用"
+  },
+  {
+    "context": "*",
+    "msgid": "PostScript Name",
+    "ja_JP": "PostScript 名"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the PostScript font name",
+    "ja_JP": "PostScript フォント名を使用"
   },
   {
     "context": "*",
@@ -933,6 +1148,11 @@
     "context": "*",
     "msgid": "Preview loading…",
     "ja_JP": "プレビュー読み込み中…"
+  },
+  {
+    "context": "*",
+    "msgid": "Built-in font preview not supported yet",
+    "ja_JP": "組み込みフォントのプレビューは未対応"
   },
   {
     "context": "*",
@@ -1131,6 +1351,11 @@
   },
   {
     "context": "*",
+    "msgid": "Filtering unsupported fonts… ({:d} shown)",
+    "ja_JP": "非対応フォントを絞り込み中…（{:d} 件表示）"
+  },
+  {
+    "context": "*",
     "msgid": "Show all fonts",
     "ja_JP": "すべてのフォントを表示"
   },
@@ -1267,7 +1492,7 @@
   {
     "context": "*",
     "msgid": "Shear",
-    "ja_JP": "シアー"
+    "ja_JP": "シア"
   },
   {
     "context": "*",
@@ -1287,7 +1512,7 @@
   {
     "context": "*",
     "msgid": "Line Height",
-    "ja_JP": "行の高さ"
+    "ja_JP": "行高"
   },
   {
     "context": "*",
@@ -1297,12 +1522,17 @@
   {
     "context": "*",
     "msgid": "Font Size",
-    "ja_JP": "フォントサイズ"
+    "ja_JP": "字級"
   },
   {
     "context": "*",
     "msgid": "Strike Pos",
     "ja_JP": "取消位置"
+  },
+  {
+    "context": "*",
+    "msgid": "Enable strikethrough first",
+    "ja_JP": "先に取り消し線を有効にしてください"
   },
   {
     "context": "*",
@@ -1948,5 +2178,230 @@
     "context": "Operator",
     "msgid": "Filter the font list by script or language",
     "ja_JP": "文字体系または言語でフォント一覧を絞り込み"
+  },
+  {
+    "context": "*",
+    "msgid": "Header Toolbar",
+    "ja_JP": "ヘッダーツールバー"
+  },
+  {
+    "context": "*",
+    "msgid": "Show formatting controls in the 3D viewport top header when a text object is selected",
+    "ja_JP": "テキストオブジェクト選択時に 3D ビューポート上部ヘッダーへ書式コントロールを表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Sz",
+    "ja_JP": "字級"
+  },
+  {
+    "context": "*",
+    "msgid": "Ch",
+    "ja_JP": "字間"
+  },
+  {
+    "context": "*",
+    "msgid": "Wd",
+    "ja_JP": "語間"
+  },
+  {
+    "context": "*",
+    "msgid": "Ln",
+    "ja_JP": "行高"
+  },
+  {
+    "context": "*",
+    "msgid": "Sh",
+    "ja_JP": "シア"
+  },
+  {
+    "context": "*",
+    "msgid": "St",
+    "ja_JP": "取消"
+  },
+  {
+    "context": "*",
+    "msgid": "Regular",
+    "ja_JP": "レギュラー"
+  },
+  {
+    "context": "*",
+    "msgid": "Browse font file…",
+    "ja_JP": "フォントファイルを参照…"
+  },
+  {
+    "context": "*",
+    "msgid": "Font size for selected text objects",
+    "ja_JP": "選択中テキストオブジェクトのフォントサイズ"
+  },
+  {
+    "context": "*",
+    "msgid": "Character spacing offset (0 = preset default)",
+    "ja_JP": "字間オフセット（0 はプリセット既定値）"
+  },
+  {
+    "context": "*",
+    "msgid": "Word spacing offset (0 = preset default)",
+    "ja_JP": "語間オフセット（0 はプリセット既定値）"
+  },
+  {
+    "context": "*",
+    "msgid": "Line height display value",
+    "ja_JP": "行の高さ表示値"
+  },
+  {
+    "context": "*",
+    "msgid": "Text shear for selected text objects",
+    "ja_JP": "選択中テキストオブジェクトのシアー"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Preview fonts while hovering the header font or weight list",
+    "ja_JP": "ヘッダーのフォントまたはウェイト一覧をホバー中にプレビュー"
+  },
+  {
+    "context": "*",
+    "msgid": "Favorites only",
+    "ja_JP": "お気に入りのみ"
+  },
+  {
+    "context": "*",
+    "msgid": "All favorites",
+    "ja_JP": "すべて"
+  },
+  {
+    "context": "*",
+    "msgid": "Variable fonts",
+    "ja_JP": "可変フォント"
+  },
+  {
+    "context": "*",
+    "msgid": "All font types",
+    "ja_JP": "すべて"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Font Favorite",
+    "ja_JP": "フォントをお気に入りに切替"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add or remove this font family from favorites",
+    "ja_JP": "このフォントファミリーをお気に入りに追加または削除"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Added to favorites",
+    "ja_JP": "お気に入りに追加しました"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Removed from favorites",
+    "ja_JP": "お気に入りから削除しました"
+  },
+  {
+    "context": "*",
+    "msgid": "Favorites Only",
+    "ja_JP": "お気に入りのみ"
+  },
+  {
+    "context": "*",
+    "msgid": "Only list font families marked as favorites",
+    "ja_JP": "お気に入りのフォントファミリーのみ表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Variable Fonts Only",
+    "ja_JP": "可変フォントのみ"
+  },
+  {
+    "context": "*",
+    "msgid": "Only list OpenType variable font files",
+    "ja_JP": "OpenType 可変フォントのみ表示"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Header Font Picker Hover",
+    "ja_JP": "ヘッダーフォントピッカーのホバープレビュー"
+  },
+  {
+    "context": "*",
+    "msgid": "Favorite Font Families",
+    "ja_JP": "お気に入りフォントファミリー"
+  },
+  {
+    "context": "*",
+    "msgid": "JSON list of favorite font family keys",
+    "ja_JP": "お気に入りフォントファミリーキーの JSON リスト"
+  },
+  {
+    "context": "*",
+    "msgid": "Close font picker",
+    "ja_JP": "フォントピッカーを閉じる"
+  },
+  {
+    "context": "*",
+    "msgid": "Show every font family, including those missing characters from the preview text",
+    "ja_JP": "プレビュー文字に欠字があるフォントも含め、すべてのフォントファミリーを表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Show all font families, including single-weight families",
+    "ja_JP": "単一ウェイトのファミリーも含め、すべてのフォントファミリーを表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Show all font families, not just favorites",
+    "ja_JP": "お気に入りだけでなく、すべてのフォントファミリーを表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Show all font types, including static and variable fonts",
+    "ja_JP": "静的フォントと可変フォントを含む、すべてのフォント種別を表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Add or remove this font family from favorites",
+    "ja_JP": "このフォントファミリーをお気に入りに追加または削除"
+  },
+  {
+    "context": "*",
+    "msgid": "Show recently applied font families first. Click to cycle sort order.",
+    "ja_JP": "最近使ったフォントファミリーを優先表示。クリックで並べ替えを切り替え。"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort fonts by name ascending. Click to cycle sort order.",
+    "ja_JP": "名前の昇順で並べ替え。クリックで並べ替えを切り替え。"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort fonts by name descending. Click to cycle sort order.",
+    "ja_JP": "名前の降順で並べ替え。クリックで並べ替えを切り替え。"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust font size (↺ reset · click value to type)",
+    "ja_JP": "フォントサイズ（↺ リセット · 数値クリックで入力）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust character spacing (↺ reset · click value to type)",
+    "ja_JP": "字間（↺ リセット · 数値クリックで入力）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust word spacing (↺ reset · click value to type)",
+    "ja_JP": "単語間隔（↺ リセット · 数値クリックで入力）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust line height (↺ reset · click value to type)",
+    "ja_JP": "行間（↺ リセット · 数値クリックで入力）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust text shear (↺ reset · click value to type)",
+    "ja_JP": "シアー（↺ リセット · 数値クリックで入力）"
   }
 ]

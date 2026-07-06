@@ -32,9 +32,6 @@ class TH_OT_apply_preset(ActiveFontDataPollMixin, Operator):
     keep_picker_open: bpy.props.BoolProperty(default=False, options={"HIDDEN"})
 
     def execute(self, context):
-        text_data = get_active_text_data(context)
-        if text_data is None:
-            return {"CANCELLED"}
         state = getattr(context.window_manager, "th_state", None)
         if state is not None:
             state.th_hud_open_menu = ""
@@ -43,8 +40,6 @@ class TH_OT_apply_preset(ActiveFontDataPollMixin, Operator):
 
                 close_picker(context)
         result = apply_preset(context, self.preset_id)
-        if "FINISHED" in result:
-            text_data.text_helper.th_preset = self.preset_id
         if self.keep_picker_open and "FINISHED" in result:
             from ..utils.text_frame import tag_view3d_redraw
             from ..hud.draw import tag_redraw
@@ -87,6 +82,9 @@ class TH_OT_toggle_preset_picker(ActiveFontDataPollMixin, Operator):
         from ..hud.weight_picker import close_picker as close_weight_picker
 
         close_weight_picker(context)
+        from ..hud.slider_input import dismiss_slider_value_edit
+
+        dismiss_slider_value_edit(context, undo=False)
         state.th_hud_open_menu = ""
         _dismiss_popup_menus(context)
         state.th_preset_picker_open = True

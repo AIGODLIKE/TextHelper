@@ -4,6 +4,7 @@ from mathutils import Vector
 from bpy_extras import view3d_utils
 
 from .addon_prefs import get_addon_prefs
+from .hud_offset import get_hud_offset
 from ..hud.layout import slider_row_height
 
 
@@ -47,15 +48,13 @@ def get_toolbar_anchor(context, obj, offset_px=12.0):
         return None
 
     prefs = get_addon_prefs(context)
-    hud_scale = getattr(prefs, "hud_scale", 1.0) if prefs else 1.0
+    hud_scale = getattr(prefs, "hud_scale", 0.8) if prefs else 0.8
     scale = max(context.preferences.system.ui_scale, 0.5) * hud_scale
     bar_h = slider_row_height(scale)
     draw_pad = 4.0 * scale
     top_gap = max(float(offset_px), 14.0 * scale)
 
-    text_data = obj.data if obj is not None else None
-    user_ox = getattr(text_data.text_helper, "th_hud_offset_x", 0.0) if text_data else 0.0
-    user_oy = getattr(text_data.text_helper, "th_hud_offset_y", 0.0) if text_data else 0.0
+    user_ox, user_oy = get_hud_offset(obj)
 
     x = region.width * 0.5 + user_ox
     y = region.height - top_gap - bar_h - draw_pad + user_oy

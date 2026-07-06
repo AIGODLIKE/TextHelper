@@ -10,7 +10,8 @@ import imbuf
 from .addon_prefs import get_addon_prefs
 from .font_preview_draw import blf_load_for_preview, draw_blf_preview, trim_text_to_width
 from .font_preview_text import get_font_preview_text
-from .font_blf import blf_unload, font_path_usable
+from .font_blf import blf_no_fallback_flag, blf_unload, font_path_usable, resolve_catalog_blf_path
+from .font_loader import is_builtin_bfont_catalog
 from .png_clean import strip_png_color_profile, strip_png_dir, write_solid_png
 
 _PREVIEW_COLLECTION = None
@@ -99,7 +100,10 @@ def _file_mtime_token(filepath):
 
 
 def _preview_key(filepath, settings_hash):
-    abs_path = os.path.normcase(bpy.path.abspath(filepath))
+    abs_path = _preview_abs_path(filepath)
+    if not abs_path:
+        return ""
+    abs_path = os.path.normcase(abs_path)
     payload = "|".join((settings_hash, abs_path, _file_mtime_token(abs_path)))
     digest = hashlib.md5(payload.encode("utf-8", errors="surrogateescape")).hexdigest()
     return "thf_" + digest[:24]
@@ -157,24 +161,25 @@ def _fit_point_size(font_id, text, width, height, max_size):
     inner_w = max(32.0, width - 28.0)
     inner_h = max(16.0, height - 10.0)
     size = int(max_size)
+    no_fallback = blf_no_fallback_flag()
     while size >= 10:
         drawn = trim_text_to_width(font_id, text, inner_w, size) or text
         blf.size(font_id, float(size))
-        blf.enable(font_id, blf.NO_FALLBACK)
+        blf.enable(font_id, no_fallback)
         try:
             tw, th = blf.dimensions(font_id, drawn)
         finally:
-            blf.disable(font_id, blf.NO_FALLBACK)
+            blf.disable(font_id, no_fallback)
         if tw <= inner_w and th <= inner_h:
             return size, tw, th
         size -= 1
     blf.size(font_id, 10.0)
     drawn = trim_text_to_width(font_id, text, inner_w, 10) or text
-    blf.enable(font_id, blf.NO_FALLBACK)
+    blf.enable(font_id, no_fallback)
     try:
         tw, th = blf.dimensions(font_id, drawn)
     finally:
-        blf.disable(font_id, blf.NO_FALLBACK)
+        blf.disable(font_id, no_fallback)
     return 10, tw, th
 
 
@@ -203,7 +208,6 @@ def _render_preview_png(filepath, png_path, sample, width, height, point_size):
         if ibuf is None:
             return False
         text = sample or _FALLBACK_SAMPLE
-        fitted_size, _, _ = _fit_point_size(font_id, text, width, height, point_size)
         _draw_preview_chars(ibuf, font_id, text, width, height, point_size, None)
         return _write_png(png_path, ibuf)
     except Exception:
@@ -270,9 +274,13 @@ def _process_queue_step(max_items=3):
     processed = 0
     while _PREVIEW_QUEUE and processed < max_items:
         filepath, display_name = _PREVIEW_QUEUE.pop(0)
-        abs_path = bpy.path.abspath(filepath)
-        key = _preview_key(abs_path, settings_hash)
+        abs_path = _preview_abs_path(filepath)
+        if not abs_path:
+            continue
+        key = _preview_key(filepath, settings_hash)
         _QUEUE_KEYS.discard(key)
+        if not key:
+            continue
 
         if key in coll and coll[key].icon_id:
             continue
@@ -332,9 +340,11 @@ def init_font_preview_cache():
 def queue_font_preview(context, filepath, display_name=""):
     if not filepath or context is None:
         return
+    if is_builtin_bfont_catalog(filepath):
+        return
     _ensure_clean_cache()
-    abs_path = bpy.path.abspath(filepath)
-    if not os.path.isfile(abs_path):
+    abs_path = _preview_abs_path(filepath)
+    if not abs_path:
         return
     if not font_path_usable(abs_path):
         return
@@ -343,13 +353,13 @@ def queue_font_preview(context, filepath, display_name=""):
         return
 
     _ensure_settings(context)
-    key = _preview_key(abs_path, _ACTIVE_SETTINGS_HASH)
-    if key in _FAILED_KEYS:
+    key = _preview_key(filepath, _ACTIVE_SETTINGS_HASH)
+    if not key or key in _FAILED_KEYS:
         return
     coll = preview_collection()
     if key in coll and coll[key].icon_id:
         return
-    token = (abs_path, display_name)
+    token = (filepath, display_name)
     if key in _QUEUE_KEYS:
         return
     _QUEUE_KEYS.add(key)
@@ -357,13 +367,27 @@ def queue_font_preview(context, filepath, display_name=""):
     _schedule_queue()
 
 
+def _preview_abs_path(filepath):
+    if not filepath:
+        return ""
+    resolved = resolve_catalog_blf_path(filepath)
+    if resolved:
+        return resolved
+    abs_path = bpy.path.abspath(filepath)
+    if abs_path and not abs_path.startswith("<") and os.path.isfile(abs_path):
+        return abs_path
+    return ""
+
+
 def get_font_icon(context, filepath, display_name=""):
     """Return icon_value for UILayout, or 0 if preview is not ready yet."""
     _ensure_clean_cache()
     if not filepath or context is None:
         return 0
-    abs_path = bpy.path.abspath(filepath)
-    if not os.path.isfile(abs_path):
+    if is_builtin_bfont_catalog(filepath):
+        return 0
+    abs_path = _preview_abs_path(filepath)
+    if not abs_path:
         return 0
     if not font_path_usable(abs_path):
         return 0
@@ -373,8 +397,8 @@ def get_font_icon(context, filepath, display_name=""):
         return 0
 
     _ensure_settings(context)
-    key = _preview_key(abs_path, _ACTIVE_SETTINGS_HASH)
-    if key in _FAILED_KEYS:
+    key = _preview_key(filepath, _ACTIVE_SETTINGS_HASH)
+    if not key or key in _FAILED_KEYS:
         return 0
 
     coll = preview_collection()

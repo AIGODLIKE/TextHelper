@@ -4,6 +4,40 @@ import bpy
 
 _MSG_BUS_OWNER = object()
 _subscribers_active = False
+_history_handlers_active = False
+
+
+def refresh_text_objects_after_history(context=None):
+    """Re-sync Font curves and redraw after undo/redo."""
+    from .utils.text_format import (
+        iter_selected_font_objects,
+        reapply_bold_if_active,
+        sync_line_decoration,
+    )
+    from .utils.text_frame import tag_view3d_redraw
+
+    ctx = context or bpy.context
+    if ctx.window is None:
+        return False
+
+    updated = False
+    for obj in iter_selected_font_objects(ctx):
+        text_data = obj.data
+        sync_line_decoration(text_data)
+        reapply_bold_if_active(text_data)
+        text_data.update_tag()
+        obj.update_tag()
+        updated = True
+
+    if updated:
+        tag_view3d_redraw(ctx)
+        try:
+            from .hud.draw import tag_redraw
+
+            tag_redraw()
+        except Exception:
+            pass
+    return updated
 
 
 def _on_text_changed():
@@ -16,6 +50,18 @@ def _on_text_changed():
 
     obj = get_active_text(context)
     if obj is not None:
+        from .utils.text_orientation import is_vertical, sync_body_to_vertical_source, sync_vertical_source_to_body
+
+        if is_vertical(obj.data):
+            sync_body_to_vertical_source(obj.data, context=context)
+            sync_vertical_source_to_body(obj.data, context=context)
+        else:
+            from .utils.text_limits import assign_text_body, clamp_multiline_text
+
+            body = obj.data.body or ""
+            clamped = clamp_multiline_text(body, context=context)
+            if clamped != body:
+                assign_text_body(obj.data, clamped, context=context)
         sync_live_text_case(obj.data)
 
     for area in context.window.screen.areas:
@@ -25,8 +71,18 @@ def _on_text_changed():
 
 def _on_active_object_changed():
     from .runtime import request_ensure
+    from .utils.font_loader import prefetch_font_catalog
 
     request_ensure()
+    context = bpy.context
+    obj = context.active_object if context is not None else None
+    if obj is not None and obj.type == "FONT":
+        prefetch_font_catalog(context)
+
+
+@bpy.app.handlers.persistent
+def _undo_redo_post(_scene):
+    refresh_text_objects_after_history()
 
 
 @bpy.app.handlers.persistent
@@ -40,12 +96,40 @@ def _load_post(_dummy):
     bpy.app.timers.register(_deferred, first_interval=0.1)
 
 
+def _register_history_handlers():
+    global _history_handlers_active
+    if _history_handlers_active:
+        return
+    for handler, bucket in (
+        (_undo_redo_post, bpy.app.handlers.undo_post),
+        (_undo_redo_post, bpy.app.handlers.redo_post),
+    ):
+        if handler not in bucket:
+            bucket.append(handler)
+    _history_handlers_active = True
+
+
+def _unregister_history_handlers():
+    global _history_handlers_active
+    if not _history_handlers_active:
+        return
+    for handler, bucket in (
+        (_undo_redo_post, bpy.app.handlers.undo_post),
+        (_undo_redo_post, bpy.app.handlers.redo_post),
+    ):
+        if handler in bucket:
+            bucket.remove(handler)
+    _history_handlers_active = False
+
+
 def ensure_subscribers():
-    """Register msgbus and load_post when Text Helper is first used."""
+    """Register msgbus, undo/redo, and load_post when Text Helper is first used."""
     global _subscribers_active
     if _subscribers_active:
         return
     _subscribers_active = True
+
+    _register_history_handlers()
 
     bpy.msgbus.subscribe_rna(
         key=(bpy.types.TextCurve, "body"),
@@ -65,12 +149,16 @@ def ensure_subscribers():
 
 
 def register():
-    """Intentionally empty — subscribers attach lazily via ensure_subscribers()."""
-    pass
+    """Msgbus and undo/redo handlers attach lazily via ensure_subscribers()."""
+    return
 
 
 def unregister():
     global _subscribers_active
+
+    if _subscribers_active:
+        _unregister_history_handlers()
+
     if not _subscribers_active:
         return
 

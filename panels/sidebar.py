@@ -4,9 +4,9 @@ from bpy.types import Panel
 from ..i18n import _
 from ..utils.font_context import is_font_edit_mode
 from ..utils.ui_textbox import draw_multiline_field
-from ..utils.addon_prefs import get_addon_prefs
 from ..utils.text_format import get_active_text
-from ..utils.text_orientation import is_vertical, vertical_source_char_count
+from ..utils.header_toolbar import floating_toolbar_pressed
+from ..utils.text_orientation import is_vertical
 from ..utils.vertical_align_check import (
     build_vertical_align_report,
     format_halfwidth_preview,
@@ -17,15 +17,6 @@ from ..utils.vertical_align_check import (
 _BUTTON_ROW_SCALE_Y = 1.5
 
 
-def _floating_toolbar_pressed(context, text_data=None):
-    prefs = get_addon_prefs(context)
-    if not getattr(prefs, "show_floating_toolbar", True):
-        return False
-    if text_data is not None:
-        return getattr(text_data.text_helper, "th_hud_visible", True)
-    return True
-
-
 def _draw_panel_header(layout, context, text_data=None):
     row = layout.row(align=True)
     row.scale_x = 0.92
@@ -34,7 +25,7 @@ def _draw_panel_header(layout, context, text_data=None):
         "wm.texthelper_toggle_toolbar",
         text="",
         icon="OVERLAY",
-        depress=_floating_toolbar_pressed(context, text_data),
+        depress=floating_toolbar_pressed(context, text_data),
     )
     row.operator(
         "font.texthelper_open_addon_preferences",
@@ -43,15 +34,17 @@ def _draw_panel_header(layout, context, text_data=None):
     )
 
 
-def _char_count_text(text_data, *, vertical):
+def _char_count_text(text_data, *, vertical, context=None):
+    from ..utils.text_limits import multiline_char_count, text_body_max_len
+
+    chars = multiline_char_count(text_data, vertical=vertical)
+    max_chars = text_body_max_len(context)
     if vertical:
-        chars = vertical_source_char_count(text_data)
         source = getattr(text_data.text_helper, "th_vertical_source", "") or ""
         words = sum(1 for line in source.split("\n") if line.strip())
     else:
-        chars = len(text_data.body)
         words = len(text_data.body.split()) if text_data.body else 0
-    return _("{:d} chars · {:d} words").format(chars, words)
+    return _("{:d} / {:d} chars · {:d} words").format(chars, max_chars, words)
 
 
 def _button_row(parent):
@@ -130,10 +123,10 @@ def _draw_align_warnings(col, text_data, *, vertical):
             )
 
 
-def _draw_footer(col, text_data, *, vertical):
+def _draw_footer(col, text_data, *, vertical, context=None):
     row = col.row(align=True)
     row.scale_y = 0.88
-    row.label(text=_char_count_text(text_data, vertical=vertical))
+    row.label(text=_char_count_text(text_data, vertical=vertical, context=context))
 
 
 def _draw_content_box(layout, context, text_data):
@@ -166,7 +159,7 @@ def _draw_content_box(layout, context, text_data):
 
     _draw_actions_row(col)
     _draw_align_warnings(col, text_data, vertical=vertical)
-    _draw_footer(col, text_data, vertical=vertical)
+    _draw_footer(col, text_data, vertical=vertical, context=context)
 
 
 class VIEW3D_PT_text_helper(Panel):

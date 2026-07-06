@@ -2,7 +2,7 @@ schema_version = "1.0.0"
 id = "TextHelper"
 name = "Text Helper"
 tagline = "Easy text input & font management"
-version = "1.9.17"
+version = "2.0.0"
 type = "add-on"
 maintainer = "ACGGIT <1132692358@qq.com>"
 
@@ -11,7 +11,7 @@ blender_version_min = "5.2.0"
 website = "https://github.com/AIGODLIKE/TextHelper"
 support = "https://github.com/AIGODLIKE/TextHelper/issues"
 
-tags = ["3D View"]
+tags = ["User Interface"]
 license = ["SPDX:GPL-3.0-or-later"]
 
 [permissions]
@@ -33,6 +33,7 @@ paths_exclude_pattern = [
     ".idea/",
     ".DS_Store",
     "Thumbs.db",
+    "assets/",
     "i18n/_audit_translations.py",
     "i18n/_audit_full.py",
     "i18n/_append_op_descriptions.py",

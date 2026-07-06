@@ -4,6 +4,7 @@ from contextlib import contextmanager
 
 import bpy
 
+from .font_loader import get_default_bfont
 from .text_format import get_active_text
 from .view3d_context import find_view3d_area_region
 
@@ -38,7 +39,7 @@ def ensure_text_font(text_data):
         return False
     if text_data.font is not None:
         return True
-    default = bpy.data.fonts.get("Bfont")
+    default = get_default_bfont()
     if default is None and bpy.data.fonts:
         default = bpy.data.fonts[0]
     if default is None:
@@ -120,7 +121,7 @@ def enter_text_edit_mode(context, obj=None):
     prepare_font_edit_ui(context)
 
     if is_vertical(obj.data):
-        sync_vertical_source_to_body(obj.data)
+        sync_vertical_source_to_body(obj.data, context=context)
 
     area, region = find_view3d_area_region(context.window)
     if area is None:
@@ -154,7 +155,7 @@ def exit_text_edit_mode(context, obj=None):
         from .text_orientation import is_vertical, sync_body_to_vertical_source
 
         if is_vertical(obj.data):
-            sync_body_to_vertical_source(obj.data)
+            sync_body_to_vertical_source(obj.data, context=context)
     with font_view3d_override(context, obj) as ok:
         if not ok:
             return False

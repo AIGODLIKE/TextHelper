@@ -214,7 +214,7 @@ def count_convertible_chars(text: str) -> int:
     return sum(1 for char in (text or "") if should_convert_to_fullwidth(char))
 
 
-def apply_fullwidth_fix(text_data) -> int:
+def apply_fullwidth_fix(text_data, *, context=None) -> int:
     """Convert halfwidth chars in the active N-panel source. Returns chars fixed."""
     from .text_orientation import set_vertical_source
 
@@ -225,7 +225,7 @@ def apply_fullwidth_fix(text_data) -> int:
 
     converted = convert_text_to_fullwidth(raw)
     if is_vertical(text_data):
-        set_vertical_source(text_data, converted)
+        set_vertical_source(text_data, converted, context=context)
     else:
         text_data.body = converted
         from .ui_textbox import sync_panel_textbox_from_canonical

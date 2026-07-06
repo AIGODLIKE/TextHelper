@@ -48,20 +48,9 @@ def _ui_scale(context):
 
 
 def _theme(context):
-    from ..utils.hud_theme import get_accent_active_bg, get_accent_rgba
+    from ..utils.hud_theme import build_picker_draw_theme
 
-    prefs = get_addon_prefs(context)
-    accent = get_accent_rgba(prefs)
-    return {
-        "accent": accent,
-        "panel_bg": (0.08, 0.08, 0.09, 0.98),
-        "header_bg": (0.10, 0.10, 0.11, 1.0),
-        "row_bg": (0.14, 0.14, 0.15, 1.0),
-        "row_hover": (0.22, 0.22, 0.24, 1.0),
-        "row_active": get_accent_active_bg(accent),
-        "text": (0.95, 0.95, 0.96, 1.0),
-        "muted": (0.55, 0.55, 0.58, 1.0),
-    }
+    return build_picker_draw_theme(context)
 
 
 def _picker_position(context, panel_w, panel_h, scale):
@@ -121,7 +110,7 @@ def _invoke_apply_preset(context, preset_id, *, keep_picker_open=False):
             keep_picker_open=keep_picker_open,
         )
 
-    if not run_active_font_op(context, _call, obj):
+    if not run_active_font_op(context, _call, obj, undo=True):
         return False
     return "FINISHED" in result
 
@@ -280,6 +269,7 @@ def draw_preset_picker(context):
     hover_id = getattr(state, "th_preset_picker_hover", "") if state else ""
     theme = _theme(context)
     accent = theme["accent"]
+    from ..utils.hud_theme import theme_text_color
 
     gpu.state.blend_set("ALPHA")
     shader = gpu.shader.from_builtin("UNIFORM_COLOR")
@@ -316,7 +306,7 @@ def draw_preset_picker(context):
         if active:
             label = "✓ " + label
         blf.size(_UI_FONT, int(11 * scale))
-        blf.color(_UI_FONT, *theme["text"])
+        blf.color(_UI_FONT, *theme_text_color(theme, highlighted=(active or hovered)))
         blf.position(_UI_FONT, hit.x + 10.0 * scale, hit.y + hit.h * 0.5 - 6.0 * scale, 0)
         blf.draw(_UI_FONT, label)
 

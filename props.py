@@ -11,7 +11,15 @@ from bpy.props import (
 from bpy.types import PropertyGroup
 
 from .utils.text_format import STYLE_PRESETS
+from .utils.text_limits import BLENDER_TEXT_BODY_MAX_LEN
 from .utils.font_language import LANGUAGE_FILTER_ITEMS
+from .utils.header_sliders import (
+    HEADER_CHAR_SPACING_PROP,
+    HEADER_LINE_HEIGHT_PROP,
+    HEADER_SIZE_PROP,
+    HEADER_SHEAR_PROP,
+    HEADER_WORD_SPACING_PROP,
+)
 
 PRESET_ITEMS = tuple((k, v["label"], v["label"]) for k, v in STYLE_PRESETS.items())
 
@@ -51,7 +59,7 @@ def _update_vertical_source(self, context):
     if self.th_text_orientation != "VERTICAL":
         return
     sync_live_text_case(self.id_data)
-    sync_vertical_source_to_body(self.id_data)
+    sync_vertical_source_to_body(self.id_data, context=context)
 
 
 def _update_column_order(self, context):
@@ -59,7 +67,25 @@ def _update_column_order(self, context):
 
     if not is_vertical(self.id_data):
         return
-    sync_vertical_source_to_body(self.id_data)
+    sync_vertical_source_to_body(self.id_data, context=context)
+
+
+def _update_strike_position(self, context):
+    from .utils.text_format import apply_strike_position
+
+    text_data = self.id_data
+    if text_data is None:
+        return
+    apply_strike_position(text_data, self.th_strike_position)
+    from .utils.text_frame import tag_view3d_redraw
+
+    tag_view3d_redraw(context)
+    try:
+        from .hud.draw import tag_redraw
+
+        tag_redraw()
+    except Exception:
+        pass
 
 
 def _apply_font_index_from_catalog(wm, index):
@@ -142,13 +168,15 @@ class TH_TextCurveProps(PropertyGroup):
     th_preset: EnumProperty(name="Style", items=PRESET_ITEMS, default="BODY")
     th_hud_offset_x: FloatProperty(
         name="HUD Offset X",
-        description="User drag offset for the floating toolbar (screen pixels)",
+        description="Legacy HUD drag offset (migrated to the text object; not used for new data)",
         default=0.0,
+        options={"HIDDEN"},
     )
     th_hud_offset_y: FloatProperty(
         name="HUD Offset Y",
-        description="User drag offset for the floating toolbar (screen pixels)",
+        description="Legacy HUD drag offset (migrated to the text object; not used for new data)",
         default=0.0,
+        options={"HIDDEN"},
     )
     th_hud_visible: BoolProperty(
         name="Show HUD",
@@ -184,6 +212,7 @@ class TH_TextCurveProps(PropertyGroup):
         name="Vertical Source",
         description="Horizontal input in N-panel: each line is one vertical column",
         default="",
+        maxlen=BLENDER_TEXT_BODY_MAX_LEN,
         update=_update_vertical_source,
     )
     th_text_case: EnumProperty(
@@ -218,16 +247,19 @@ class TH_TextCurveProps(PropertyGroup):
         default=0.4,
         min=-0.2,
         max=0.8,
+        update=_update_strike_position,
     )
     th_panel_buf_a: StringProperty(
         name="Panel Buffer A",
         default="",
+        maxlen=BLENDER_TEXT_BODY_MAX_LEN,
         options={"HIDDEN"},
         update=_update_panel_buf_a,
     )
     th_panel_buf_b: StringProperty(
         name="Panel Buffer B",
         default="",
+        maxlen=BLENDER_TEXT_BODY_MAX_LEN,
         options={"HIDDEN"},
         update=_update_panel_buf_b,
     )
@@ -252,6 +284,11 @@ class TH_WindowManagerProps(PropertyGroup):
     th_hud_hover_id: StringProperty(default="")
     th_hud_dragging: BoolProperty(default=False)
     th_hud_drag_id: StringProperty(default="")
+    th_hud_slider_edit_id: StringProperty(default="")
+    th_hud_slider_edit_text: StringProperty(default="")
+    th_text_field_cursor: IntProperty(default=0, min=0)
+    th_text_field_anchor: IntProperty(default=0, min=0)
+    th_text_field_selecting: BoolProperty(default=False)
     th_hud_drag_start: FloatProperty(default=0.0)
     th_hud_moving: BoolProperty(default=False)
     th_hud_move_start_x: FloatProperty(default=0.0)
@@ -276,6 +313,16 @@ class TH_WindowManagerProps(PropertyGroup):
         description="Only list font families that have more than one weight on disk",
         default=False,
     )
+    th_font_picker_favorites_only: BoolProperty(
+        name="Favorites Only",
+        description="Only list font families marked as favorites",
+        default=False,
+    )
+    th_font_picker_variable_only: BoolProperty(
+        name="Variable Fonts Only",
+        description="Only list OpenType variable font files",
+        default=False,
+    )
     th_font_picker_scroll_drag: BoolProperty(default=False)
     th_font_picker_scroll_drag_y: FloatProperty(default=0.0)
     th_font_picker_scroll_drag_base: IntProperty(default=0)
@@ -296,6 +343,10 @@ class TH_WindowManagerProps(PropertyGroup):
         description="Expanded slider row below the floating toolbar",
         default="",
     )
+    th_header_picker_modal: BoolProperty(default=False, options={"HIDDEN"})
+    th_header_picker_type: StringProperty(default="", options={"HIDDEN"})
+    th_header_picker_list_top: FloatProperty(default=0.0, options={"HIDDEN"})
+    th_header_picker_row_height: FloatProperty(default=20.0, options={"HIDDEN"})
     font_catalog: CollectionProperty(type=TH_FontCatalogItem)
     font_index: IntProperty(name="Font Index", default=0, update=_update_font_index)
     font_filter: StringProperty(
@@ -308,10 +359,11 @@ class TH_WindowManagerProps(PropertyGroup):
         name="Font Sort",
         description="Sort order for the system font list",
         items=(
+            ("RECENT", "Recently Used", "Show recently applied font families first"),
             ("NAME_AZ", "Name A-Z", "Sort fonts by name ascending"),
             ("NAME_ZA", "Name Z-A", "Sort fonts by name descending"),
         ),
-        default="NAME_AZ",
+        default="RECENT",
     )
     font_language: EnumProperty(
         name="Script Filter",
@@ -324,6 +376,11 @@ class TH_WindowManagerProps(PropertyGroup):
         description="Custom preview phrase shown in the viewport font picker",
         default="",
     )
+    th_header_size: FloatProperty(**HEADER_SIZE_PROP)
+    th_header_char_spacing: FloatProperty(**HEADER_CHAR_SPACING_PROP)
+    th_header_word_spacing: FloatProperty(**HEADER_WORD_SPACING_PROP)
+    th_header_line_height: FloatProperty(**HEADER_LINE_HEIGHT_PROP)
+    th_header_shear: FloatProperty(**HEADER_SHEAR_PROP)
 
 
 def register():

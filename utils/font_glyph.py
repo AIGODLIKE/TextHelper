@@ -5,8 +5,8 @@ import os
 import blf
 import bpy
 
-from .font_blf import blf_load, blf_unload, font_path_usable
-from .font_loader import disk_font_path_from_string
+from .font_blf import blf_load, blf_no_fallback_flag, blf_unload, font_path_usable
+from .font_loader import disk_font_path_from_string, is_builtin_bfont_catalog
 
 _COVERAGE_CACHE = {}
 _UNLOAD_HOOKS = []
@@ -50,18 +50,17 @@ def _char_missing_glyph(font_id, char, point_size):
     if api_result is not None:
         return not api_result
 
+    no_fallback = blf_no_fallback_flag()
     blf.size(font_id, float(point_size))
-    blf.enable(font_id, blf.NO_FALLBACK)
+    blf.enable(font_id, no_fallback)
     w_nf, h_nf = blf.dimensions(font_id, char)
     if w_nf <= 0.01 or h_nf <= 0.01:
-        blf.disable(font_id, blf.NO_FALLBACK)
+        blf.disable(font_id, no_fallback)
         return True
 
-    # Fonts often return a non-zero .notdef box for missing codepoints.
-    # If enabling the fallback stack changes metrics, the glyph was substituted.
-    blf.disable(font_id, blf.NO_FALLBACK)
+    blf.disable(font_id, no_fallback)
     w_fb, h_fb = blf.dimensions(font_id, char)
-    blf.enable(font_id, blf.NO_FALLBACK)
+    blf.enable(font_id, no_fallback)
 
     dw = abs(w_fb - w_nf)
     dh = abs(h_fb - h_nf)
@@ -75,12 +74,13 @@ def char_renders_without_fallback(font_id, char, point_size):
         return True
     if font_id == -1:
         return False
+    no_fallback = blf_no_fallback_flag()
     blf.size(font_id, float(point_size))
-    blf.enable(font_id, blf.NO_FALLBACK)
+    blf.enable(font_id, no_fallback)
     try:
         w, h = blf.dimensions(font_id, char)
     finally:
-        blf.disable(font_id, blf.NO_FALLBACK)
+        blf.disable(font_id, no_fallback)
     return w > 0.01 and h > 0.01
 
 
@@ -99,6 +99,9 @@ def glyph_status_for_font_id(font_id, text, point_size):
 
 
 def font_glyph_status(filepath, text, point_size=24, font_id=None):
+    if is_builtin_bfont_catalog(filepath):
+        return [True] * len(text or "")
+
     abs_path = disk_font_path_from_string(filepath)
     if not abs_path:
         abs_path = os.path.normcase(bpy.path.abspath(filepath))
@@ -140,6 +143,8 @@ def font_missing_count(filepath, text, point_size=24):
 
 def font_has_full_coverage(filepath, text, point_size=24, font_id=None):
     if not text:
+        return True
+    if is_builtin_bfont_catalog(filepath):
         return True
     if font_id is not None and font_id != -1:
         status = glyph_status_for_font_id(font_id, text, point_size)

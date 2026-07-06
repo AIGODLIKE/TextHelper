@@ -19,6 +19,15 @@ def _table_from_json(filename: str, value_key: str) -> dict:
 
 
 _OWNER = None
+_REGISTERED_OWNERS: list[str] = []
+
+
+def _translation_owners(primary: str) -> list[str]:
+    owners: list[str] = []
+    for candidate in (primary, primary.rsplit(".", 1)[-1]):
+        if candidate and candidate not in owners:
+            owners.append(candidate)
+    return owners
 
 
 def _hant_table() -> dict:
@@ -27,6 +36,7 @@ def _hant_table() -> dict:
 
 _TRANSLATIONS = {
     "zh_HANS": _table_from_json("_catalog.json", "zh_HANS"),
+    "zh_CN": _table_from_json("_catalog.json", "zh_HANS"),
     "zh_Hant": _hant_table(),
     "zh_HANT": _hant_table(),
     "ja_JP": _table_from_json("ja_JP.json", "ja_JP"),
@@ -34,16 +44,23 @@ _TRANSLATIONS = {
 
 
 def register(owner=None):
-    global _OWNER
+    global _OWNER, _REGISTERED_OWNERS
     _OWNER = owner if owner is not None else __name__.rsplit(".", 1)[0]
-    bpy.app.translations.register(_OWNER, _TRANSLATIONS)
+    _REGISTERED_OWNERS = []
+    for mod in _translation_owners(_OWNER):
+        bpy.app.translations.register(mod, _TRANSLATIONS)
+        _REGISTERED_OWNERS.append(mod)
 
 
 def unregister():
-    global _OWNER
-    if _OWNER:
-        bpy.app.translations.unregister(_OWNER)
-        _OWNER = None
+    global _OWNER, _REGISTERED_OWNERS
+    for mod in reversed(_REGISTERED_OWNERS):
+        try:
+            bpy.app.translations.unregister(mod)
+        except Exception:
+            pass
+    _REGISTERED_OWNERS = []
+    _OWNER = None
 
 
 __all__ = ("_", "register", "unregister")

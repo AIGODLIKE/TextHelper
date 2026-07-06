@@ -26,6 +26,7 @@ from ..hud.font_picker import (
     handle_picker_key,
     handle_picker_release,
     handle_picker_wheel,
+    handle_search_field_mouse_move,
     hit_test_picker as hit_test_font_picker,
     picker_open as font_picker_open,
     picker_search_blocks_keymap,
@@ -53,14 +54,26 @@ from ..hud.language_picker import (
     panel_contains as language_picker_panel_contains,
     picker_open as language_picker_open,
 )
-from ..hud.hit_test import get_hud_hit_rects, hit_test, hud_enabled, slider_value_from_mouse
+from ..hud.hit_test import get_hud_hit_rects, hit_test, hud_enabled
 from ..hud.layout import (
     SPACING_SLIDER_IDS,
     slider_reset_hit,
     slider_track_start,
     slider_value_from_mouse,
 )
-from ..utils.text_format import get_active_text
+from ..hud.slider_input import (
+    clear_slider_value_edit,
+    commit_slider_value_edit,
+    handle_slider_value_key,
+    handle_slider_value_mouse_move,
+    handle_slider_value_mouse_release,
+    slider_value_blocks_keymap,
+    slider_value_editing,
+    try_begin_slider_value_edit,
+)
+from ..utils.text_format import get_active_text, iter_selected_font_objects
+from ..utils.undo import push_undo
+from ..utils.hud_offset import get_hud_offset, set_hud_offset
 
 _RUNNING = False
 
@@ -88,22 +101,30 @@ def _hud_override(context, obj):
     area, region = find_view3d_area_region(context.window)
     if area is None:
         return None
-    return context.temp_override(
-        window=context.window,
-        screen=context.window.screen,
-        area=area,
-        region=region,
-        space_data=area.spaces.active,
-        object=obj,
-        active_object=obj,
-    )
+    selected = [o for o in iter_selected_font_objects(context)]
+    if obj is not None and obj not in selected:
+        selected.insert(0, obj)
+    kwargs = {
+        "window": context.window,
+        "screen": context.window.screen,
+        "area": area,
+        "region": region,
+        "space_data": area.spaces.active,
+    }
+    if obj is not None:
+        kwargs["object"] = obj
+        kwargs["active_object"] = obj
+        kwargs["selected_objects"] = selected
+    return context.temp_override(**kwargs)
 
 
-def _run_hud_op(context, obj, callback):
+def _run_hud_op(context, obj, callback, *, undo=False):
     override = _hud_override(context, obj)
     if override is None:
         return
     with override:
+        if undo:
+            push_undo()
         callback()
 
 
@@ -121,6 +142,26 @@ def _spacing_mode(item_id):
         "shear": "SHEAR",
         "strike_position": "STRIKE_POS",
     }.get(item_id, "PARA")
+
+
+def _hud_apply_spacing(context, mode, value, *, undo=False):
+    from ..utils.text_format import apply_spacing_value, iter_selected_text_data
+
+    if undo:
+        push_undo()
+    for text_data in iter_selected_text_data(context):
+        apply_spacing_value(text_data, mode, value)
+    tag_view3d_redraw(context)
+
+
+def _hud_reset_format(context, mode, *, undo=False):
+    from ..utils.text_format import iter_selected_text_data, reset_format_value
+
+    if undo:
+        push_undo()
+    for text_data in iter_selected_text_data(context):
+        reset_format_value(text_data, mode)
+    tag_view3d_redraw(context)
 
 
 def _hud_handles_pointer(context, event):
@@ -190,6 +231,7 @@ def _clear_drag_state(state):
     state.th_hud_dragging = False
     state.th_hud_drag_id = ""
     state.th_hud_moving = False
+    clear_slider_value_edit(state)
 
 
 def _clear_hover(state):
@@ -224,6 +266,8 @@ def _cancel_modal(state):
 
 
 def _close_all_pickers(context):
+    if slider_value_editing(context):
+        commit_slider_value_edit(context, undo=False)
     close_font_picker(context)
     close_weight_picker(context)
     close_preset_picker(context)
@@ -288,6 +332,10 @@ def _handle_dropdown(context, obj, item, state):
 def _handle_hud_press(context, event, obj, text_data, state, rects):
     rect = hit_test(rects, event.mouse_region_x, event.mouse_region_y)
     if rect is None:
+        if slider_value_editing(context):
+            commit_slider_value_edit(context, undo=True)
+            tag_redraw()
+            return {"RUNNING_MODAL"}
         return None
 
     _ensure_text_selected(context, obj)
@@ -296,21 +344,29 @@ def _handle_hud_press(context, event, obj, text_data, state, rects):
         state.th_hud_moving = True
         state.th_hud_move_start_x = event.mouse_region_x
         state.th_hud_move_start_y = event.mouse_region_y
-        state.th_hud_move_base_x = text_data.text_helper.th_hud_offset_x
-        state.th_hud_move_base_y = text_data.text_helper.th_hud_offset_y
+        state.th_hud_move_base_x, state.th_hud_move_base_y = get_hud_offset(obj)
         tag_redraw()
         return {"RUNNING_MODAL"}
     if item.kind == "dropdown":
         _handle_dropdown(context, obj, item, state)
         return {"RUNNING_MODAL"}
     if item.kind == "spacing_slider":
+        scale = _hud_ui_scale(context)
+        if try_begin_slider_value_edit(
+            context,
+            rect,
+            text_data,
+            event.mouse_region_x,
+            event.mouse_region_y,
+            scale,
+        ):
+            tag_redraw()
+            return {"RUNNING_MODAL"}
+        if slider_value_editing(context):
+            commit_slider_value_edit(context, undo=False)
         if slider_reset_hit(rect, event.mouse_region_x, event.mouse_region_y) and item.reset_mode:
             mode = item.reset_mode
-
-            def _reset_value(mode=mode):
-                bpy.ops.font.texthelper_reset_format_value(mode=mode)
-
-            _run_hud_op(context, obj, _reset_value)
+            _hud_reset_format(context, mode, undo=True)
             tag_redraw()
             return {"RUNNING_MODAL"}
         if event.mouse_region_x >= slider_track_start(rect, _hud_ui_scale(context)):
@@ -320,7 +376,7 @@ def _handle_hud_press(context, event, obj, text_data, state, rects):
             val = slider_value_from_mouse(
                 rect, event.mouse_region_x, text_data, rect.id, _hud_ui_scale(context)
             )
-            _run_hud_op(context, obj, lambda: bpy.ops.font.texthelper_set_spacing_value(mode=mode, value=val))
+            _hud_apply_spacing(context, mode, val, undo=True)
             tag_redraw()
         return {"RUNNING_MODAL"}
     if item.kind == "button" and item.op:
@@ -329,7 +385,7 @@ def _handle_hud_press(context, event, obj, text_data, state, rects):
         def _invoke_button(opmod=opmod, opname=opname):
             getattr(getattr(bpy.ops, opmod), opname)()
 
-        _run_hud_op(context, obj, _invoke_button)
+        _run_hud_op(context, obj, _invoke_button, undo=True)
         tag_redraw()
         return {"RUNNING_MODAL"}
     if item.op:
@@ -338,7 +394,7 @@ def _handle_hud_press(context, event, obj, text_data, state, rects):
         def _invoke_op(opmod=opmod, opname=opname, kwargs=dict(item.op_kwargs)):
             getattr(getattr(bpy.ops, opmod), opname)(**kwargs)
 
-        _run_hud_op(context, obj, _invoke_op)
+        _run_hud_op(context, obj, _invoke_op, undo=True)
     tag_redraw()
     return {"RUNNING_MODAL"}
 
@@ -373,7 +429,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
         if is_font_edit_mode_value(prev_mode) and not is_font_edit_mode(context):
             obj = get_active_text(context)
             if obj is not None and is_vertical(obj.data):
-                sync_body_to_vertical_source(obj.data)
+                sync_body_to_vertical_source(obj.data, context=context)
         self._th_prev_mode = mode
 
         if is_font_edit_mode(context):
@@ -414,6 +470,14 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
         picker_active = font_picker_active or weight_picker_active or preset_picker_active or language_picker_active
         rects = get_hud_hit_rects(context, obj, text_data) if show_hud else []
 
+        if show_hud and slider_value_editing(context):
+            if getattr(event, "is_compose", False):
+                tag_redraw()
+                return {"RUNNING_MODAL"}
+            if handle_slider_value_key(context, event) or slider_value_blocks_keymap(event):
+                tag_redraw()
+                return {"RUNNING_MODAL"}
+
         if picker_active:
             search_focused = (
                 font_picker_active
@@ -438,6 +502,13 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
 
             if event.type == "MOUSEMOVE":
                 if (
+                    font_picker_active
+                    and not language_picker_active
+                    and getattr(state, "th_text_field_selecting", False)
+                    and search_focused
+                ):
+                    handle_search_field_mouse_move(context, mx, my)
+                elif (
                     font_picker_active
                     and not language_picker_active
                     and getattr(state, "th_font_picker_scroll_drag", False)
@@ -511,14 +582,21 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                 return {"PASS_THROUGH"}
 
         if event.type == "MOUSEMOVE":
+            if show_hud and slider_value_editing(context) and getattr(state, "th_text_field_selecting", False):
+                handle_slider_value_mouse_move(context, mx, _hud_ui_scale(context))
+                tag_redraw()
+                return {"RUNNING_MODAL"}
             if show_hud and rects:
                 rect = hit_test(rects, mx, my)
                 state.th_hud_hover_id = rect.id if rect else ""
                 if state.th_hud_moving:
                     dx = mx - state.th_hud_move_start_x
                     dy = my - state.th_hud_move_start_y
-                    text_data.text_helper.th_hud_offset_x = state.th_hud_move_base_x + dx
-                    text_data.text_helper.th_hud_offset_y = state.th_hud_move_base_y + dy
+                    set_hud_offset(
+                        obj,
+                        state.th_hud_move_base_x + dx,
+                        state.th_hud_move_base_y + dy,
+                    )
                     tag_redraw()
                     return {"RUNNING_MODAL"}
                 if state.th_hud_dragging and state.th_hud_drag_id in SPACING_SLIDER_IDS:
@@ -528,7 +606,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                         drag_rect, mx, text_data, state.th_hud_drag_id, drag_scale
                     )
                     mode = _spacing_mode(state.th_hud_drag_id)
-                    _run_hud_op(context, obj, lambda: bpy.ops.font.texthelper_set_spacing_value(mode=mode, value=val))
+                    _hud_apply_spacing(context, mode, val)
                 tag_redraw()
             return {"PASS_THROUGH"}
 
@@ -543,6 +621,11 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                         tag_redraw()
                         return {"RUNNING_MODAL"}
 
+                if slider_value_editing(context):
+                    commit_slider_value_edit(context, undo=True)
+                    tag_redraw()
+                    return {"RUNNING_MODAL"}
+
                 if _click_outside_hud_and_text(rects, obj, context, mx, my):
                     return {"PASS_THROUGH"}
 
@@ -554,17 +637,20 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
 
                 return {"PASS_THROUGH"}
 
-            if event.value == "RELEASE" and show_hud and (state.th_hud_dragging or state.th_hud_moving):
-                state.th_hud_dragging = False
-                state.th_hud_drag_id = ""
-                state.th_hud_moving = False
-                tag_redraw()
-                return {"RUNNING_MODAL"}
+            if event.value == "RELEASE" and show_hud:
+                if slider_value_editing(context) and handle_slider_value_mouse_release(context):
+                    tag_redraw()
+                    return {"RUNNING_MODAL"}
+                if state.th_hud_dragging or state.th_hud_moving:
+                    state.th_hud_dragging = False
+                    state.th_hud_drag_id = ""
+                    state.th_hud_moving = False
+                    tag_redraw()
+                    return {"RUNNING_MODAL"}
 
         if show_hud and event.type in {"ESC", "RIGHTMOUSE"} and (state.th_hud_dragging or state.th_hud_moving):
             if state.th_hud_moving:
-                text_data.text_helper.th_hud_offset_x = state.th_hud_move_base_x
-                text_data.text_helper.th_hud_offset_y = state.th_hud_move_base_y
+                set_hud_offset(obj, state.th_hud_move_base_x, state.th_hud_move_base_y)
             state.th_hud_dragging = False
             state.th_hud_drag_id = ""
             state.th_hud_moving = False

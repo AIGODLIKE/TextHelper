@@ -48,21 +48,9 @@ def _ui_scale(context):
 
 
 def _theme(context):
-    from ..utils.addon_prefs import get_addon_prefs
-    from ..utils.hud_theme import get_accent_active_bg, get_accent_rgba
+    from ..utils.hud_theme import build_picker_draw_theme
 
-    prefs = get_addon_prefs(context)
-    accent = get_accent_rgba(prefs)
-    return {
-        "accent": accent,
-        "panel_bg": (0.08, 0.08, 0.09, 0.98),
-        "header_bg": (0.10, 0.10, 0.11, 1.0),
-        "row_bg": (0.14, 0.14, 0.15, 1.0),
-        "row_hover": (0.22, 0.22, 0.24, 1.0),
-        "row_active": get_accent_active_bg(accent),
-        "text": (0.95, 0.95, 0.96, 1.0),
-        "muted": (0.55, 0.55, 0.58, 1.0),
-    }
+    return build_picker_draw_theme(context)
 
 
 def _picker_position(context, panel_w, panel_h, scale):
@@ -93,6 +81,9 @@ def close_picker(context):
 
 
 def open_picker(context):
+    from .slider_input import dismiss_slider_value_edit
+
+    dismiss_slider_value_edit(context, undo=False)
     state = _state(context)
     if state is None:
         return
@@ -231,6 +222,7 @@ def draw_language_picker(context):
     state = _state(context)
     scale = layout["scale"]
     theme = _theme(context)
+    from ..utils.hud_theme import theme_text_color
     current = get_language_filter(wm)
     hover = getattr(state, "th_language_picker_hover", "") if state else ""
 
@@ -271,7 +263,7 @@ def draw_language_picker(context):
         if active:
             label = f"✓ {label}"
         blf.size(_UI_FONT, int(10 * scale))
-        blf.color(_UI_FONT, *theme["text"])
+        blf.color(_UI_FONT, *theme_text_color(theme, highlighted=(active or hovered)))
         blf.position(_UI_FONT, hit.x + 8.0 * scale, hit.y + hit.h * 0.5 - 5.0 * scale, 0)
         blf.draw(_UI_FONT, label)
 

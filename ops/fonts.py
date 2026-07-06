@@ -41,16 +41,20 @@ class TH_OT_browse_font(ActiveFontDataPollMixin, Operator):
         return {"RUNNING_MODAL"}
 
     def execute(self, context):
-        text_data = get_active_text_data(context)
-        if text_data is None:
-            return {"CANCELLED"}
-        try:
-            assign_font(text_data, self.filepath)
-        except FileNotFoundError:
-            self.report({"ERROR"}, _("Font file not found"))
-            return {"CANCELLED"}
-        except Exception as exc:
-            self.report({"ERROR"}, str(exc))
+        from ..utils.text_format import iter_selected_text_data
+
+        applied = False
+        for text_data in iter_selected_text_data(context):
+            try:
+                assign_font(text_data, self.filepath)
+            except FileNotFoundError:
+                self.report({"ERROR"}, _("Font file not found"))
+                return {"CANCELLED"}
+            except Exception as exc:
+                self.report({"ERROR"}, str(exc))
+                return {"CANCELLED"}
+            applied = True
+        if not applied:
             return {"CANCELLED"}
         self.report({"INFO"}, _("Font loaded: {}").format(bpy.path.display_name(self.filepath)))
         return {"FINISHED"}

@@ -5,11 +5,12 @@ import sys
 
 class _DefaultPrefs:
     show_floating_toolbar = True
+    show_header_toolbar = True
     auto_layout_frame = True
     toolbar_offset = 100.0
-    hud_scale = 1.0
-    hud_accent_preset = "GREEN"
-    hud_accent_custom = (0.12, 0.86, 0.42)
+    hud_scale = 0.8
+    hud_accent_preset = "BLUE"
+    hud_accent_custom = (71 / 255, 114 / 255, 179 / 255)
     font_preview_icons = True
     font_preview_on_select = True
     font_preview_sample = "Exploration witnesses courage, open source witnesses glory"
@@ -19,6 +20,11 @@ class _DefaultPrefs:
     font_preview_height = 56
     font_preview_ui_scale = 3.5
     n_panel_textbox_lines = 30
+    multiline_text_max_len = 20000
+    font_favorite_keys = "[]"
+    font_recent_keys = "[]"
+    font_display_mode = "FAMILY"
+    font_family_group_mode = "AUTO"
 
 
 def prefs_are_editable(prefs):

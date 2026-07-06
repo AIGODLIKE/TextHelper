@@ -256,6 +256,16 @@
   },
   {
     "context": "*",
+    "msgid": "Multi-line Character Limit",
+    "zh_HANS": "多行字符上限"
+  },
+  {
+    "context": "*",
+    "msgid": "Maximum characters for N-panel multi-line text input (Blender hard cap is 50,000)",
+    "zh_HANS": "N 面板多行文本输入的最大字符数（Blender 硬上限为 50,000）"
+  },
+  {
+    "context": "*",
     "msgid": "Select a text object to edit.",
     "zh_HANS": "选择文字对象以开始编辑。"
   },
@@ -286,6 +296,11 @@
   },
   {
     "context": "*",
+    "msgid": "Header toolbar in the 3D viewport top bar",
+    "zh_HANS": "3D 视口顶栏排版工具栏"
+  },
+  {
+    "context": "*",
     "msgid": "Style presets, alignment, and spacing controls",
     "zh_HANS": "样式预设、对齐与间距控制"
   },
@@ -298,6 +313,16 @@
     "context": "*",
     "msgid": "Multi-line textbox requires Blender 5.2+",
     "zh_HANS": "多行文本框需要 Blender 5.2+"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} / {:d} chars · {:d} words",
+    "zh_HANS": "{:d} / {:d} 字 · {:d} 词"
+  },
+  {
+    "context": "*",
+    "msgid": "Text truncated to {:d} characters (limit)",
+    "zh_HANS": "文本已截断至 {:d} 字（上限）"
   },
   {
     "context": "*",
@@ -373,6 +398,16 @@
     "context": "*",
     "msgid": "Accent color for the viewport HUD and pickers",
     "zh_HANS": "视口 HUD 与选择面板的强调色"
+  },
+  {
+    "context": "*",
+    "msgid": "Follow System",
+    "zh_HANS": "跟随系统"
+  },
+  {
+    "context": "*",
+    "msgid": "Match Blender interface theme colors (tool header)",
+    "zh_HANS": "与 Blender 界面主题一致（工具栏标题栏）"
   },
   {
     "context": "*",
@@ -611,6 +646,16 @@
   },
   {
     "context": "*",
+    "msgid": "Reset Font Filters",
+    "zh_HANS": "重置字体筛选"
+  },
+  {
+    "context": "*",
+    "msgid": "Clear search text and restore sort, script filter, and filter chips to defaults",
+    "zh_HANS": "清空搜索并恢复排序、书写系统筛选和筛选芯片为默认值"
+  },
+  {
+    "context": "*",
     "msgid": "Search Fonts",
     "zh_HANS": "搜索字体"
   },
@@ -656,6 +701,16 @@
   },
   {
     "context": "Operator",
+    "msgid": "Font filters restored to defaults",
+    "zh_HANS": "筛选条件已还原为默认值"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font filters already at defaults",
+    "zh_HANS": "筛选条件已是默认值"
+  },
+  {
+    "context": "Operator",
     "msgid": "Rescan system font folders, clear failed-load caches, and rebuild font preview thumbnails",
     "zh_HANS": "重新扫描系统字体、清除加载失败缓存并重建预览缩略图"
   },
@@ -686,8 +741,8 @@
   },
   {
     "context": "*",
-    "msgid": "No fonts match filter",
-    "zh_HANS": "没有匹配的字体"
+    "msgid": "No matching fonts. Try turning off filters.",
+    "zh_HANS": "未匹配到字体，可尝试关闭筛选"
   },
   {
     "context": "*",
@@ -773,6 +828,166 @@
     "context": "*",
     "msgid": "Sort order for the system font list",
     "zh_HANS": "系统字体列表的排序方式"
+  },
+  {
+    "context": "*",
+    "msgid": "Recently Used",
+    "zh_HANS": "最近使用"
+  },
+  {
+    "context": "*",
+    "msgid": "Show recently applied font families first",
+    "zh_HANS": "优先显示最近应用的字体族"
+  },
+  {
+    "context": "*",
+    "msgid": "Recent",
+    "zh_HANS": "最近"
+  },
+  {
+    "context": "*",
+    "msgid": "A-Z",
+    "zh_HANS": "A-Z"
+  },
+  {
+    "context": "*",
+    "msgid": "Z-A",
+    "zh_HANS": "Z-A"
+  },
+  {
+    "context": "*",
+    "msgid": "Supported",
+    "zh_HANS": "已支持"
+  },
+  {
+    "context": "*",
+    "msgid": "All fonts",
+    "zh_HANS": "全部字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Multi-wt",
+    "zh_HANS": "多字重"
+  },
+  {
+    "context": "*",
+    "msgid": "Families",
+    "zh_HANS": "全部族"
+  },
+  {
+    "context": "*",
+    "msgid": "All favs",
+    "zh_HANS": "全部收藏"
+  },
+  {
+    "context": "*",
+    "msgid": "Variable",
+    "zh_HANS": "可变"
+  },
+  {
+    "context": "*",
+    "msgid": "All types",
+    "zh_HANS": "全部类型"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Name Display",
+    "zh_HANS": "字体名称显示"
+  },
+  {
+    "context": "*",
+    "msgid": "How font names appear in lists and the viewport font picker",
+    "zh_HANS": "字体列表与视口字体选择器中的名称显示方式"
+  },
+  {
+    "context": "*",
+    "msgid": "Weight Grouping",
+    "zh_HANS": "字重合并方式"
+  },
+  {
+    "context": "*",
+    "msgid": "How font files are merged into one family with multiple weights. OpenType uses the name-table family (matches Family Name display); File Name parses weight suffixes from file names (-Bold, -Light, etc.)",
+    "zh_HANS": "如何将多个字体文件合并为同一字族的多字重。OpenType 按名称表族名合并（与「族名」显示一致）；文件名则解析 -Bold、-Light 等后缀"
+  },
+  {
+    "context": "*",
+    "msgid": "OpenType First",
+    "zh_HANS": "优先 OpenType"
+  },
+  {
+    "context": "*",
+    "msgid": "Group by OpenType family name when available, otherwise parse the file name",
+    "zh_HANS": "优先按 OpenType 族名合并，无族名时回退到文件名解析"
+  },
+  {
+    "context": "*",
+    "msgid": "Prefer PostScript name prefix (e.g. GenYoGothic2), then OpenType family, then file name",
+    "zh_HANS": "优先 PostScript 前缀（如 GenYoGothic2），其次 OpenType 族名，最后文件名"
+  },
+  {
+    "context": "*",
+    "msgid": "PostScript Prefix",
+    "zh_HANS": "PostScript 前缀"
+  },
+  {
+    "context": "*",
+    "msgid": "Group by PostScript name before the last hyphen (GenYoGothic2-B → GenYoGothic2)",
+    "zh_HANS": "按 PostScript 名最后一个连字符前的部分合并（GenYoGothic2-B → GenYoGothic2）"
+  },
+  {
+    "context": "*",
+    "msgid": "OpenType Family",
+    "zh_HANS": "OpenType 族名"
+  },
+  {
+    "context": "*",
+    "msgid": "Always group by OpenType typographic/font family name (name table IDs 16/1)",
+    "zh_HANS": "始终按 OpenType 族名（名称表 ID 16/1）合并字重"
+  },
+  {
+    "context": "*",
+    "msgid": "Group by file name after stripping -Bold, -Light, and similar suffixes",
+    "zh_HANS": "按文件名合并，并剥离 -Bold、-Light 等字落后缀"
+  },
+  {
+    "context": "*",
+    "msgid": "File Name",
+    "zh_HANS": "文件名"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the font file name (default)",
+    "zh_HANS": "使用字体文件名（默认）"
+  },
+  {
+    "context": "*",
+    "msgid": "Family Name",
+    "zh_HANS": "族名"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the OpenType family name (prefers localized CJK names when available)",
+    "zh_HANS": "使用 OpenType 族名（优先显示可用的中文/日文等本地化名称）"
+  },
+  {
+    "context": "*",
+    "msgid": "Full Name",
+    "zh_HANS": "完整名称"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the full font name from the name table",
+    "zh_HANS": "使用 name table 中的完整字体名"
+  },
+  {
+    "context": "*",
+    "msgid": "PostScript Name",
+    "zh_HANS": "PostScript 名"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the PostScript font name",
+    "zh_HANS": "使用 PostScript 字体名"
   },
   {
     "context": "*",
@@ -933,6 +1148,11 @@
     "context": "*",
     "msgid": "Preview loading…",
     "zh_HANS": "预览加载中…"
+  },
+  {
+    "context": "*",
+    "msgid": "Built-in font preview not supported yet",
+    "zh_HANS": "内置字体暂不支持预览"
   },
   {
     "context": "*",
@@ -1131,6 +1351,11 @@
   },
   {
     "context": "*",
+    "msgid": "Filtering unsupported fonts… ({:d} shown)",
+    "zh_HANS": "正在筛选不支持的字族…（已显示 {:d} 个）"
+  },
+  {
+    "context": "*",
     "msgid": "Show all fonts",
     "zh_HANS": "显示全部字体"
   },
@@ -1303,6 +1528,11 @@
     "context": "*",
     "msgid": "Strike Pos",
     "zh_HANS": "删除线位置"
+  },
+  {
+    "context": "*",
+    "msgid": "Enable strikethrough first",
+    "zh_HANS": "请先启用删除线"
   },
   {
     "context": "*",
@@ -1948,5 +2178,230 @@
     "context": "Operator",
     "msgid": "Filter the font list by script or language",
     "zh_HANS": "按书写系统或语言筛选字体列表"
+  },
+  {
+    "context": "*",
+    "msgid": "Header Toolbar",
+    "zh_HANS": "顶栏工具条"
+  },
+  {
+    "context": "*",
+    "msgid": "Show formatting controls in the 3D viewport top header when a text object is selected",
+    "zh_HANS": "选中文字对象时在 3D 视口顶栏显示排版控件"
+  },
+  {
+    "context": "*",
+    "msgid": "Sz",
+    "zh_HANS": "字号"
+  },
+  {
+    "context": "*",
+    "msgid": "Ch",
+    "zh_HANS": "字距"
+  },
+  {
+    "context": "*",
+    "msgid": "Wd",
+    "zh_HANS": "词距"
+  },
+  {
+    "context": "*",
+    "msgid": "Ln",
+    "zh_HANS": "行高"
+  },
+  {
+    "context": "*",
+    "msgid": "Sh",
+    "zh_HANS": "切变"
+  },
+  {
+    "context": "*",
+    "msgid": "St",
+    "zh_HANS": "删线"
+  },
+  {
+    "context": "*",
+    "msgid": "Regular",
+    "zh_HANS": "常规"
+  },
+  {
+    "context": "*",
+    "msgid": "Browse font file…",
+    "zh_HANS": "浏览字体文件…"
+  },
+  {
+    "context": "*",
+    "msgid": "Font size for selected text objects",
+    "zh_HANS": "所选文字对象的字号"
+  },
+  {
+    "context": "*",
+    "msgid": "Character spacing offset (0 = preset default)",
+    "zh_HANS": "字距偏移（0 表示样式预设值）"
+  },
+  {
+    "context": "*",
+    "msgid": "Word spacing offset (0 = preset default)",
+    "zh_HANS": "词距偏移（0 表示样式预设值）"
+  },
+  {
+    "context": "*",
+    "msgid": "Line height display value",
+    "zh_HANS": "行高显示值"
+  },
+  {
+    "context": "*",
+    "msgid": "Text shear for selected text objects",
+    "zh_HANS": "所选文字对象的切变"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Preview fonts while hovering the header font or weight list",
+    "zh_HANS": "悬停顶栏字体或字重列表时预览字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Favorites only",
+    "zh_HANS": "仅收藏"
+  },
+  {
+    "context": "*",
+    "msgid": "All favorites",
+    "zh_HANS": "全部收藏"
+  },
+  {
+    "context": "*",
+    "msgid": "Variable fonts",
+    "zh_HANS": "可变字体"
+  },
+  {
+    "context": "*",
+    "msgid": "All font types",
+    "zh_HANS": "全部字体"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Toggle Font Favorite",
+    "zh_HANS": "切换字体收藏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Add or remove this font family from favorites",
+    "zh_HANS": "将此字体族加入或移出收藏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Added to favorites",
+    "zh_HANS": "已加入收藏"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Removed from favorites",
+    "zh_HANS": "已移出收藏"
+  },
+  {
+    "context": "*",
+    "msgid": "Favorites Only",
+    "zh_HANS": "仅显示收藏字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Only list font families marked as favorites",
+    "zh_HANS": "仅列出已收藏的字体族"
+  },
+  {
+    "context": "*",
+    "msgid": "Variable Fonts Only",
+    "zh_HANS": "仅可变字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Only list OpenType variable font files",
+    "zh_HANS": "仅列出 OpenType 可变字体文件"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Header Font Picker Hover",
+    "zh_HANS": "顶栏字体选择器悬停预览"
+  },
+  {
+    "context": "*",
+    "msgid": "Favorite Font Families",
+    "zh_HANS": "收藏字体族"
+  },
+  {
+    "context": "*",
+    "msgid": "JSON list of favorite font family keys",
+    "zh_HANS": "收藏字体族键名的 JSON 列表"
+  },
+  {
+    "context": "*",
+    "msgid": "Close font picker",
+    "zh_HANS": "关闭字体选择器"
+  },
+  {
+    "context": "*",
+    "msgid": "Show every font family, including those missing characters from the preview text",
+    "zh_HANS": "显示全部字体族，包括预览文字中缺字的字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Show all font families, including single-weight families",
+    "zh_HANS": "显示全部字体族，包括只有一种字重的字体族"
+  },
+  {
+    "context": "*",
+    "msgid": "Show all font families, not just favorites",
+    "zh_HANS": "显示全部字体族，不仅限于收藏"
+  },
+  {
+    "context": "*",
+    "msgid": "Show all font types, including static and variable fonts",
+    "zh_HANS": "显示全部字体类型，包括静态字体与可变字体"
+  },
+  {
+    "context": "*",
+    "msgid": "Add or remove this font family from favorites",
+    "zh_HANS": "将此字体族加入或移出收藏"
+  },
+  {
+    "context": "*",
+    "msgid": "Show recently applied font families first. Click to cycle sort order.",
+    "zh_HANS": "优先显示最近使用的字体族。点击切换排序方式。"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort fonts by name ascending. Click to cycle sort order.",
+    "zh_HANS": "按名称升序排列。点击切换排序方式。"
+  },
+  {
+    "context": "*",
+    "msgid": "Sort fonts by name descending. Click to cycle sort order.",
+    "zh_HANS": "按名称降序排列。点击切换排序方式。"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust font size (↺ reset · click value to type)",
+    "zh_HANS": "调整字号（↺ 重置 · 点击数值输入）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust character spacing (↺ reset · click value to type)",
+    "zh_HANS": "调整字距（↺ 重置 · 点击数值输入）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust word spacing (↺ reset · click value to type)",
+    "zh_HANS": "调整词距（↺ 重置 · 点击数值输入）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust line height (↺ reset · click value to type)",
+    "zh_HANS": "调整行高（↺ 重置 · 点击数值输入）"
+  },
+  {
+    "context": "*",
+    "msgid": "Adjust text shear (↺ reset · click value to type)",
+    "zh_HANS": "调整切变（↺ 重置 · 点击数值输入）"
   }
 ]

@@ -4,8 +4,8 @@ import bpy
 from bpy.types import Operator, UIList
 
 from ..i18n import _
-from ..utils.operator_poll import ActiveFontDataPollMixin, ActiveFontPollMixin, WindowManagerPollMixin
 from ..utils.addon_prefs import get_addon_prefs, prefs_are_editable
+from ..utils.operator_poll import ActiveFontDataPollMixin, ActiveFontPollMixin, WindowManagerPollMixin
 from ..utils.font_loader import (
     assign_font,
     ensure_font_catalog,
@@ -15,40 +15,92 @@ from ..utils.font_loader import (
     queue_font_catalog,
     refresh_font_catalog,
 )
+from ..utils.font_catalog_filter import (
+    catalog_item_passes_filters,
+    dedupe_header_font_filter_items,
+    filtered_font_groups,
+    font_catalog_filter_state,
+    font_filters_differ_from_defaults,
+    invalidate_catalog_filter_cache,
+    reset_font_catalog_filters,
+    sorted_catalog_indices,
+    visible_catalog_indices as shared_visible_catalog_indices,
+)
+from ..utils.font_family import family_weight_counts, header_font_display_label
 from ..utils.font_language import catalog_item_passes_language, catalog_item_passes_name, get_language_filter, get_language_label
 from ..utils.font_preview import get_font_icon, invalidate_font_previews, queue_font_preview, tag_ui_redraw
 from ..utils.text_format import get_active_text_data
 from ..utils.text_frame import tag_view3d_redraw
-from ..utils.font_glyph import invalidate_glyph_cache
 from ..hud.draw import tag_redraw
 from ..hud.font_picker import close_picker
 
 _MENU_FONT_ROWS = 8
 
 
+def _draw_font_favorite_toggle(row, context, filepath, *, keep_picker_open=False, solo_icons=False):
+    """Favorite toggle for RNA UI lists."""
+    from ..utils.font_favorites import is_family_favorite
+
+    favorited = is_family_favorite(context, filepath)
+    fav_cell = row.row(align=True)
+    fav_cell.ui_units_x = 1.05
+    if solo_icons:
+        op = fav_cell.operator(
+            "font.texthelper_toggle_font_favorite",
+            text="",
+            icon="SOLO_ON" if favorited else "SOLO_OFF",
+            depress=favorited,
+        )
+    else:
+        op = fav_cell.operator(
+            "font.texthelper_toggle_font_favorite",
+            text="",
+            icon="BOOKMARKS",
+            depress=favorited,
+        )
+    op.filepath = filepath
+    op.keep_picker_open = keep_picker_open
+
+
 def _preview_list_scale(prefs):
     return max(1.0, float(getattr(prefs, "font_preview_ui_scale", 3.5)))
 
 
-def _draw_font_card(layout, context, item, active):
+def _draw_font_card(layout, context, item, active, *, catalog_index=-1):
     """Reference-style card: small name row + large preview line below."""
+    from ..utils.font_favorites import is_family_favorite
+    from ..utils.font_loader import is_builtin_bfont_catalog
+
     prefs = get_addon_prefs(context)
+    wm = context.window_manager
+    catalog = wm.th_state.font_catalog if wm and getattr(wm, "th_state", None) else None
+    favorited = is_family_favorite(context, item.filepath)
     box = layout.box()
     col = box.column(align=True)
 
     name_row = col.row(align=True)
     name_row.scale_y = 0.78
+    _draw_font_favorite_toggle(name_row, context, item.filepath)
     if active:
         name_row.label(text="", icon="CHECKMARK")
+    label = item.display_name
+    if catalog is not None and catalog_index >= 0:
+        label = header_font_display_label(context, catalog, catalog_index, item)
     op = name_row.operator(
         "font.texthelper_apply_system_font",
-        text=item.display_name,
+        text=label,
         emboss=False,
         depress=active,
     )
     op.filepath = item.filepath
 
     if not getattr(prefs, "font_preview_icons", True):
+        return
+
+    if is_builtin_bfont_catalog(item.filepath):
+        note = col.row(align=True)
+        note.scale_y = 0.7
+        note.label(text=_("Built-in font preview not supported yet"), icon="INFO")
         return
 
     icon_id = get_font_icon(context, item.filepath, item.display_name)
@@ -74,28 +126,109 @@ class TEXTHELPER_UL_system_fonts(UIList):
 
         text_data = get_active_text_data(context)
         active = is_current_font(text_data, item.filepath)
-        _draw_font_card(layout, context, item, active)
+        _draw_font_card(layout, context, item, active, catalog_index=index)
 
     def filter_items(self, context, data, propname):
-        items = getattr(data, propname)
-        state = context.window_manager.th_state
-        filter_text = (state.font_filter or "").strip().lower()
-        sort_mode = state.font_sort or "NAME_AZ"
-        lang = get_language_filter(context.window_manager)
+        return filter_font_catalog_items(self, context, data, propname)
 
-        flt_flags = []
-        for item in items:
-            if not catalog_item_passes_name(item, filter_text):
-                flt_flags.append(0)
-            elif not catalog_item_passes_language(item, lang):
-                flt_flags.append(0)
-            else:
-                flt_flags.append(self.bitflag_filter_item)
 
-        indices = list(range(len(items)))
-        reverse = sort_mode == "NAME_ZA"
-        indices.sort(key=lambda i: items[i].display_name.lower(), reverse=reverse)
-        return flt_flags, indices
+def _font_catalog_filter_state(context):
+    return font_catalog_filter_state(context)
+
+
+def _catalog_item_visible(context, item, *, filters, weight_counts=None):
+    return catalog_item_passes_filters(context, item, filters, weight_counts=weight_counts)
+
+
+def visible_font_catalog_indices(context):
+    wm = context.window_manager
+    return shared_visible_catalog_indices(context, wm.th_state.font_catalog)
+
+
+def filter_font_catalog_items(ui_list, context, data, propname):
+    items = getattr(data, propname)
+    filters = font_catalog_filter_state(context)
+    weight_counts = family_weight_counts(items, context) if filters["multi_weight_only"] else None
+
+    flt_flags = []
+    for item in items:
+        if catalog_item_passes_filters(context, item, filters, weight_counts=weight_counts):
+            flt_flags.append(ui_list.bitflag_filter_item)
+        else:
+            flt_flags.append(0)
+
+    indices = sorted_catalog_indices(items, filters["sort_mode"], context)
+    return flt_flags, indices
+
+
+def filter_header_font_catalog_items(ui_list, context, data, propname):
+    flt_flags, indices = filter_font_catalog_items(ui_list, context, data, propname)
+    catalog = getattr(data, propname)
+    return dedupe_header_font_filter_items(ui_list, catalog, flt_flags, indices)
+
+
+def _draw_header_font_filter_chips(layout, context, state):
+    row = layout.row(align=True)
+    row.scale_y = 0.9
+    hide = state.th_font_picker_hide_unsupported
+    row.prop(
+        state,
+        "th_font_picker_hide_unsupported",
+        text=_("Hide unsupported") if hide else _("Show all fonts"),
+        toggle=True,
+    )
+    multi = state.th_font_picker_multi_weight_only
+    row.prop(
+        state,
+        "th_font_picker_multi_weight_only",
+        text=_("Multi-weight only") if multi else _("All font families"),
+        toggle=True,
+    )
+    row = layout.row(align=True)
+    row.scale_y = 0.9
+    favorites = state.th_font_picker_favorites_only
+    row.prop(
+        state,
+        "th_font_picker_favorites_only",
+        text=_("Favorites only") if favorites else _("All favorites"),
+        toggle=True,
+    )
+    variable = state.th_font_picker_variable_only
+    row.prop(
+        state,
+        "th_font_picker_variable_only",
+        text=_("Variable fonts") if variable else _("All font types"),
+        toggle=True,
+    )
+    reset_row = row.row(align=True)
+    reset_row.operator(
+        "font.texthelper_reset_font_filters",
+        text="",
+        icon="X",
+    )
+
+
+def _draw_header_font_list_header(layout, context, wm):
+    """Sort, language, and filter toggles for the header font popover."""
+    state = wm.th_state
+    row = layout.row(align=True)
+    row.prop(state, "font_sort", text="")
+    row.menu(
+        "TEXTHELPER_MT_font_language",
+        text=_(get_language_label(get_language_filter(wm))),
+        icon="NONE",
+    )
+    _draw_header_font_filter_chips(layout, context, state)
+
+
+def _draw_font_filter_row(layout, wm, context, *, compact_refresh=False):
+    row = layout.row(align=True)
+    row.prop(wm.th_state, "font_filter", text="", icon="VIEWZOOM", placeholder=_("Search fonts…"))
+    row.operator(
+        "font.texthelper_refresh_system_fonts",
+        text="" if compact_refresh else _("Force Refresh Previews"),
+        icon="FILE_REFRESH",
+    )
 
 
 def _draw_font_list_header(layout, context, wm):
@@ -121,16 +254,6 @@ def _draw_font_list_header(layout, context, wm):
         row.label(text=_("Enter preview text…"), icon="FONT_DATA")
 
 
-def _draw_font_filter_row(layout, wm):
-    row = layout.row(align=True)
-    row.prop(wm.th_state, "font_filter", text="", icon="VIEWZOOM", placeholder=_("Search fonts…"))
-    row.operator(
-        "font.texthelper_refresh_system_fonts",
-        text=_("Force Refresh Previews"),
-        icon="FILE_REFRESH",
-    )
-
-
 def _draw_font_catalog_status(layout, wm):
     if wm.th_state.font_catalog:
         return False
@@ -149,20 +272,18 @@ def draw_font_picker_popup(layout, context):
     queue_font_catalog(wm)
 
     _draw_font_list_header(layout, context, wm)
-    _draw_font_filter_row(layout, wm)
+    _draw_font_filter_row(layout, wm, context)
 
     if _draw_font_catalog_status(layout, wm):
         return
 
     text_data = get_active_text_data(context)
-    filt = wm.th_state.font_filter.strip().lower()
-    lang = get_language_filter(wm)
+    filters = font_catalog_filter_state(context)
+    weight_counts = family_weight_counts(wm.th_state.font_catalog, context) if filters["multi_weight_only"] else None
     col = layout.column(align=False)
     shown = 0
     for item in wm.th_state.font_catalog:
-        if not catalog_item_passes_name(item, filt):
-            continue
-        if not catalog_item_passes_language(item, lang):
+        if not catalog_item_passes_filters(context, item, filters, weight_counts=weight_counts):
             continue
         if shown >= _MENU_FONT_ROWS:
             col.label(text=_("Type in search to narrow results…"), icon="INFO")
@@ -171,7 +292,7 @@ def draw_font_picker_popup(layout, context):
         _draw_font_card(col, context, item, active)
         shown += 1
     if shown == 0:
-        col.label(text=_("No fonts match filter"), icon="INFO")
+        col.label(text=_("No matching fonts. Try turning off filters."), icon="INFO")
 
 
 def draw_system_font_list(layout, context, rows=6, list_id="th_font_sidebar"):
@@ -180,7 +301,7 @@ def draw_system_font_list(layout, context, rows=6, list_id="th_font_sidebar"):
     text_data = get_active_text_data(context)
 
     _draw_font_list_header(layout, context, wm)
-    _draw_font_filter_row(layout, wm)
+    _draw_font_filter_row(layout, wm, context)
 
     if _draw_font_catalog_status(layout, wm):
         return
@@ -270,6 +391,9 @@ class TH_OT_toggle_font_picker(ActiveFontDataPollMixin, Operator):
 
         close_preset_picker(context)
         close_weight_picker(context)
+        from ..hud.slider_input import dismiss_slider_value_edit
+
+        dismiss_slider_value_edit(context, undo=False)
         state.th_hud_open_menu = ""
         from ..ops.hud_modal import _dismiss_popup_menus
 
@@ -278,11 +402,7 @@ class TH_OT_toggle_font_picker(ActiveFontDataPollMixin, Operator):
         state.th_font_picker_scroll = 0
         state.th_font_picker_hover = -1
 
-        try:
-            ensure_font_catalog(wm)
-        except Exception:
-            pass
-        invalidate_glyph_cache()
+        queue_font_catalog(wm)
         from ..hud.font_picker import _ensure_picker_blf_hooks, focus_search_field, seed_picker_hover_apply
 
         _ensure_picker_blf_hooks()
@@ -334,6 +454,9 @@ class TH_OT_toggle_weight_picker(ActiveFontDataPollMixin, Operator):
 
         close_font_picker(context)
         close_preset_picker(context)
+        from ..hud.slider_input import dismiss_slider_value_edit
+
+        dismiss_slider_value_edit(context, undo=False)
         state.th_hud_open_menu = ""
         _dismiss_popup_menus(context)
         state.th_weight_picker_open = True
@@ -356,24 +479,34 @@ class TH_OT_apply_system_font(ActiveFontDataPollMixin, Operator):
     filepath: bpy.props.StringProperty(subtype="FILE_PATH")
     catalog_index: bpy.props.IntProperty(default=-1, options={"HIDDEN"})
     keep_picker_open: bpy.props.BoolProperty(default=False, options={"HIDDEN"})
+    record_recent: bpy.props.BoolProperty(default=True, options={"HIDDEN"})
 
     def execute(self, context):
-        text_data = get_active_text_data(context)
-        if text_data is None:
+        from ..utils.text_format import iter_selected_text_data
+
+        applied = False
+        font = None
+        for text_data in iter_selected_text_data(context):
+            try:
+                font = assign_font(text_data, self.filepath)
+            except FileNotFoundError:
+                self.report({"ERROR"}, _("Font file not found"))
+                return {"CANCELLED"}
+            except Exception as exc:
+                self.report({"ERROR"}, str(exc))
+                return {"CANCELLED"}
+            applied = True
+        if not applied:
             self.report({"WARNING"}, _("Select a text object first"))
-            return {"CANCELLED"}
-        try:
-            font = assign_font(text_data, self.filepath)
-        except FileNotFoundError:
-            self.report({"ERROR"}, _("Font file not found"))
-            return {"CANCELLED"}
-        except Exception as exc:
-            self.report({"ERROR"}, str(exc))
             return {"CANCELLED"}
         if self.catalog_index >= 0:
             from ..props import set_font_catalog_index
 
             set_font_catalog_index(context.window_manager, self.catalog_index)
+        if self.record_recent:
+            from ..utils.font_recent import touch_recent_family
+
+            touch_recent_family(context, self.filepath)
         tag_view3d_redraw(context)
         if self.keep_picker_open:
             from ..hud.draw import tag_redraw
@@ -383,7 +516,26 @@ class TH_OT_apply_system_font(ActiveFontDataPollMixin, Operator):
             from ..hud.weight_picker import close_picker as close_weight_picker
 
             close_weight_picker(context)
-            self.report({"INFO"}, _("Font: {}").format(font.name))
+            self.report({"INFO"}, _("Font: {}").format(font.name if font else bpy.path.display_name(self.filepath)))
+        return {"FINISHED"}
+
+
+class TH_OT_reset_font_filters(WindowManagerPollMixin, Operator):
+    bl_idname = "font.texthelper_reset_font_filters"
+    bl_label = "Reset Font Filters"
+    bl_description = "Clear search text and restore sort, script filter, and filter chips to defaults"
+    bl_options = {"REGISTER", "UNDO"}
+
+    def execute(self, context):
+        from ..i18n import _
+
+        if reset_font_catalog_filters(context):
+            message = _("Font filters restored to defaults")
+        else:
+            message = _("Font filters already at defaults")
+        tag_ui_redraw(context)
+        tag_redraw()
+        self.report({"INFO"}, message)
         return {"FINISHED"}
 
 
@@ -394,6 +546,7 @@ classes = (
     TH_OT_toggle_font_picker,
     TH_OT_toggle_weight_picker,
     TH_OT_apply_system_font,
+    TH_OT_reset_font_filters,
 )
 
 

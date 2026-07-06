@@ -123,69 +123,100 @@ def _refresh_after_body_change(text_data) -> None:
     text_data.update_tag()
 
 
-def sync_vertical_source_to_body(text_data) -> None:
+def sync_vertical_source_to_body(text_data, *, context=None) -> None:
     if _in_edit_font():
         return
-    source = getattr(text_data.text_helper, "th_vertical_source", "") or ""
+    from .text_limits import assign_vertical_source, clamp_multiline_text, clamp_text_body, text_body_max_len
+
+    source = clamp_multiline_text(getattr(text_data.text_helper, "th_vertical_source", "") or "", context=context)
+    assign_vertical_source(text_data.text_helper, source, context=context)
     if not source and text_data.body:
         source = body_to_columns_source(text_data.body, _column_order(text_data))
         text_data.text_helper.th_vertical_source = source
-    text_data.body = columns_source_to_body(source, _column_order(text_data))
+    body = columns_source_to_body(source, _column_order(text_data))
+    truncated = False
+
+    if len(body) > text_body_max_len(context):
+        body = clamp_text_body(body, context=context)
+        recovered = body_to_columns_source(body, _column_order(text_data))
+        global _VERTICAL_SOURCE_GUARD
+        _VERTICAL_SOURCE_GUARD = True
+        try:
+            text_data.text_helper.th_vertical_source = recovered
+        finally:
+            _VERTICAL_SOURCE_GUARD = False
+        truncated = True
+    text_data.body = body
     _refresh_after_body_change(text_data)
+    if truncated:
+        from .ui_textbox import sync_panel_textbox_from_canonical
+
+        sync_panel_textbox_from_canonical(text_data, vertical=True, context=context)
 
 
-def sync_body_to_vertical_source(text_data) -> None:
+def sync_body_to_vertical_source(text_data, *, context=None) -> None:
     """Recover N-panel columns after in-viewport EDIT_FONT edits."""
     if not is_vertical(text_data):
         return
+    from .text_limits import assign_vertical_source, clamp_multiline_text
+
     source = body_to_columns_source(text_data.body or "", _column_order(text_data))
+    source = clamp_multiline_text(source, context=context)
     global _VERTICAL_SOURCE_GUARD
     _VERTICAL_SOURCE_GUARD = True
     try:
-        text_data.text_helper.th_vertical_source = source
+        assign_vertical_source(text_data.text_helper, source, context=context)
     finally:
         _VERTICAL_SOURCE_GUARD = False
 
 
-def apply_orientation(text_data, orientation: str) -> None:
+def apply_orientation(text_data, orientation: str, *, context=None) -> None:
     current = getattr(text_data.text_helper, "th_text_orientation", "HORIZONTAL")
     if orientation == current:
         return
 
+    from .text_limits import clamp_multiline_text
+
     order = _column_order(text_data)
     if orientation == "VERTICAL":
         if current == "HORIZONTAL":
-            text_data.text_helper.th_vertical_source = _horizontal_content(text_data)
+            text_data.text_helper.th_vertical_source = clamp_multiline_text(
+                _horizontal_content(text_data),
+                context=context,
+            )
         elif not getattr(text_data.text_helper, "th_vertical_source", ""):
-            text_data.text_helper.th_vertical_source = body_to_columns_source(text_data.body, order)
-        sync_vertical_source_to_body(text_data)
+            text_data.text_helper.th_vertical_source = clamp_multiline_text(
+                body_to_columns_source(text_data.body, order),
+                context=context,
+            )
+        sync_vertical_source_to_body(text_data, context=context)
     else:
         source = getattr(text_data.text_helper, "th_vertical_source", "") or body_to_columns_source(
             text_data.body, order
         )
-        text_data.body = source
+        text_data.body = clamp_multiline_text(source, context=context)
         _refresh_after_body_change(text_data)
 
     text_data.text_helper.th_text_orientation = orientation
 
 
-def apply_column_order(text_data, new_order: str) -> None:
+def apply_column_order(text_data, new_order: str, *, context=None) -> None:
     """Flip viewport column direction without reordering N-panel lines."""
     if new_order == _column_order(text_data):
         return
     text_data.text_helper.th_vertical_column_order = new_order
     if not is_vertical(text_data):
         return
-    sync_vertical_source_to_body(text_data)
+    sync_vertical_source_to_body(text_data, context=context)
 
 
-def insert_column_break(text_data) -> bool:
+def insert_column_break(text_data, *, context=None) -> bool:
     if not is_vertical(text_data):
         return False
     text = getattr(text_data.text_helper, "th_vertical_source", "") or ""
     if text and not text.endswith("\n"):
         text_data.text_helper.th_vertical_source = text + "\n"
-        sync_vertical_source_to_body(text_data)
+        sync_vertical_source_to_body(text_data, context=context)
         return True
     return False
 
@@ -193,23 +224,25 @@ def insert_column_break(text_data) -> bool:
 _VERTICAL_SOURCE_GUARD = False
 
 
-def set_vertical_source(text_data, raw: str) -> None:
+def set_vertical_source(text_data, raw: str, *, context=None) -> None:
+    from .text_limits import assign_vertical_source, clamp_multiline_text
+
     global _VERTICAL_SOURCE_GUARD
     _VERTICAL_SOURCE_GUARD = True
     try:
-        text_data.text_helper.th_vertical_source = raw
+        assign_vertical_source(text_data.text_helper, clamp_multiline_text(raw, context=context), context=context)
         from .text_case import sync_live_text_case
 
         sync_live_text_case(text_data)
-        sync_vertical_source_to_body(text_data)
+        sync_vertical_source_to_body(text_data, context=context)
     finally:
         _VERTICAL_SOURCE_GUARD = False
     from .ui_textbox import sync_panel_textbox_from_canonical
 
-    sync_panel_textbox_from_canonical(text_data, vertical=True)
+    sync_panel_textbox_from_canonical(text_data, vertical=True, context=context)
 
 
-def clear_vertical_content(text_data) -> None:
+def clear_vertical_content(text_data, *, context=None) -> None:
     global _VERTICAL_SOURCE_GUARD
     _VERTICAL_SOURCE_GUARD = True
     try:
@@ -219,12 +252,12 @@ def clear_vertical_content(text_data) -> None:
         _VERTICAL_SOURCE_GUARD = False
     from .ui_textbox import sync_panel_textbox_from_canonical
 
-    sync_panel_textbox_from_canonical(text_data, vertical=True, flip_active=True)
+    sync_panel_textbox_from_canonical(text_data, vertical=True, flip_active=True, context=context)
     _refresh_after_body_change(text_data)
 
 
-def normalize_incoming_text(text_data, raw: str) -> str:
+def normalize_incoming_text(text_data, raw: str, *, context=None) -> str:
     if is_vertical(text_data):
-        set_vertical_source(text_data, raw)
+        set_vertical_source(text_data, raw, context=context)
         return text_data.body
     return raw

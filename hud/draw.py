@@ -7,7 +7,8 @@ import gpu
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs
 from ..utils.text_bounds import get_toolbar_anchor
-from ..utils.text_format import get_active_text, is_strike_active, is_underline_active
+from ..utils.text_format import get_active_text
+from ..utils.toolbar_ui import tool_item_pressed as _is_toggle_on
 from ..hud.hit_test import hud_enabled
 from .gpu_primitives import draw_rounded_rect
 from .tooltip import draw_hud_tooltip
@@ -22,7 +23,6 @@ from .layout import (
     slider_track_end,
     slider_track_start,
     slider_track_y,
-    slider_value_left_x,
     spacing_slider_t,
 )
 from .font_picker import draw_font_picker, picker_open as font_picker_open
@@ -51,12 +51,10 @@ def _ui_scale(context):
     return max(context.preferences.system.ui_scale, 0.5) * prefs.hud_scale
 
 
-def _accent(context):
-    from ..utils.hud_theme import get_accent_active_bg, get_accent_drag_bg, get_accent_rgba
+def _toolbar_colors(context):
+    from ..utils.hud_theme import get_toolbar_draw_colors
 
-    prefs = _prefs(context)
-    accent = get_accent_rgba(prefs)
-    return accent, get_accent_active_bg(accent), get_accent_drag_bg(accent)
+    return get_toolbar_draw_colors(context)
 
 
 def _is_view3d_draw_context(context):
@@ -153,29 +151,9 @@ def _draw_chevron(x, baseline_y, scale, color):
 
 
 def _is_active(item, text_data):
-    if text_data is None or not item.active_check:
-        return False
-    attr, val = item.active_check.split(":", 1)
-    cur = text_data
-    for part in attr.split("."):
-        cur = getattr(cur, part, None)
-        if cur is None:
-            return False
-    return str(cur) == val
+    from ..utils.toolbar_ui import _is_active_check
 
-
-def _is_toggle_on(item, text_data):
-    if text_data is None or item.kind != "toggle":
-        return False
-    if item.id == "bold":
-        return any(f.use_bold for f in text_data.body_format) if text_data.body_format else False
-    if item.id == "italic":
-        return any(f.use_italic for f in text_data.body_format) if text_data.body_format else False
-    if item.id == "underline":
-        return is_underline_active(text_data)
-    if item.id == "strike":
-        return is_strike_active(text_data)
-    return _is_active(item, text_data)
+    return _is_active_check(text_data, item.active_check)
 
 
 def _title_for_item(item):
@@ -190,22 +168,38 @@ def _tip_for_item(item):
     return ""
 
 
-def _draw_spacing_slider(shader, rect, item, text_data, scale, accent, muted, text_col):
+def _dropdown_picker_open(context, item_id):
+    if item_id == "preset":
+        return preset_picker_open(context)
+    if item_id == "font":
+        return font_picker_open(context)
+    if item_id == "font_weight":
+        return weight_picker_open(context)
+    return False
+
+
+def _label_color(colors, *, highlight=False, surface="btn"):
+    from ..utils.hud_theme import theme_text_color
+
+    return theme_text_color(colors, highlighted=highlight, surface=surface)
+
+
+def _draw_spacing_slider(shader, rect, item, text_data, scale, accent, colors, context):
+    from .slider_input import draw_slider_value_field
+
     title = _title_for_item(item)
     pad = 8.0 * scale
     header_size = slider_header_font_size(scale)
     header_y = slider_header_position_y(rect, scale, header_size, title, _FONT_ID)
+    label_color = _label_color(colors, surface="panel")
+    track_color = colors.get("slider_track", (0.28, 0.28, 0.30, 1.0))
 
     blf.size(_FONT_ID, header_size)
-    blf.color(_FONT_ID, *muted)
+    blf.color(_FONT_ID, *label_color)
     blf.position(_FONT_ID, rect.x + pad, header_y, 0)
     blf.draw(_FONT_ID, title)
 
-    blf.size(_FONT_ID, header_size)
-    blf.color(_FONT_ID, *text_col)
-    value_x = slider_value_left_x(rect, scale, header_size, item.label, _FONT_ID)
-    blf.position(_FONT_ID, value_x, header_y, 0)
-    blf.draw(_FONT_ID, item.label)
+    draw_slider_value_field(shader, rect, item, scale, accent, colors, context, font_id=_FONT_ID)
 
     track_y = slider_track_y(rect, scale)
     track_h = 3.0 * scale
@@ -213,13 +207,13 @@ def _draw_spacing_slider(shader, rect, item, text_data, scale, accent, muted, te
     track_x0 = slider_track_start(rect, scale)
     track_x1 = slider_track_end(rect)
     t = spacing_slider_t(text_data, item.id)
-    draw_rounded_rect(shader, track_x0, track_y, track_x1 - track_x0, track_h, (0.28, 0.28, 0.30, 1.0), 1.5 * scale)
+    draw_rounded_rect(shader, track_x0, track_y, track_x1 - track_x0, track_h, track_color, 1.5 * scale)
     thumb_x = track_x0 + (track_x1 - track_x0) * t - 3 * scale
     draw_rounded_rect(shader, thumb_x, track_y - 2 * scale, 6 * scale, 7 * scale, accent, 2.0 * scale)
 
     if item.reset_mode:
         blf.size(_FONT_ID, int(10 * scale))
-        blf.color(_FONT_ID, *muted)
+        blf.color(_FONT_ID, *label_color)
         reset_x = slider_reset_x(rect)
         _, reset_h = blf.dimensions(_FONT_ID, "↺")
         blf.position(_FONT_ID, reset_x, row_center - reset_h * 0.5, 0)
@@ -261,12 +255,14 @@ def draw_hud():
 
     gpu.state.blend_set("ALPHA")
     shader = gpu.shader.from_builtin("UNIFORM_COLOR")
-    accent, btn_active, drag_active = _accent(context)
-    bg = (0.08, 0.08, 0.09, 0.94)
-    btn = (0.16, 0.16, 0.17, 1.0)
-    btn_hover = (0.22, 0.22, 0.24, 1.0)
-    text_col = (0.95, 0.95, 0.96, 1.0)
-    muted = (0.55, 0.55, 0.58, 1.0)
+    colors = _toolbar_colors(context)
+    accent = colors["accent"]
+    btn_active = colors["btn_active"]
+    drag_active = colors["drag_active"]
+    bg = colors["bg"]
+    btn = colors["btn"]
+    btn_hover = colors["btn_hover"]
+    muted = colors["muted"]
     radius = 8.0 * scale
     btn_radius = 5.0 * scale
 
@@ -301,27 +297,29 @@ def draw_hud():
 
         is_hover = hover_id == rect.id
         is_on = _is_toggle_on(item, text_data) or _is_active(item, text_data)
+        picker_open = item.kind == "dropdown" and _dropdown_picker_open(context, item.id)
+        text_highlight = is_on or is_hover or picker_open or (item.kind == "drag" and moving)
         color = btn
         if item.kind == "drag":
             if moving or is_hover:
                 color = drag_active
             else:
-                color = (0.12, 0.13, 0.14, 1.0)
-        elif is_on:
+                color = btn
+        elif is_on or picker_open:
             color = btn_active
         elif is_hover:
             color = btn_hover
         draw_rounded_rect(shader, rect.x, rect.y, rect.w, rect.h, color, btn_radius)
 
         if item.kind == "drag":
-            grip_color = text_col if (is_hover or moving) else muted
+            grip_color = _label_color(colors, highlight=text_highlight, surface="btn")
             _draw_drag_grip(shader, rect, grip_color, scale)
 
         elif item.kind == "dropdown":
             font_size = toolbar_font_size(scale)
             baseline_y = toolbar_baseline_y(rect, _FONT_ID, font_size)
             blf.size(_FONT_ID, font_size)
-            blf.color(_FONT_ID, *text_col)
+            blf.color(_FONT_ID, *_label_color(colors, highlight=text_highlight, surface="btn"))
             text_max_w = dropdown_text_max_width(rect.w, scale)
             display_label = fit_dropdown_label(_FONT_ID, item.label, font_size, text_max_w)
             blf.position(_FONT_ID, rect.x + 8 * scale, baseline_y, 0)
@@ -331,23 +329,22 @@ def draw_hud():
                 rect.x + rect.w - 8 * scale - chevron_w,
                 baseline_y,
                 scale,
-                muted,
+                _label_color(colors, highlight=text_highlight, surface="btn"),
             )
 
         elif item.kind == "toggle":
+            icon_color = _label_color(colors, highlight=text_highlight, surface="btn")
             if item.id.startswith("align_"):
                 align = item.id.replace("align_", "").upper()
-                icon_color = text_col if (is_on or is_hover) else muted
                 _draw_align_icon(shader, rect, align, icon_color, scale)
             elif item.id == "case_default":
-                icon_color = text_col if (is_on or is_hover) else muted
                 _draw_default_case_glyph(shader, rect, icon_color, scale)
             else:
                 font_size = toolbar_font_size(scale)
                 label = item.label
                 baseline_y = toolbar_baseline_y(rect, _FONT_ID, font_size)
                 blf.size(_FONT_ID, font_size)
-                blf.color(_FONT_ID, *text_col)
+                blf.color(_FONT_ID, *icon_color)
                 tw, _ = blf.dimensions(_FONT_ID, label)
                 blf.position(
                     _FONT_ID,
@@ -361,7 +358,7 @@ def draw_hud():
                         shader,
                         rect,
                         baseline_y,
-                        text_col if is_on else muted,
+                        icon_color,
                         scale,
                     )
                 elif item.id == "strike":
@@ -369,12 +366,12 @@ def draw_hud():
                         shader,
                         rect,
                         text_visual_center_y(_FONT_ID, label, baseline_y),
-                        text_col if is_on else muted,
+                        icon_color,
                         scale,
                     )
 
         elif item.kind == "spacing_slider":
-            _draw_spacing_slider(shader, rect, item, text_data, scale, accent, muted, text_col)
+            _draw_spacing_slider(shader, rect, item, text_data, scale, accent, colors, context)
 
         elif item.kind == "button":
             font_size = max(int(round(13.0 * scale)), 9)
@@ -383,7 +380,7 @@ def draw_hud():
                 _FONT_ID,
                 font_size,
                 item.label,
-                text_col if is_hover else muted,
+                _label_color(colors, highlight=is_hover, surface="btn"),
             )
 
     if hover_id:

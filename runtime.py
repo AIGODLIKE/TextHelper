@@ -30,6 +30,10 @@ def ensure(context=None):
         register_draw()
         _draw_registered = True
 
+    from .utils.font_loader import prefetch_font_catalog
+
+    prefetch_font_catalog(ctx)
+
     return _ensure_modal(ctx)
 
 
@@ -96,10 +100,17 @@ def shutdown():
             pass
         _ensure_timer = None
 
-    close_font_picker(bpy.context)
-    close_weight_picker(bpy.context)
-    close_preset_picker(bpy.context)
-    close_language_picker(bpy.context)
+    try:
+        ctx = bpy.context
+        if ctx is None or not hasattr(ctx, "window_manager"):
+            ctx = None
+    except Exception:
+        ctx = None
+
+    close_font_picker(ctx)
+    close_weight_picker(ctx)
+    close_preset_picker(ctx)
+    close_language_picker(ctx)
 
     if _draw_registered:
         unregister_draw()

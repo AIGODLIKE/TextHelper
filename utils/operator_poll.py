@@ -2,8 +2,42 @@
 
 from __future__ import annotations
 
+import bpy
+
 from ..i18n import _
-from .text_format import get_active_text, get_active_text_data
+from .text_format import get_active_text, get_active_text_data, has_selected_font, iter_selected_font_objects
+
+
+def translate_operator_text(text: str, *, context: str = "Operator") -> str:
+    """Resolve operator RNA tooltip/label text from registered locale tables."""
+    msgid = (text or "").strip()
+    if not msgid:
+        return ""
+    translated = bpy.app.translations.pgettext(msgid, context)
+    if translated and translated != msgid:
+        return translated
+    if context != "*":
+        fallback = bpy.app.translations.pgettext(msgid, "*")
+        if fallback and fallback != msgid:
+            return fallback
+    return msgid
+
+
+def operator_description_text(operator_cls) -> str:
+    raw = getattr(operator_cls, "bl_description", None)
+    if raw is None:
+        return ""
+    if isinstance(raw, tuple):
+        parts = [part.strip() for part in raw if isinstance(part, str) and part.strip()]
+        text = " ".join(parts)
+    elif isinstance(raw, str):
+        text = raw.strip()
+    else:
+        return str(raw)
+    if not text:
+        return ""
+    ctxt = getattr(operator_cls, "bl_translation_context", None) or "Operator"
+    return translate_operator_text(text, context=ctxt)
 
 
 class TextHelperOperatorMixin:
@@ -11,36 +45,39 @@ class TextHelperOperatorMixin:
 
     bl_translation_context = "Operator"
 
+    @classmethod
+    def description(cls, context, properties):
+        return operator_description_text(cls)
+
 
 def poll_active_font(context):
-    return get_active_text(context) is not None
+    return has_selected_font(context)
 
 
 def poll_active_font_message(cls, context):
-    obj = context.active_object
-    if obj is None:
+    if not has_selected_font(context):
         cls.poll_message_set(_("Select a text object first"))
-        return False
-    if obj.type != "FONT":
-        cls.poll_message_set(_("Active object is not a text object"))
-        return False
-    if not obj.select_get():
-        cls.poll_message_set(_("Select the text object"))
         return False
     return True
 
 
 def poll_active_font_data(context):
-    return get_active_text_data(context) is not None
+    if not has_selected_font(context):
+        return False
+    for obj in iter_selected_font_objects(context):
+        if obj.data is not None:
+            return True
+    return False
 
 
 def poll_active_font_data_message(cls, context):
     if not poll_active_font_message(cls, context):
         return False
-    if get_active_text_data(context) is None:
-        cls.poll_message_set(_("Text data is unavailable"))
-        return False
-    return True
+    for obj in iter_selected_font_objects(context):
+        if obj.data is not None:
+            return True
+    cls.poll_message_set(_("Text data is unavailable"))
+    return False
 
 
 class ActiveFontDataPollMixin(TextHelperOperatorMixin):

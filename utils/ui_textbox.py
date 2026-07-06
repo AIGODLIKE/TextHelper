@@ -35,17 +35,17 @@ def _inactive_panel_buf_prop(text_helper):
     return _PANEL_BUF_PROPS[0 if getattr(text_helper, "th_panel_buf_active", False) else 1]
 
 
-def _apply_panel_buf_to_text(text_data, text_helper, content):
+def _apply_panel_buf_to_text(text_data, text_helper, content, *, context=None):
+    from .text_limits import assign_text_body, assign_vertical_source, clamp_multiline_text
+
+    content = clamp_multiline_text(content, context=context)
     mode = getattr(text_helper, "th_panel_buf_mode", "")
     if mode == "V":
-        if getattr(text_helper, "th_vertical_source", "") == content:
-            return
-        text_helper.th_vertical_source = content
+        assign_vertical_source(text_helper, content, context=context)
         return
     if text_data.body == content:
         return
-    text_data.body = content
-    text_data.update_tag()
+    assign_text_body(text_data, content, context=context)
 
 
 def _apply_deferred_panel_update(text_data, updates):
@@ -94,6 +94,8 @@ def _queue_panel_update(text_data, updates):
 
 
 def _update_panel_buf(self, context, prop_name):
+    global _module_sync_guard
+
     if _module_sync_guard:
         return
     if _active_panel_buf_prop(self) != prop_name:
@@ -101,7 +103,19 @@ def _update_panel_buf(self, context, prop_name):
     text_data = self.id_data
     if text_data is None:
         return
-    _apply_panel_buf_to_text(text_data, self, getattr(self, prop_name, ""))
+    content = getattr(self, prop_name, "")
+    mode = getattr(self, "th_panel_buf_mode", "")
+    from .text_limits import clamp_multiline_text
+
+    clamped = clamp_multiline_text(content, context=context)
+    if clamped != content:
+        _module_sync_guard = True
+        try:
+            setattr(self, prop_name, clamped)
+        finally:
+            _module_sync_guard = False
+        content = clamped
+    _apply_panel_buf_to_text(text_data, self, content, context=context)
 
 
 def update_panel_buf_a(self, context):
@@ -114,13 +128,15 @@ def update_panel_buf_b(self, context):
 
 def resolve_panel_textbox(text_data, context, *, vertical=False, visible_lines=None):
     """Pick a buffer property so each line-height pref gets a fresh textbox state."""
+    from .text_limits import clamp_multiline_text
+
     text_helper = text_data.text_helper
     if visible_lines is None:
         lines = n_panel_textbox_lines(context)
     else:
         lines = max(3, int(visible_lines))
     mode = _panel_buf_mode(vertical)
-    canonical = _canonical_panel_text(text_data, vertical)
+    canonical = clamp_multiline_text(_canonical_panel_text(text_data, vertical), context=context)
 
     stored_lines = int(getattr(text_helper, "th_panel_buf_lines", 0) or 0)
     stored_mode = getattr(text_helper, "th_panel_buf_mode", "") or ""
@@ -155,8 +171,10 @@ def sync_panel_textbox_from_canonical(
     flip_active=False,
 ):
     """Push th_vertical_source / body into both panel textbox buffers immediately."""
+    from .text_limits import clamp_multiline_text
+
     text_helper = text_data.text_helper
-    canonical = _canonical_panel_text(text_data, vertical)
+    canonical = clamp_multiline_text(_canonical_panel_text(text_data, vertical), context=context)
     if visible_lines is None:
         visible_lines = n_panel_textbox_lines(context)
     lines = max(3, int(visible_lines))

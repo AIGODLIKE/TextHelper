@@ -117,16 +117,26 @@ def active_font_override(context, obj=None):
         "space_data": area.spaces.active,
     }
     if obj is not None:
+        from .text_format import iter_selected_font_objects
+
+        selected = [o for o in iter_selected_font_objects(context)]
+        if obj not in selected:
+            selected.insert(0, obj)
         kwargs["object"] = obj
         kwargs["active_object"] = obj
+        kwargs["selected_objects"] = selected
     return context.temp_override(**kwargs)
 
 
-def run_active_font_op(context, callback, obj=None):
+def run_active_font_op(context, callback, obj=None, *, undo=False):
     """Run callback inside a 3D View override with the active text object selected."""
     override = active_font_override(context, obj)
     if override is None:
         return False
     with override:
+        if undo:
+            from .undo import push_undo
+
+            push_undo()
         callback()
     return True

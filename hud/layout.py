@@ -7,6 +7,7 @@ import blf
 from ..i18n import _
 
 SPACING_SLIDER_IDS = frozenset({"font_size", "char_spacing", "word_spacing", "line_height", "shear", "strike_position"})
+SPACING_VALUE_INPUT_IDS = frozenset({"font_size", "char_spacing", "word_spacing", "line_height", "shear"})
 
 FONT_DROPDOWN_WIDTH = 156.0
 FONT_WEIGHT_DROPDOWN_WIDTH = 72.0
@@ -183,7 +184,7 @@ def build_slider_row_items():
             op="font.texthelper_set_spacing_value",
             op_kwargs={"mode": "SIZE"},
             title_key="Font Size",
-            tip_key="Adjust font size (↺ resets to preset default)",
+            tip_key="Adjust font size (↺ reset · click value to type)",
             reset_mode="SIZE",
         ),
         HudItem(
@@ -194,7 +195,7 @@ def build_slider_row_items():
             op="font.texthelper_set_spacing_value",
             op_kwargs={"mode": "CHAR"},
             title_key="Char Spacing",
-            tip_key="Adjust character spacing (↺ resets to preset default)",
+            tip_key="Adjust character spacing (↺ reset · click value to type)",
             reset_mode="CHAR",
         ),
         HudItem(
@@ -205,7 +206,7 @@ def build_slider_row_items():
             op="font.texthelper_set_spacing_value",
             op_kwargs={"mode": "WORD"},
             title_key="Word Spacing",
-            tip_key="Adjust word spacing (↺ resets to preset default)",
+            tip_key="Adjust word spacing (↺ reset · click value to type)",
             reset_mode="WORD",
         ),
         HudItem(
@@ -216,7 +217,7 @@ def build_slider_row_items():
             op="font.texthelper_set_spacing_value",
             op_kwargs={"mode": "LINE"},
             title_key="Line Height",
-            tip_key="Adjust line height (↺ resets to preset default)",
+            tip_key="Adjust line height (↺ reset · click value to type)",
             reset_mode="LINE",
         ),
         HudItem(
@@ -227,7 +228,7 @@ def build_slider_row_items():
             op="font.texthelper_set_spacing_value",
             op_kwargs={"mode": "SHEAR"},
             title_key="Shear",
-            tip_key="Adjust text shear (↺ resets to preset default)",
+            tip_key="Adjust text shear (↺ reset · click value to type)",
             reset_mode="SHEAR",
         ),
         HudItem("sep_close", "separator", width=6.0),
@@ -270,7 +271,7 @@ def _update_item_labels(items, text_data, context=None):
         if item.id == "font" and text_data is not None and text_data.font:
             from ..utils.font_loader import font_hud_label
 
-            item.label = font_hud_label(text_data.font)
+            item.label = font_hud_label(text_data.font, context)
             item.width = FONT_DROPDOWN_WIDTH
         elif item.id == "font":
             item.label = _("Font")
@@ -479,8 +480,24 @@ def slider_reset_hit(rect, mx, my):
     return reset_x0 <= mx <= rect.x + rect.w - 2.0 and rect.y <= my <= rect.y + rect.h
 
 
+def slider_value_field_contains(rect, mx, my, scale, value_text, font_id=0):
+    """Hit-test the editable value label on the right of a spacing slider."""
+    if mx < 0.0 or my < 0.0:
+        return False
+    header_size = slider_header_font_size(scale)
+    left = slider_value_left_x(rect, scale, header_size, value_text, font_id)
+    right = slider_value_right_edge(rect)
+    top = slider_header_top(rect, scale)
+    blf.size(font_id, int(header_size))
+    _, th = blf.dimensions(font_id, value_text or "0")
+    bottom = top - th - 2.0 * scale
+    pad = 4.0 * scale
+    return (left - pad) <= mx <= (right + pad) and bottom <= my <= (top + pad)
+
+
 def spacing_slider_t(text_data, item_id):
     from ..utils.text_format import (
+        char_spacing_display_bounds,
         format_size_slider_t,
         line_height_display_max,
         spacing_display_line,
@@ -489,14 +506,21 @@ def spacing_slider_t(text_data, item_id):
         LINE_HEIGHT_DISPLAY_MIN,
         shear_slider_t,
         strike_position_slider_t,
+        word_spacing_display_bounds,
     )
 
     if item_id == "font_size":
         return format_size_slider_t(text_data.size if text_data is not None else 1.0)
     if item_id == "char_spacing":
-        return max(0.0, min(1.0, (spacing_display_char(text_data.space_character) + 50) / 250.0))
+        cur = spacing_display_char(text_data.space_character) if text_data is not None else 0
+        lo, hi = char_spacing_display_bounds(cur)
+        span = max(1.0, float(hi - lo))
+        return max(0.0, min(1.0, (cur - lo) / span))
     if item_id == "word_spacing":
-        return max(0.0, min(1.0, (spacing_display_word(text_data.space_word) + 50) / 250.0))
+        cur = spacing_display_word(text_data.space_word) if text_data is not None else 0
+        lo, hi = word_spacing_display_bounds(cur)
+        span = max(1.0, float(hi - lo))
+        return max(0.0, min(1.0, (cur - lo) / span))
     if item_id == "line_height":
         dmax = line_height_display_max(text_data)
         dmin = LINE_HEIGHT_DISPLAY_MIN
@@ -512,11 +536,15 @@ def spacing_slider_t(text_data, item_id):
 
 def slider_value_from_mouse(rect, mx, text_data, item_id, scale=1.0):
     from ..utils.text_format import (
+        char_spacing_display_bounds,
         format_size_from_slider_t,
         line_height_display_max,
         LINE_HEIGHT_DISPLAY_MIN,
         shear_from_slider_t,
+        spacing_display_char,
+        spacing_display_word,
         strike_position_from_slider_t,
+        word_spacing_display_bounds,
     )
 
     item = rect.item
@@ -526,17 +554,23 @@ def slider_value_from_mouse(rect, mx, text_data, item_id, scale=1.0):
     t = (mx - track_x0) / (track_x1 - track_x0)
     t = max(0.0, min(1.0, t))
     if item_id == "font_size":
-        return format_size_from_slider_t(t)
+        current = text_data.size if text_data is not None else 1.0
+        return format_size_from_slider_t(t, current)
     if item_id == "char_spacing":
-        return int(-50 + t * 250)
+        cur = spacing_display_char(text_data.space_character) if text_data is not None else 0
+        lo, hi = char_spacing_display_bounds(cur)
+        return int(round(lo + t * (hi - lo)))
     if item_id == "word_spacing":
-        return int(-50 + t * 250)
+        cur = spacing_display_word(text_data.space_word) if text_data is not None else 0
+        lo, hi = word_spacing_display_bounds(cur)
+        return int(round(lo + t * (hi - lo)))
     if item_id == "line_height":
         dmax = line_height_display_max(text_data)
         dmin = LINE_HEIGHT_DISPLAY_MIN
-        return int(dmin + t * (dmax - dmin))
+        return int(round(dmin + t * (dmax - dmin)))
     if item_id == "shear":
-        return shear_from_slider_t(t)
+        current = text_data.shear if text_data is not None else 0.0
+        return shear_from_slider_t(t, current)
     if item_id == "strike_position":
         return strike_position_from_slider_t(t)
     return 0

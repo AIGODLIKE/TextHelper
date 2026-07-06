@@ -8,6 +8,7 @@ import struct
 import bpy
 
 from .font_glyph import font_has_full_coverage
+from .font_search import catalog_item_passes_name  # noqa: F401 — re-export
 
 LANGUAGE_FILTER_ITEMS = (
     ("ALL", "All", "All languages"),
@@ -131,20 +132,23 @@ def _range_has_bit(ranges: tuple[int, int, int, int], bit_index: int) -> bool:
     return bool(ranges[word] & (1 << bit))
 
 
-def _os2_fast_reject(filepath: str, lang: str) -> bool:
+def _os2_fast_confirms_support(filepath: str, lang: str) -> bool:
+    """True only when OS/2 unicode-range bits fully confirm script support."""
     bits = _OS2_MIN_BITS.get(lang)
     if not bits:
         return False
     ranges = _read_os2_unicode_ranges(filepath)
     if ranges is None:
         return False
-    return any(not _range_has_bit(ranges, bit) for bit in bits)
+    return all(_range_has_bit(ranges, bit) for bit in bits)
 
 
 def font_supports_language(filepath: str, lang: str, point_size: float = 24.0) -> bool:
     lang = normalize_language_code(lang)
     if not lang or lang == "ALL":
         return True
+    if str(filepath or "").startswith("blend://"):
+        return lang in {"EN", "LATIN"}
     if not filepath:
         return False
 
@@ -153,9 +157,9 @@ def font_supports_language(filepath: str, lang: str, point_size: float = 24.0) -
     if cached is not None:
         return cached
 
-    if _os2_fast_reject(filepath, lang):
-        _SUPPORT_CACHE[cache_key] = False
-        return False
+    if _os2_fast_confirms_support(filepath, lang):
+        _SUPPORT_CACHE[cache_key] = True
+        return True
 
     probe = _LANG_PROBES.get(lang)
     if not probe:
@@ -169,10 +173,3 @@ def font_supports_language(filepath: str, lang: str, point_size: float = 24.0) -
 
 def catalog_item_passes_language(item, lang: str, point_size: float = 24.0) -> bool:
     return font_supports_language(getattr(item, "filepath", ""), lang, point_size)
-
-
-def catalog_item_passes_name(item, text_filter: str) -> bool:
-    if not text_filter:
-        return True
-    name = getattr(item, "display_name", "") or ""
-    return text_filter in name.lower()

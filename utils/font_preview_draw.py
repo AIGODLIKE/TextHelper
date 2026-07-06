@@ -2,7 +2,7 @@
 
 import blf
 
-from .font_blf import blf_load
+from .font_blf import blf_load, blf_no_fallback_flag
 from .font_glyph import char_renders_without_fallback
 
 
@@ -19,15 +19,16 @@ def trim_text_to_width(font_id, text, max_w, point_size):
     if not text or max_w <= 0.0:
         return ""
     point_size = float(point_size)
+    no_fallback = blf_no_fallback_flag()
     blf.size(font_id, point_size)
-    blf.enable(font_id, blf.NO_FALLBACK)
+    blf.enable(font_id, no_fallback)
     try:
         drawn = text
         while len(drawn) > 1 and blf.dimensions(font_id, drawn)[0] > max_w:
             drawn = drawn[:-1]
         return drawn
     finally:
-        blf.disable(font_id, blf.NO_FALLBACK)
+        blf.disable(font_id, no_fallback)
 
 
 def draw_blf_preview(
@@ -81,13 +82,14 @@ def draw_blf_preview(
             cx += blf.dimensions(ui_font, "□")[0] + 1.0
             continue
 
+        no_fallback = blf_no_fallback_flag()
         blf.size(font_id, int(point_size))
-        blf.enable(font_id, blf.NO_FALLBACK)
+        blf.enable(font_id, no_fallback)
         blf.color(font_id, *color)
         blf.position(font_id, cx, y, 0)
         try:
             _draw(font_id, ch)
             cw, _ = blf.dimensions(font_id, ch)
         finally:
-            blf.disable(font_id, blf.NO_FALLBACK)
+            blf.disable(font_id, no_fallback)
         cx += cw

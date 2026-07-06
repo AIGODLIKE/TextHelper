@@ -40,12 +40,12 @@ _STEM_SUFFIXES = (
     ("-Regular", "Regular", 400),
     (" Regular", "Regular", 400),
     ("Regular", "Regular", 400),
-    ("-Normal", "Regular", 400),
-    (" Normal", "Regular", 400),
-    ("Normal", "Regular", 400),
-    ("-Roman", "Regular", 400),
-    (" Roman", "Regular", 400),
-    ("Roman", "Regular", 400),
+    ("-Normal", "Normal", 400),
+    (" Normal", "Normal", 400),
+    ("Normal", "Normal", 400),
+    ("-Roman", "Roman", 400),
+    (" Roman", "Roman", 400),
+    ("Roman", "Roman", 400),
     ("-Book", "Book", 350),
     (" Book", "Book", 350),
     ("Book", "Book", 350),
@@ -75,6 +75,42 @@ _LEGACY_WINDOWS_SUFFIXES = (
     ("i", "Italic", 950),
 )
 
+# GenYoGothic2 B / GenYoGothic2-EL style single-token weight codes (longer first).
+_ABBREV_WEIGHT_CODES = {
+    "BL": ("Black", 900),
+    "EL": ("ExtraLight", 200),
+    "UL": ("UltraLight", 200),
+    "XL": ("ExtraLight", 200),
+    "SB": ("SemiBold", 600),
+    "DB": ("DemiBold", 600),
+    "EB": ("ExtraBold", 800),
+    "HB": ("Heavy", 800),
+    "HL": ("ExtraLight", 200),
+    "TH": ("Thin", 100),
+    "LT": ("Light", 300),
+    "RG": ("Regular", 400),
+    "MD": ("Medium", 500),
+    "B": ("Bold", 700),
+    "L": ("Light", 300),
+    "M": ("Medium", 500),
+    "H": ("Heavy", 800),
+    "R": ("Regular", 400),
+    "N": ("Normal", 400),
+}
+
+# Appended to _STEM_SUFFIXES after the long names — space/hyphen + abbrev code.
+_ABBREV_STEM_SUFFIXES = tuple(
+    (f" {code}", label, rank)
+    for code, (label, rank) in sorted(
+        _ABBREV_WEIGHT_CODES.items(), key=lambda item: (-len(item[0]), item[0])
+    )
+) + tuple(
+    (f"-{code}", label, rank)
+    for code, (label, rank) in sorted(
+        _ABBREV_WEIGHT_CODES.items(), key=lambda item: (-len(item[0]), item[0])
+    )
+)
+
 
 def _display_family(stem: str) -> str:
     return stem.replace("_", " ").replace("-", " ").strip()
@@ -90,6 +126,49 @@ def _parse_legacy_windows_stem(stem: str):
     return None
 
 
+def _parse_abbreviated_stem(stem: str):
+    for suffix, label, rank in _ABBREV_STEM_SUFFIXES:
+        if stem.endswith(suffix):
+            family = stem[: -len(suffix)]
+            if family:
+                return family, label, rank
+    return None
+
+
+def _parse_postscript_parts(filepath: str) -> tuple[str, str]:
+    """Return (family_prefix, weight_code) from PostScript name, e.g. GenYoGothic2-B."""
+    from .font_name_meta import read_font_name_id
+
+    ps = read_font_name_id(filepath, 6)
+    if not ps or "-" not in ps:
+        return "", ""
+    head, tail = ps.rsplit("-", 1)
+    if not head or not tail or len(tail) > 8:
+        return "", ""
+    return head, tail
+
+
+def _family_key_from_postscript(filepath: str) -> str:
+    head, _tail = _parse_postscript_parts(filepath)
+    if head:
+        return _normalize_family_key(head)
+    from .font_name_meta import read_font_name_id
+
+    ps = read_font_name_id(filepath, 6)
+    if ps:
+        return _normalize_family_key(ps)
+    return ""
+
+
+def _weight_from_postscript_code(code: str) -> tuple[str, int]:
+    if not code:
+        return "Regular", 400
+    upper = code.upper()
+    if upper in _ABBREV_WEIGHT_CODES:
+        return _ABBREV_WEIGHT_CODES[upper]
+    return code, _rank_from_weight_label(code)
+
+
 def parse_font_stem(stem: str):
     """Return (family_stem, weight_label, weight_rank)."""
     if not stem:
@@ -98,6 +177,10 @@ def parse_font_stem(stem: str):
     legacy = _parse_legacy_windows_stem(stem)
     if legacy is not None:
         return legacy
+
+    abbrev = _parse_abbreviated_stem(stem)
+    if abbrev is not None:
+        return abbrev
 
     for suffix, label, rank in _STEM_SUFFIXES:
         if stem.endswith(suffix):
@@ -111,7 +194,115 @@ def parse_font_stem(stem: str):
 
 def family_key_from_stem(stem: str) -> str:
     family, _label, _rank = parse_font_stem(stem)
-    return family.replace("_", "").replace("-", "").replace(" ", "").lower()
+    return _normalize_family_key(family)
+
+
+_VF_KEY_SUFFIXES = ("variablefont", "variable", "vf")
+
+
+def _normalize_family_key(name: str) -> str:
+    key = name.replace("_", "").replace("-", "").replace(" ", "").lower()
+    for suffix in _VF_KEY_SUFFIXES:
+        if key.endswith(suffix) and len(key) > len(suffix) + 1:
+            key = key[: -len(suffix)]
+            break
+    return key
+
+
+def get_font_family_group_mode(context=None) -> str:
+    from .addon_prefs import get_addon_prefs
+
+    if context is None:
+        try:
+            import bpy
+
+            context = bpy.context
+        except ImportError:
+            context = None
+    prefs = get_addon_prefs(context)
+    mode = getattr(prefs, "font_family_group_mode", "AUTO") or "AUTO"
+    if mode in {"FILENAME", "OPENTYPE", "AUTO", "POSTSCRIPT"}:
+        return mode
+    return "AUTO"
+
+
+def _opentype_family_name(filepath: str) -> str:
+    from .font_name_meta import read_font_name_id
+
+    return read_font_name_id(filepath, 16) or read_font_name_id(filepath, 1)
+
+
+def _opentype_subfamily_name(filepath: str) -> str:
+    from .font_name_meta import read_font_name_id
+
+    return read_font_name_id(filepath, 17) or read_font_name_id(filepath, 2)
+
+
+def family_key_for_filepath(filepath: str, context=None) -> str:
+    """Stable family key for grouping weights, favorites, and recent lists."""
+    if not filepath:
+        return ""
+    if str(filepath).startswith("blend://"):
+        stem = os.path.splitext(os.path.basename(filepath[8:] or filepath))[0]
+        return family_key_from_stem(stem) if stem else ""
+
+    mode = get_font_family_group_mode(context)
+    ps_key = _family_key_from_postscript(filepath)
+
+    if mode == "AUTO":
+        if ps_key:
+            return ps_key
+        family = _opentype_family_name(filepath)
+        if family:
+            return _normalize_family_key(family)
+    elif mode == "OPENTYPE":
+        family = _opentype_family_name(filepath)
+        if family:
+            return _normalize_family_key(family)
+        if ps_key:
+            return ps_key
+    elif mode == "POSTSCRIPT":
+        if ps_key:
+            return ps_key
+
+    stem = os.path.splitext(os.path.basename(filepath))[0]
+    return family_key_from_stem(stem)
+
+
+def _rank_from_weight_label(label: str) -> int:
+    if not label:
+        return 400
+    compact = label.upper().replace(" ", "").replace("-", "")
+    if compact in _ABBREV_WEIGHT_CODES:
+        return _ABBREV_WEIGHT_CODES[compact][1]
+    compact_lower = label.lower().replace(" ", "").replace("-", "")
+    for _suffix, known_label, rank in _STEM_SUFFIXES:
+        known = known_label.lower().replace(" ", "")
+        if compact_lower == known or known in compact_lower or compact_lower in known:
+            return rank
+    return 400
+
+
+def weight_label_and_rank_for_filepath(filepath: str, context=None) -> tuple[str, int]:
+    if not filepath:
+        return "Regular", 400
+    if str(filepath).startswith("blend://"):
+        stem = os.path.splitext(os.path.basename(filepath[8:] or filepath))[0]
+        _family, label, rank = parse_font_stem(stem)
+        return label, rank
+
+    mode = get_font_family_group_mode(context)
+    if mode in {"OPENTYPE", "AUTO", "POSTSCRIPT"}:
+        _head, ps_code = _parse_postscript_parts(filepath)
+        if ps_code:
+            return _weight_from_postscript_code(ps_code)
+        sub = _opentype_subfamily_name(filepath)
+        if sub and mode != "POSTSCRIPT":
+            return sub, _rank_from_weight_label(sub)
+
+    stem = os.path.splitext(os.path.basename(filepath))[0]
+    _family, label, rank = parse_font_stem(stem)
+    return label, rank
 
 
 @dataclass(frozen=True)
@@ -138,32 +329,37 @@ class FontFamilyGroup:
         return {os.path.normcase(v.filepath) for v in self.variants}
 
 
-def variant_from_catalog_item(index: int, item) -> FontWeightVariant:
-    basename = os.path.basename(item.filepath or "")
+def variant_from_catalog_item(index: int, item, context=None) -> FontWeightVariant:
+    filepath = getattr(item, "filepath", "") or ""
+    basename = os.path.basename(filepath)
     stem, _ext = os.path.splitext(basename)
-    family, weight_label, weight_rank = parse_font_stem(stem)
+    family, _stem_label, _stem_rank = parse_font_stem(stem)
+    weight_label, weight_rank = weight_label_and_rank_for_filepath(filepath, context)
     return FontWeightVariant(
         catalog_index=index,
         weight_label=weight_label,
         weight_rank=weight_rank,
-        filepath=item.filepath,
+        filepath=filepath,
         display_name=_display_family(family) or item.display_name,
     )
 
 
-def group_catalog_items(indexed_items):
+def group_catalog_items(indexed_items, context=None):
     """Group (catalog_index, item) pairs into FontFamilyGroup rows."""
+    from .font_display import display_name_for_catalog_item
+
     buckets: dict[str, list[FontWeightVariant]] = {}
     display_names: dict[str, str] = {}
 
     for index, item in indexed_items:
-        variant = variant_from_catalog_item(index, item)
-        key = family_key_from_stem(os.path.splitext(os.path.basename(item.filepath or ""))[0])
+        variant = variant_from_catalog_item(index, item, context)
+        filepath = getattr(item, "filepath", "") or ""
+        key = family_key_for_filepath(filepath, context)
         if not key:
             key = f"__item_{index}"
         buckets.setdefault(key, []).append(variant)
         if key not in display_names:
-            display_names[key] = variant.display_name
+            display_names[key] = display_name_for_catalog_item(item, context)
 
     groups: list[FontFamilyGroup] = []
     for key, variants in buckets.items():
@@ -209,12 +405,11 @@ def find_group_for_filepath(groups, filepath: str):
     return None
 
 
-def find_family_variants_in_catalog(catalog, filepath: str) -> tuple[FontWeightVariant, ...]:
+def find_family_variants_in_catalog(catalog, filepath: str, context=None) -> tuple[FontWeightVariant, ...]:
     """All catalog entries belonging to the same font family as filepath."""
     if not filepath or catalog is None or len(catalog) == 0:
         return ()
-    target_stem = os.path.splitext(os.path.basename(filepath))[0]
-    key = family_key_from_stem(target_stem)
+    key = family_key_for_filepath(filepath, context)
     if not key:
         return ()
     variants = []
@@ -222,9 +417,8 @@ def find_family_variants_in_catalog(catalog, filepath: str) -> tuple[FontWeightV
         item_path = getattr(item, "filepath", "") or ""
         if not item_path:
             continue
-        stem = os.path.splitext(os.path.basename(item_path))[0]
-        if family_key_from_stem(stem) == key:
-            variants.append(variant_from_catalog_item(index, item))
+        if family_key_for_filepath(item_path, context) == key:
+            variants.append(variant_from_catalog_item(index, item, context))
     if not variants:
         return ()
     return tuple(sorted(variants, key=lambda v: (v.weight_rank, v.weight_label.lower())))
@@ -249,45 +443,55 @@ def catalog_index_for_filepath(catalog, filepath: str) -> int:
 
 
 def toolbar_weight_label(catalog, filepath: str) -> str:
-    """HUD button label: actual weight when multiple exist, otherwise Regular."""
-    variants = find_family_variants_in_catalog(catalog, filepath) if filepath and catalog else ()
-    if len(variants) > 1:
-        return weight_label_for_filepath(filepath)
-    return "Regular"
+    """HUD / header button label from the active font filename."""
+    return weight_label_for_filepath(filepath)
 
 
-def ensure_weight_variants(catalog, filepath: str) -> tuple[FontWeightVariant, ...]:
-    """Picker rows; single-weight fonts appear as Regular."""
+def ensure_weight_variants(catalog, filepath: str, context=None) -> tuple[FontWeightVariant, ...]:
+    """Picker rows; single-weight fonts keep their parsed weight label."""
     if not filepath:
         return ()
-    variants = find_family_variants_in_catalog(catalog, filepath) if catalog else ()
+    variants = find_family_variants_in_catalog(catalog, filepath, context) if catalog else ()
     if len(variants) > 1:
         return variants
-    family, _label, _rank = parse_font_stem(os.path.splitext(os.path.basename(filepath))[0])
+    stem = os.path.splitext(os.path.basename(filepath))[0]
+    family, label, rank = parse_font_stem(stem)
+    weight_label, weight_rank = weight_label_and_rank_for_filepath(filepath, context)
     return (
         FontWeightVariant(
             catalog_index=catalog_index_for_filepath(catalog, filepath),
-            weight_label="Regular",
-            weight_rank=400,
+            weight_label=weight_label,
+            weight_rank=weight_rank,
             filepath=filepath,
-            display_name=_display_family(family) or family or "Regular",
+            display_name=_display_family(family) or family or label,
         ),
     )
 
 
-def family_weight_counts(catalog):
+def family_weight_counts(catalog, context=None):
     """Map family_key -> number of font files in the full catalog."""
     counts = {}
     if not catalog:
         return counts
     for item in catalog:
         filepath = getattr(item, "filepath", "") or ""
-        stem = os.path.splitext(os.path.basename(filepath))[0]
-        key = family_key_from_stem(stem)
+        key = family_key_for_filepath(filepath, context)
         if not key:
             continue
         counts[key] = counts.get(key, 0) + 1
     return counts
+
+
+def header_font_display_label(context, catalog, index: int, item) -> str:
+    """Family display name with weight count suffix for header font lists."""
+    from .font_display import display_name_for_catalog_item
+
+    label = display_name_for_catalog_item(item, context)
+    filepath = getattr(item, "filepath", "") or ""
+    count = family_weight_counts(catalog, context).get(family_key_for_filepath(filepath, context), 1)
+    if count > 1:
+        label = f"{label}  · {count}"
+    return label
 
 
 def weight_label_for_filepath(filepath: str) -> str:

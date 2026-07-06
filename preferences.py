@@ -15,10 +15,32 @@ def _tag_hud_redraw(_self, context):
     tag_redraw()
 
 
+def _tag_font_grouping_changed(_self, context):
+    from .utils.font_catalog_filter import invalidate_catalog_filter_cache
+
+    invalidate_catalog_filter_cache()
+    _tag_hud_redraw(_self, context)
+
+
 def _tag_sidebar_redraw(_self, context):
     from .utils.font_preview import tag_ui_redraw
 
     tag_ui_redraw(context)
+
+
+def _enforce_multiline_text_limit(_self, context):
+    from .utils.text_limits import enforce_multiline_limits
+    from .utils.text_frame import tag_view3d_redraw
+
+    if enforce_multiline_limits(context):
+        tag_view3d_redraw(context)
+        try:
+            from .hud.draw import tag_redraw
+
+            tag_redraw()
+        except Exception:
+            pass
+    _tag_sidebar_redraw(_self, context)
 
 
 def _invalidate_font_previews(_self, context):
@@ -33,6 +55,12 @@ class TH_Preferences(AddonPreferences):
     show_floating_toolbar: BoolProperty(
         name="Floating Toolbar",
         description="Show the floating toolbar near selected text in the 3D viewport",
+        default=True,
+        update=_tag_hud_redraw,
+    )
+    show_header_toolbar: BoolProperty(
+        name="Header Toolbar",
+        description="Show formatting controls in the 3D viewport top header when a text object is selected",
         default=True,
         update=_tag_hud_redraw,
     )
@@ -52,7 +80,7 @@ class TH_Preferences(AddonPreferences):
     hud_scale: FloatProperty(
         name="HUD Scale",
         description="Viewport HUD display scale",
-        default=1.0,
+        default=0.8,
         min=0.5,
         max=2.0,
         update=_tag_hud_redraw,
@@ -61,15 +89,14 @@ class TH_Preferences(AddonPreferences):
         name="Accent Color",
         description="Accent color for the viewport HUD and pickers",
         items=(
-            ("GREEN", "Green", "Default green accent"),
+            ("SYSTEM", "Follow System", "Match Blender interface theme colors (tool header)"),
             ("BLUE", "Blue", "Blue accent"),
             ("ORANGE", "Orange", "Orange accent"),
             ("PURPLE", "Purple", "Purple accent"),
             ("PINK", "Pink", "Pink accent"),
-            ("CYAN", "Cyan", "Cyan accent"),
             ("CUSTOM", "Custom", "Use the custom color below"),
         ),
-        default="GREEN",
+        default="BLUE",
         update=_tag_hud_redraw,
     )
     hud_accent_custom: FloatVectorProperty(
@@ -79,7 +106,7 @@ class TH_Preferences(AddonPreferences):
         size=3,
         min=0.0,
         max=1.0,
-        default=(0.12, 0.86, 0.42),
+        default=(71 / 255, 114 / 255, 179 / 255),
         update=_tag_hud_redraw,
     )
     font_preview_icons: BoolProperty(
@@ -93,6 +120,50 @@ class TH_Preferences(AddonPreferences):
         description="Apply the highlighted font while hovering or navigating the font list",
         default=True,
         update=_tag_hud_redraw,
+    )
+    font_display_mode: EnumProperty(
+        name="Font Name Display",
+        description="How font names appear in lists, the font picker, HUD, and header toolbar",
+        items=(
+            ("FILENAME", "File Name", "Use the font file name"),
+            ("FAMILY", "Family Name", "Use the OpenType family name (default; prefers localized CJK names when available)"),
+            ("FULL", "Full Name", "Use the full font name from the name table"),
+            ("POSTSCRIPT", "PostScript Name", "Use the PostScript font name"),
+        ),
+        default="FAMILY",
+        update=_tag_hud_redraw,
+    )
+    font_family_group_mode: EnumProperty(
+        name="Weight Grouping",
+        description=(
+            "How font files are merged into one family with multiple weights. "
+            "OpenType uses the name-table family (matches Family Name display); "
+            "File Name parses weight suffixes from file names (-Bold, -Light, etc.)"
+        ),
+        items=(
+            (
+                "AUTO",
+                "OpenType First",
+                "Prefer PostScript name prefix (e.g. GenYoGothic2), then OpenType family, then file name",
+            ),
+            (
+                "OPENTYPE",
+                "OpenType Family",
+                "Always group by OpenType typographic/font family name (name table IDs 16/1)",
+            ),
+            (
+                "POSTSCRIPT",
+                "PostScript Prefix",
+                "Group by PostScript name before the last hyphen (GenYoGothic2-B → GenYoGothic2)",
+            ),
+            (
+                "FILENAME",
+                "File Name",
+                "Group by file name after stripping -Bold, -Light, and similar suffixes",
+            ),
+        ),
+        default="AUTO",
+        update=_tag_font_grouping_changed,
     )
     font_preview_sample: StringProperty(
         name="Preview Text",
@@ -143,6 +214,18 @@ class TH_Preferences(AddonPreferences):
         max=6.0,
         update=_invalidate_font_previews,
     )
+    font_favorite_keys: StringProperty(
+        name="Favorite Font Families",
+        description="JSON list of favorite font family keys",
+        default="[]",
+        options={"HIDDEN"},
+    )
+    font_recent_keys: StringProperty(
+        name="Recent Font Families",
+        description="JSON list of recently applied font family keys",
+        default="[]",
+        options={"HIDDEN"},
+    )
     n_panel_textbox_lines: IntProperty(
         name="N-Panel Textbox Lines",
         description="Default visible line count for the N-panel textbox (you can still drag the bottom edge to resize)",
@@ -150,6 +233,14 @@ class TH_Preferences(AddonPreferences):
         min=3,
         max=30,
         update=_tag_sidebar_redraw,
+    )
+    multiline_text_max_len: IntProperty(
+        name="Multi-line Character Limit",
+        description="Maximum characters for N-panel multi-line text input (Blender hard cap is 50,000)",
+        default=20000,
+        min=256,
+        max=50000,
+        update=_enforce_multiline_text_limit,
     )
 
     def draw(self, context):
@@ -164,6 +255,7 @@ class TH_Preferences(AddonPreferences):
         for line in (
             _("Multi-line N-panel editor (Blender 5.2+)"),
             _("Floating toolbar near selected text in the viewport"),
+            _("Header toolbar in the 3D viewport top bar"),
             _("Style presets, alignment, and spacing controls"),
             _("Double-click text in the viewport to edit"),
         ):
@@ -174,6 +266,7 @@ class TH_Preferences(AddonPreferences):
         box = layout.box()
         box.label(text=_("Viewport"), icon="VIEW3D")
         box.prop(self, "show_floating_toolbar")
+        box.prop(self, "show_header_toolbar")
         box.prop(self, "auto_layout_frame")
         box.prop(self, "toolbar_offset")
         box.prop(self, "hud_scale")
@@ -184,6 +277,7 @@ class TH_Preferences(AddonPreferences):
         box = layout.box()
         box.label(text=_("Sidebar"), icon="PREFERENCES")
         box.prop(self, "n_panel_textbox_lines")
+        box.prop(self, "multiline_text_max_len")
 
         box = layout.box()
         box.label(text=_("Fonts"), icon="FONT_DATA")
@@ -204,6 +298,25 @@ class TH_Preferences(AddonPreferences):
                 icon="FILE_REFRESH",
             )
         box.prop(self, "font_preview_on_select")
+        box.prop(self, "font_display_mode")
+        box.prop(self, "font_family_group_mode")
+
+
+def _migrate_removed_accent_presets():
+    import bpy
+
+    from .utils.addon_prefs import _addon_pref_keys
+
+    removed = {"GREEN", "CYAN"}
+    addons = getattr(getattr(bpy.context, "preferences", None), "addons", None)
+    if addons is None:
+        return
+    for key in _addon_pref_keys():
+        if key not in addons:
+            continue
+        prefs = addons[key].preferences
+        if prefs is not None and getattr(prefs, "hud_accent_preset", None) in removed:
+            prefs.hud_accent_preset = "BLUE"
 
 
 def register():
@@ -211,6 +324,7 @@ def register():
 
     TH_Preferences.bl_idname = ADDON_PACKAGE
     bpy.utils.register_class(TH_Preferences)
+    _migrate_removed_accent_presets()
 
 
 def unregister():

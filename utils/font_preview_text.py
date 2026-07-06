@@ -5,6 +5,7 @@ from .text_format import get_active_text_data
 
 DEFAULT_SAMPLE = "Exploration witnesses courage, open source witnesses glory"
 MAX_PREVIEW_LEN = 48
+MAX_COVERAGE_LEN = 2048
 
 _LEGACY_MODES = {
     "BOTH": "OBJECT",
@@ -27,6 +28,26 @@ def _inline_sample(context):
     return (getattr(state, "font_picker_preview", "") or "").strip()
 
 
+def _unique_coverage_chars(text: str, *, max_chars: int = MAX_COVERAGE_LEN) -> str:
+    """Deduplicated non-newline characters for glyph coverage checks."""
+    if not text:
+        return ""
+    seen = set()
+    out = []
+    for char in text:
+        if char in "\r\n":
+            continue
+        if char.isspace():
+            char = " "
+        if char in seen:
+            continue
+        seen.add(char)
+        out.append(char)
+        if len(out) >= max_chars:
+            break
+    return "".join(out)
+
+
 def _object_sample(context):
     text_data = get_active_text_data(context)
     if text_data is None:
@@ -41,6 +62,14 @@ def _object_sample(context):
     else:
         line = ""
     return (line or "").strip()
+
+
+def _object_coverage_text(context):
+    text_data = get_active_text_data(context)
+    if text_data is None or not text_data.body:
+        return ""
+    body = text_data.body.replace("\r\n", "\n").replace("\r", "\n")
+    return _unique_coverage_chars(body)
 
 
 def _custom_sample(context, prefs):
@@ -72,3 +101,25 @@ def get_font_preview_text(context, display_name=""):
     if object_text:
         return object_text
     return custom or "Aa"
+
+
+def get_font_coverage_text(context, display_name=""):
+    """All unique characters to test when filtering fonts by glyph support."""
+    if context is None:
+        return _unique_coverage_chars(DEFAULT_SAMPLE or "Aa")
+
+    prefs = get_addon_prefs(context)
+    mode = _preview_mode(prefs)
+    custom = _custom_sample(context, prefs)
+    name = (display_name or "").strip()
+
+    if mode == "NAME":
+        return _unique_coverage_chars(name or custom or "Aa")
+
+    if mode == "SAMPLE":
+        return _unique_coverage_chars(custom or "Aa")
+
+    object_text = _object_coverage_text(context)
+    if object_text:
+        return object_text
+    return _unique_coverage_chars(custom or "Aa")
