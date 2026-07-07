@@ -72,10 +72,17 @@ def _on_text_changed():
 def _on_active_object_changed():
     from .runtime import request_ensure
     from .utils.font_loader import prefetch_font_catalog
+    from .utils.text_format import get_active_text
 
     context = bpy.context
-    obj = context.active_object if context is not None else None
-    if obj is not None and obj.type == "FONT":
+    obj = get_active_text(context)
+    if obj is None:
+        from .ops.hud_modal import sync_modal_running_state
+
+        sync_modal_running_state(context)
+        return
+
+    if obj.type == "FONT":
         prefetch_font_catalog(context)
 
     request_ensure(context)

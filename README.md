@@ -68,6 +68,14 @@ https://github.com/user-attachments/assets/df5342b7-7d49-47f3-ab6a-f1b6f32632e4
 - Traditional Chinese UI (`zh_Hant`)
 - Japanese UI (`ja_JP`)
 - Customizable HUD accent color and scale
+- Follow system colors — adaptive theme support
+
+https://github.com/user-attachments/assets/65228869-fa4b-4cf9-bce6-9cc9a0790229
+
+
+
+
+
 
 ---
 

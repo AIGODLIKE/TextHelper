@@ -78,8 +78,37 @@ from ..utils.hud_offset import get_hud_offset, set_hud_offset
 _RUNNING = False
 
 
-def modal_running() -> bool:
+def _is_hud_modal_operator(op) -> bool:
+    name = (getattr(op, "bl_idname", "") or getattr(type(op), "bl_idname", "")).lower()
+    return "texthelper_hud_modal" in name
+
+
+def _hud_modal_active(context=None) -> bool:
+    import bpy
+
+    ctx = context or bpy.context
+    window = getattr(ctx, "window", None)
+    if window is None:
+        return False
+    try:
+        for op in window.modal_operators:
+            if _is_hud_modal_operator(op):
+                return True
+    except Exception:
+        return False
+    return False
+
+
+def sync_modal_running_state(context=None) -> bool:
+    """Keep the module flag aligned with Blender's modal operator stack."""
+    global _RUNNING
+    active = _hud_modal_active(context)
+    _RUNNING = active
     return _RUNNING
+
+
+def modal_running() -> bool:
+    return sync_modal_running_state()
 
 
 _DOUBLE_CLICK_SEC = 0.4
@@ -669,7 +698,8 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
 
     def invoke(self, context, event):
         global _RUNNING
-        if _RUNNING:
+        sync_modal_running_state(context)
+        if modal_running():
             return {"CANCELLED"}
         obj = get_active_text(context)
         if obj is None:
@@ -699,7 +729,8 @@ class TH_OT_hud_ensure_modal(TextHelperOperatorMixin, Operator):
     bl_options = {"INTERNAL"}
 
     def execute(self, context):
-        if _RUNNING or get_active_text(context) is None:
+        sync_modal_running_state(context)
+        if modal_running() or get_active_text(context) is None:
             return {"FINISHED"}
         override = view3d_override(context)
         if override is None:

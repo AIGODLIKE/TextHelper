@@ -48,18 +48,24 @@ def request_ensure(context=None):
 
     import bpy
 
+    from .ops.hud_modal import modal_running, sync_modal_running_state
     from .sync import ensure_subscribers
     from .utils.text_format import get_active_text
 
     ensure_subscribers()
 
     ctx = context or bpy.context
+    sync_modal_running_state(ctx)
+
     if get_active_text(ctx) is None:
         return
 
     from .hud.hit_test import hud_enabled
 
     if not hud_enabled(ctx):
+        return
+
+    if modal_running():
         return
 
     if _ensure_timer is not None:
@@ -78,8 +84,9 @@ def request_ensure(context=None):
 def _ensure_modal(context):
     import bpy
 
-    from .ops.hud_modal import modal_running
+    from .ops.hud_modal import modal_running, sync_modal_running_state
 
+    sync_modal_running_state(context)
     if modal_running():
         return True
 
@@ -88,6 +95,7 @@ def _ensure_modal(context):
     except Exception:
         return False
 
+    sync_modal_running_state(context)
     return modal_running()
 
 
