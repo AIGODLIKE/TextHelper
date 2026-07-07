@@ -337,7 +337,6 @@ class TH_WindowManagerProps(PropertyGroup):
     th_font_picker_pointer_x: FloatProperty(default=-1.0)
     th_font_picker_pointer_y: FloatProperty(default=-1.0)
     th_pending_report: StringProperty(default="")
-    th_pending_report_value: IntProperty(default=-1, options={"HIDDEN"})
     th_weight_picker_open: BoolProperty(default=False)
     th_weight_picker_hover: IntProperty(default=-1)
     th_preset_picker_open: BoolProperty(default=False)

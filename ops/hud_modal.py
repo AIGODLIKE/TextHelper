@@ -73,7 +73,7 @@ from ..hud.slider_input import (
 )
 from ..utils.text_format import get_active_text, iter_selected_font_objects
 from ..utils.undo import push_undo
-from ..utils.hud_offset import get_hud_offset, set_hud_offset, set_hud_offset
+from ..utils.hud_offset import get_hud_offset, set_hud_offset
 
 _RUNNING = False
 
@@ -447,10 +447,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
         wm = context.window_manager
         state = _safe_state(wm)
         if state is None:
-            return _cancel_modal(state)
-
-        if getattr(state, "th_pending_report", ""):
-            flush_pending_report(self, state)
+            return {"PASS_THROUGH"}
 
         handles_pointer = _hud_handles_pointer(context, event)
         mx, my = _pointer_coords(event)

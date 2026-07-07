@@ -1,8 +1,7 @@
 """Multi-field font catalog search with CJK pinyin and kana helpers.
 
-Bundled ``cjk_pinyin_min.json`` is a minified hanzi→pinyin table (generated from
-the pypinyin library, MIT) used only for font name search suggestions. It ships
-with the add-on and is not fetched at runtime.
+Bundled ``cjk_pinyin_min.json`` is a minified hanzi→pinyin table used only for
+font name search suggestions. It ships with the add-on and is not fetched at runtime.
 """
 
 from __future__ import annotations

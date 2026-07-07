@@ -6,7 +6,3 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
-i18n/_audit_*.py
-i18n/_append_*.py
-i18n/_list_*.py
-i18n/_generate_*.py

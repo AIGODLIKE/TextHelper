@@ -4,10 +4,10 @@ Requires **Blender 5.2+**.
 
 ### Highlights
 
-- **Multi-line character limit**: default **20,000** characters; configurable in add-on preferences (**256–50,000**, Blender hard cap 50,000). N-panel sidebar shows `current / limit`.
+- **Multi-line character limit**: default **500** characters; configurable in add-on preferences (**256–50,000**, Blender hard cap 50,000). N-panel sidebar shows `current / limit` and warns when text is long or at the limit.
 - **Extension platform readiness**: lazy undo/redo handler registration; consistent text-limit enforcement for horizontal and vertical text; official `blender --command extension build` packaging.
 - **Add Text** operator creates FONT curves via low-level API (no `bpy.ops.object.text_add` wrapper).
-- **Manifest**: extension tag set to `User Interface`.
+- **Manifest**: extension tag set to `Text Editor`; HUD safe margin keeps the floating toolbar inside the viewport.
 
 ### Since 1.9.17 (cumulative)
 

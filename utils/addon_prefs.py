@@ -15,11 +15,6 @@ class _DefaultPrefs:
     hud_accent_custom = (71 / 255, 114 / 255, 179 / 255)
     font_preview_icons = True
     font_preview_on_select = True
-    font_preview_on_select_before_ultra = True
-    font_picker_performance_mode = "HIGH"
-    font_picker_performance_mode_prev = "HIGH"
-    font_picker_high_performance = False
-    font_picker_ultra_high_performance = False
     font_preview_sample = "Exploration witnesses courage, open source witnesses glory"
     font_preview_mode = "OBJECT"
     font_preview_size = 36

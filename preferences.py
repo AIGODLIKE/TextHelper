@@ -22,34 +22,6 @@ def _tag_font_grouping_changed(_self, context):
     _tag_hud_redraw(_self, context)
 
 
-def _tag_font_picker_perf_mode_changed(self, context):
-    from .utils.font_catalog_filter import invalidate_catalog_filter_cache
-    from .utils.font_glyph import invalidate_glyph_cache
-
-    prev = getattr(self, "font_picker_performance_mode_prev", "HIGH") or "HIGH"
-    mode = getattr(self, "font_picker_performance_mode", "HIGH") or "HIGH"
-
-    if mode == "ULTRA" and prev != "ULTRA":
-        self.font_preview_on_select_before_ultra = bool(self.font_preview_on_select)
-        self.font_preview_on_select = False
-    elif prev == "ULTRA" and mode != "ULTRA":
-        self.font_preview_on_select = bool(self.font_preview_on_select_before_ultra)
-
-    self.font_picker_performance_mode_prev = mode
-    invalidate_catalog_filter_cache()
-    invalidate_glyph_cache()
-    _tag_hud_redraw(self, context)
-
-
-def _sync_font_picker_perf_mode_prefs(prefs) -> None:
-    """Keep preview-while-browsing consistent with a saved Ultra performance mode."""
-    mode = getattr(prefs, "font_picker_performance_mode", "HIGH") or "HIGH"
-    prefs.font_picker_performance_mode_prev = mode
-    if mode == "ULTRA" and prefs.font_preview_on_select:
-        prefs.font_preview_on_select_before_ultra = True
-        prefs.font_preview_on_select = False
-
-
 def _tag_sidebar_redraw(_self, context):
     from .utils.font_preview import tag_ui_redraw
 
@@ -166,46 +138,6 @@ class TH_Preferences(AddonPreferences):
         description="Apply the highlighted font while hovering or navigating the font list",
         default=True,
         update=_tag_hud_redraw,
-    )
-    font_preview_on_select_before_ultra: BoolProperty(
-        name="Preview While Browsing (Saved)",
-        description="Stored preview preference restored when leaving Ultra High Performance mode",
-        default=True,
-        options={"HIDDEN"},
-    )
-    font_picker_performance_mode: EnumProperty(
-        name="Font Picker Performance",
-        description="Viewport font picker performance profile",
-        items=(
-            ("STANDARD", "Standard", "Full glyph checks and hover preview"),
-            (
-                "HIGH",
-                "High Performance",
-                "Faster picker for long text with approximate filtering",
-            ),
-            (
-                "ULTRA",
-                "Ultra High Performance",
-                "Maximum speed; click to apply fonts, no hover preview",
-            ),
-        ),
-        default="HIGH",
-        update=_tag_font_picker_perf_mode_changed,
-    )
-    font_picker_performance_mode_prev: StringProperty(
-        name="Font Picker Performance (Previous)",
-        default="HIGH",
-        options={"HIDDEN"},
-    )
-    font_picker_high_performance: BoolProperty(
-        name="High Performance Font Picker (Legacy)",
-        default=False,
-        options={"HIDDEN"},
-    )
-    font_picker_ultra_high_performance: BoolProperty(
-        name="Ultra High Performance (Legacy)",
-        default=False,
-        options={"HIDDEN"},
     )
     font_display_mode: EnumProperty(
         name="Font Name Display",
@@ -366,9 +298,6 @@ class TH_Preferences(AddonPreferences):
         box.label(text=_("Sidebar"), icon="PREFERENCES")
         box.prop(self, "n_panel_textbox_lines")
         box.prop(self, "multiline_text_max_len")
-        hint = box.column(align=True)
-        hint.scale_y = 0.85
-        hint.label(text=_("More than 200 characters may cause lag when browsing fonts."), icon="INFO")
 
         box = layout.box()
         box.label(text=_("Fonts"), icon="FONT_DATA")
@@ -388,42 +317,9 @@ class TH_Preferences(AddonPreferences):
                 text=_("Force Refresh Previews"),
                 icon="FILE_REFRESH",
             )
-        box.prop(self, "font_picker_performance_mode")
-        if self.font_picker_performance_mode == "ULTRA":
-            row = box.row()
-            row.enabled = False
-            row.prop(self, "font_preview_on_select")
-            box.label(text=_("Disabled in Ultra High Performance mode"), icon="INFO")
-        else:
-            box.prop(self, "font_preview_on_select")
+        box.prop(self, "font_preview_on_select")
         box.prop(self, "font_display_mode")
         box.prop(self, "font_family_group_mode")
-
-
-def _migrate_font_picker_performance_prefs():
-    import bpy
-
-    from .utils.addon_prefs import _addon_pref_keys
-
-    addons = getattr(getattr(bpy.context, "preferences", None), "addons", None)
-    if addons is None:
-        return
-    for key in _addon_pref_keys():
-        if key not in addons:
-            continue
-        prefs = addons[key].preferences
-        if prefs is None:
-            continue
-        ultra = bool(getattr(prefs, "font_picker_ultra_high_performance", False))
-        high = bool(getattr(prefs, "font_picker_high_performance", False))
-        if ultra or high:
-            if ultra:
-                prefs.font_picker_performance_mode = "ULTRA"
-            else:
-                prefs.font_picker_performance_mode = "HIGH"
-            prefs.font_picker_ultra_high_performance = False
-            prefs.font_picker_high_performance = False
-        _sync_font_picker_perf_mode_prefs(prefs)
 
 
 def _migrate_removed_accent_presets():
@@ -449,7 +345,6 @@ def register():
     TH_Preferences.bl_idname = ADDON_PACKAGE
     bpy.utils.register_class(TH_Preferences)
     _migrate_removed_accent_presets()
-    _migrate_font_picker_performance_prefs()
 
 
 def unregister():

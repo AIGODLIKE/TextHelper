@@ -1722,7 +1722,7 @@
   {
     "context": "Operator",
     "msgid": "Text Helper HUD",
-    "zh_HANS": "文字助手 HUD"
+    "zh_HANS": "Text Helper HUD"
   },
   {
     "context": "Operator",
@@ -2416,187 +2416,17 @@
   },
   {
     "context": "*",
-    "msgid": "Font Picker Performance",
-    "zh_HANS": "字体选择器性能"
-  },
-  {
-    "context": "*",
-    "msgid": "Viewport font picker performance profile",
-    "zh_HANS": "视口字体选择器的性能档位"
-  },
-  {
-    "context": "*",
-    "msgid": "Standard",
-    "zh_HANS": "默认"
-  },
-  {
-    "context": "*",
-    "msgid": "Full glyph checks and hover preview",
-    "zh_HANS": "完整字形检测与悬停预览"
-  },
-  {
-    "context": "*",
-    "msgid": "High Performance",
-    "zh_HANS": "高性能"
-  },
-  {
-    "context": "*",
-    "msgid": "Faster picker for long text with approximate filtering",
-    "zh_HANS": "长文本下更快浏览，字形过滤为近似结果"
-  },
-  {
-    "context": "*",
-    "msgid": "Ultra High Performance",
-    "zh_HANS": "极高性能"
-  },
-  {
-    "context": "*",
-    "msgid": "Maximum speed; click to apply fonts, no hover preview",
-    "zh_HANS": "最快速度；点击应用字体，悬停不切换"
-  },
-  {
-    "context": "*",
-    "msgid": "Disabled in Ultra High Performance mode",
-    "zh_HANS": "极高性能模式下已禁用"
-  },
-  {
-    "context": "*",
-    "msgid": "{:d} characters — large text. Enable Ultra High Performance in add-on preferences.",
-    "zh_HANS": "{:d} 字 — 字数过多，建议在插件偏好设置中开启极高性能。"
-  },
-  {
-    "context": "Operator",
-    "msgid": "Too many characters ({:d}) — performance may be reduced.",
-    "zh_HANS": "{:d} 字 — 字符过多，性能降低"
-  },
-  {
-    "context": "*",
-    "msgid": "Too many characters ({:d}) — performance may be reduced.",
-    "zh_HANS": "{:d} 字 — 字符过多，性能降低"
-  },
-  {
-    "context": "*",
-    "msgid": "Large text ({:d} characters). Enable Ultra High Performance in add-on preferences for smoother font browsing.",
-    "zh_HANS": "{:d} 字 — 字符过多可能导致卡顿，建议在插件偏好设置中开启极高性能。"
-  },
-  {
-    "context": "Operator",
-    "msgid": "Reached the configured character limit ({:d} characters).",
-    "zh_HANS": "已达设置的最大字数上限（{:d} 字）。"
-  },
-  {
-    "context": "*",
-    "msgid": "Reached the configured character limit ({:d} characters).",
-    "zh_HANS": "已达设置的最大字数上限（{:d} 字）。"
-  },
-  {
-    "context": "*",
-    "msgid": "More than 200 characters may cause lag when browsing fonts.",
-    "zh_HANS": "超过 200 字可能导致卡顿，建议控制文本长度或开启极高性能。"
-  },
-  {
-    "context": "*",
     "msgid": "HUD Safe Margin",
     "zh_HANS": "HUD 安全边距"
   },
   {
     "context": "*",
-    "msgid": "Keep the floating toolbar this many pixels away from the 3D viewport edges (N/T panels shrink the usable area automatically)",
-    "zh_HANS": "浮动工具栏与 3D 视图区边缘保持此像素距离（N/T 面板会自动缩小可用区域）"
+    "msgid": "Too many characters ({:d}) — performance may be reduced.",
+    "zh_HANS": "字数过多（{:d} 字）— 性能可能下降。"
   },
   {
     "context": "*",
-    "msgid": "How font names appear in lists, the font picker, HUD, and header toolbar",
-    "zh_HANS": "字体名称在列表、字体选择器、HUD 与顶栏工具条中的显示方式"
-  },
-  {
-    "context": "*",
-    "msgid": "Use the font file name",
-    "zh_HANS": "使用字体文件名"
-  },
-  {
-    "context": "*",
-    "msgid": "Use the OpenType family name (default; prefers localized CJK names when available)",
-    "zh_HANS": "使用 OpenType 族名（默认；有则用本地化 CJK 名称）"
-  },
-  {
-    "context": "*",
-    "msgid": "Preview While Browsing (Saved)",
-    "zh_HANS": "浏览时实时预览（已保存）"
-  },
-  {
-    "context": "*",
-    "msgid": "Stored preview preference restored when leaving Ultra High Performance mode",
-    "zh_HANS": "离开极高性能模式时恢复的预览设置"
-  },
-  {
-    "context": "*",
-    "msgid": "Font Picker Performance (Previous)",
-    "zh_HANS": "字体选择器性能（上一档位）"
-  },
-  {
-    "context": "*",
-    "msgid": "High Performance Font Picker (Legacy)",
-    "zh_HANS": "高性能字体选择器（旧版）"
-  },
-  {
-    "context": "*",
-    "msgid": "Ultra High Performance (Legacy)",
-    "zh_HANS": "极高性能（旧版）"
-  },
-  {
-    "context": "*",
-    "msgid": "JSON list of recently applied font family keys",
-    "zh_HANS": "最近使用字体族的 JSON 列表"
-  },
-  {
-    "context": "*",
-    "msgid": "Recent Font Families",
-    "zh_HANS": "最近使用的字体族"
-  },
-  {
-    "context": "*",
-    "msgid": "Legacy HUD drag offset (migrated to the text object; not used for new data)",
-    "zh_HANS": "旧版 HUD 拖动偏移（已迁移至文本对象；新数据不再使用）"
-  },
-  {
-    "context": "*",
-    "msgid": "HUD User Shown",
-    "zh_HANS": "HUD 用户已显示"
-  },
-  {
-    "context": "*",
-    "msgid": "User explicitly enabled the floating toolbar while auto-show is off",
-    "zh_HANS": "在关闭自动显示时，用户手动启用了浮动工具栏"
-  },
-  {
-    "context": "*",
-    "msgid": "Panel Buffer A",
-    "zh_HANS": "面板缓冲 A"
-  },
-  {
-    "context": "*",
-    "msgid": "Panel Buffer B",
-    "zh_HANS": "面板缓冲 B"
-  },
-  {
-    "context": "*",
-    "msgid": "Panel Buffer Active",
-    "zh_HANS": "活动面板缓冲"
-  },
-  {
-    "context": "*",
-    "msgid": "Panel Buffer Lines",
-    "zh_HANS": "面板缓冲行数"
-  },
-  {
-    "context": "*",
-    "msgid": "Panel Buffer Mode",
-    "zh_HANS": "面板缓冲模式"
-  },
-  {
-    "context": "*",
-    "msgid": "Emit Status Report",
-    "zh_HANS": "发出状态报告"
+    "msgid": "Reached the configured character limit ({:d} characters).",
+    "zh_HANS": "已达设置的最大字数上限（{:d} 字）。"
   }
 ]

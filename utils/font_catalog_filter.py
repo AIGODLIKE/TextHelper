@@ -10,22 +10,12 @@ from .font_favorites import is_family_favorite
 from .font_recent import recent_family_rank_map
 from .font_search import catalog_item_passes_name
 from .font_glyph import font_has_full_coverage
-from .font_preview_text import get_font_coverage_text, get_font_picker_performance_mode
+from .font_preview_text import get_font_coverage_text
 from .font_variable import is_variable_font_filepath
 from .font_language import catalog_item_passes_language, get_language_filter
 from .addon_prefs import get_addon_prefs
 
 _GLYPH_REFINE_CHUNK = 40
-_GLYPH_REFINE_CHUNK_HIGH_PERF = 96
-_GLYPH_REFINE_INTERVAL = 0.001
-_GLYPH_REFINE_INTERVAL_HIGH_PERF = 0.01
-
-
-def _glyph_refine_settings(context):
-    mode = get_font_picker_performance_mode(context)
-    if mode in ("HIGH", "ULTRA"):
-        return _GLYPH_REFINE_CHUNK_HIGH_PERF, _GLYPH_REFINE_INTERVAL_HIGH_PERF
-    return _GLYPH_REFINE_CHUNK, _GLYPH_REFINE_INTERVAL
 
 
 def catalog_glyph_filter_point_size(context) -> float:
@@ -130,7 +120,6 @@ def _filter_cache_key(context, catalog) -> tuple:
         filters["variable_only"],
         filters["preview"],
         int(round(filters["point_size"] * 100)),
-        get_font_picker_performance_mode(context),
     )
 
 
@@ -242,8 +231,7 @@ def _glyph_refine_step():
 
     groups = state["groups"]
     index = int(state["index"])
-    chunk, interval = _glyph_refine_settings(context)
-    end = min(index + chunk, len(groups))
+    end = min(index + _GLYPH_REFINE_CHUNK, len(groups))
     kept = state["kept"]
     preview = state["preview"]
     point_size = state["point_size"]
@@ -268,7 +256,7 @@ def _glyph_refine_step():
         from .font_preview import tag_ui_redraw
 
         tag_ui_redraw(context)
-        return interval
+        return 0.001
 
     _sort_groups(kept, font_catalog_filter_state(context)["sort_mode"], context)
     _store_filter_cache(key, kept, glyph_complete=True)

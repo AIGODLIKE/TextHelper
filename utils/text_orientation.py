@@ -225,12 +225,12 @@ _VERTICAL_SOURCE_GUARD = False
 
 
 def set_vertical_source(text_data, raw: str, *, context=None) -> None:
-    from .text_limits import assign_vertical_source
+    from .text_limits import assign_vertical_source, clamp_multiline_text
 
     global _VERTICAL_SOURCE_GUARD
     _VERTICAL_SOURCE_GUARD = True
     try:
-        assign_vertical_source(text_data.text_helper, raw or "", context=context)
+        assign_vertical_source(text_data.text_helper, clamp_multiline_text(raw, context=context), context=context)
         from .text_case import sync_live_text_case
 
         sync_live_text_case(text_data)

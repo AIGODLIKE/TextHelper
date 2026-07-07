@@ -63,8 +63,7 @@ def text_was_truncated(original: str, clamped: str) -> bool:
 
 def assign_text_body(text_data, body: str, *, context=None) -> str:
     """Assign body with the configured character cap; returns the stored string."""
-    incoming = body or ""
-    body = clamp_text_body(incoming, context=context)
+    body = clamp_text_body(body, context=context)
     if getattr(text_data, "body", "") == body:
         return body
     text_data.body = body
@@ -108,8 +107,7 @@ def enforce_multiline_limits(context=None) -> bool:
 
 def assign_vertical_source(text_helper, source: str, *, context=None) -> str:
     """Assign vertical N-panel source with the same character cap."""
-    incoming = source or ""
-    source = clamp_multiline_text(incoming, context=context)
+    source = clamp_multiline_text(source or "", context=context)
     if getattr(text_helper, "th_vertical_source", "") == source:
         return source
     text_helper.th_vertical_source = source

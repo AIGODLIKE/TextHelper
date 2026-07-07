@@ -26,13 +26,7 @@ from ..utils.font_language import (
     get_language_label,
 )
 from ..utils.font_preview_draw import draw_blf_preview
-from ..utils.font_preview_text import (
-    font_coverage_is_per_font,
-    get_font_coverage_text,
-    get_font_preview_text,
-    hud_font_picker_hover_apply_enabled,
-    is_font_picker_high_performance,
-)
+from ..utils.font_preview_text import get_font_coverage_text, get_font_preview_text
 from ..utils.text_format import get_active_text_data
 from . import layout as layout_mod
 from .gpu_primitives import draw_refresh_icon, draw_rounded_rect
@@ -238,7 +232,8 @@ def seed_picker_hover_apply(context):
 
 
 def _hover_apply_enabled(context):
-    return hud_font_picker_hover_apply_enabled(context)
+    prefs = get_addon_prefs(context)
+    return getattr(prefs, "font_preview_on_select", True)
 
 
 def _invoke_refresh_system_fonts(context):
@@ -1012,20 +1007,7 @@ def _stop_caret_timer():
     _CARET_TIMER = None
 
 
-def _draw_preview_line(
-    font_id,
-    text,
-    x,
-    y,
-    max_w,
-    size,
-    theme,
-    glyph_status=None,
-    *,
-    highlighted=False,
-    filepath="",
-    skip_glyph_probe=False,
-):
+def _draw_preview_line(font_id, text, x, y, max_w, size, theme, glyph_status=None, *, highlighted=False, filepath=""):
     from ..utils.hud_theme import theme_text_color
 
     if is_builtin_bfont_catalog(filepath):
@@ -1049,7 +1031,6 @@ def _draw_preview_line(
         theme_text_color(theme, highlighted=highlighted, surface="row"),
         ui_font=_UI_FONT,
         warn_color=theme.get("warn", (0.96, 0.42, 0.30, 1.0)),
-        skip_glyph_probe=skip_glyph_probe,
     )
 
 
@@ -1311,14 +1292,6 @@ def draw_font_picker(context):
 
     items = layout["items"]
     scroll = layout["scroll"]
-    high_perf = is_font_picker_high_performance(context)
-    shared_coverage = None
-    shared_preview = None
-    per_font = font_coverage_is_per_font(context)
-    if not high_perf and not per_font:
-        shared_coverage = _coverage_text(context)
-    if not per_font:
-        shared_preview = _preview_text(context)
 
     try:
         from ..utils.hud_theme import theme_text_color
@@ -1352,14 +1325,13 @@ def draw_font_picker(context):
             blf.position(_UI_FONT, hit.x + 8.0 * scale, hit.y + hit.h - 14.0 * scale, 0)
             blf.draw(_UI_FONT, name)
 
-            row_preview = shared_preview if shared_preview is not None else _preview_text(context, item.display_name)
+            row_preview = _preview_text(context, item.display_name)
+            coverage = _coverage_text(context, item.display_name)
             font_id = -1 if is_builtin_bfont_catalog(item.filepath) else _acquire_picker_blf(item.filepath)
             missing = 0
-            if not high_perf:
-                coverage = shared_coverage if shared_coverage is not None else _coverage_text(context, item.display_name)
-                if coverage and font_id != -1:
-                    glyph_status = glyph_status_for_font_id(font_id, coverage, preview_size)
-                    missing = sum(1 for ok in glyph_status if not ok)
+            if coverage and font_id != -1:
+                glyph_status = glyph_status_for_font_id(font_id, coverage, preview_size)
+                missing = sum(1 for ok in glyph_status if not ok)
             _draw_preview_line(
                 font_id,
                 row_preview,
@@ -1370,7 +1342,6 @@ def draw_font_picker(context):
                 theme,
                 highlighted=row_highlight,
                 filepath=item.filepath,
-                skip_glyph_probe=high_perf,
             )
             if missing > 0:
                 warn = _("Missing {:d}").format(missing)
@@ -1414,8 +1385,7 @@ def draw_font_picker(context):
                     glyph_color,
                 )
     finally:
-        if not high_perf:
-            _release_picker_blf()
+        _release_picker_blf()
 
     sb = layout.get("scrollbar")
     if sb and len(items) > layout["visible_rows"]:

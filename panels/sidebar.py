@@ -15,6 +15,7 @@ from ..utils.vertical_align_check import (
 )
 
 _BUTTON_ROW_SCALE_Y = 1.5
+_PERF_HINT_CHAR_THRESHOLD = 200
 
 
 def _draw_panel_header(layout, context, text_data=None):
@@ -34,6 +35,10 @@ def _draw_panel_header(layout, context, text_data=None):
     )
 
 
+def _char_count_text(chars, max_chars, words):
+    return _("{:d} / {:d} chars · {:d} words").format(chars, max_chars, words)
+
+
 def _text_stats(text_data, *, vertical, context=None):
     from ..utils.text_limits import multiline_char_count, text_body_max_len
 
@@ -45,10 +50,6 @@ def _text_stats(text_data, *, vertical, context=None):
     else:
         words = len(text_data.body.split()) if text_data.body else 0
     return chars, max_chars, words
-
-
-def _char_count_text(chars, max_chars, words):
-    return _("{:d} / {:d} chars · {:d} words").format(chars, max_chars, words)
 
 
 def _button_row(parent):
@@ -134,11 +135,9 @@ def _draw_footer(col, *, chars, max_chars, words):
 
 
 def _draw_panel_status_hints(layout, *, chars, max_chars):
-    from ..utils.font_preview_text import PERF_HINT_CHAR_THRESHOLD
-
     if chars >= max_chars:
         message = _("Reached the configured character limit ({:d} characters).").format(max_chars)
-    elif chars > PERF_HINT_CHAR_THRESHOLD:
+    elif chars > _PERF_HINT_CHAR_THRESHOLD:
         message = _("Too many characters ({:d}) — performance may be reduced.").format(chars)
     else:
         return
@@ -158,6 +157,8 @@ def _draw_content_box(layout, context, text_data):
     plate = layout.box()
     col = plate.column(align=True)
     _draw_orientation_row(col, text_data)
+
+    vertical = is_vertical(text_data)
 
     if vertical:
         draw_multiline_field(

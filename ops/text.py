@@ -100,6 +100,8 @@ class TH_OT_paste_body(ActiveFontDataPollMixin, Operator):
         from ..utils.text_limits import (
             assign_text_body,
             clamp_clipboard_text,
+            text_body_max_len,
+            text_was_truncated,
         )
         from ..utils.text_orientation import set_vertical_source
 
@@ -108,6 +110,8 @@ class TH_OT_paste_body(ActiveFontDataPollMixin, Operator):
             return {"CANCELLED"}
         clip = context.window_manager.clipboard or ""
         raw = clamp_clipboard_text(clip, context=context)
+        if text_was_truncated(clip, raw):
+            self.report({"INFO"}, _("Text truncated to {:d} characters (limit)").format(text_body_max_len(context)))
         if is_vertical(obj.data):
             set_vertical_source(obj.data, raw, context=context)
         else:
@@ -132,6 +136,8 @@ class TH_OT_import_txt(ActiveFontDataPollMixin, Operator):
         from ..utils.text_limits import (
             assign_text_body,
             clamp_multiline_text,
+            text_body_max_len,
+            text_was_truncated,
         )
         from ..utils.text_orientation import set_vertical_source
 
@@ -142,6 +148,8 @@ class TH_OT_import_txt(ActiveFontDataPollMixin, Operator):
             with open(self.filepath, "r", encoding="utf-8") as f:
                 clip = f.read()
             raw = clamp_multiline_text(clip, context=context)
+            if text_was_truncated(clip, raw):
+                self.report({"INFO"}, _("Text truncated to {:d} characters (limit)").format(text_body_max_len(context)))
             if is_vertical(obj.data):
                 set_vertical_source(obj.data, raw, context=context)
             else:
