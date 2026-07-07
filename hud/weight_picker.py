@@ -6,6 +6,7 @@ import gpu
 
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs
+from ..utils.font_preview_text import hud_font_picker_hover_apply_enabled
 from ..utils.font_family import short_weight_label
 from ..utils.font_loader import disk_font_path, is_current_font, queue_font_catalog, resolve_font_filepath
 from ..utils.text_format import get_active_text_data
@@ -103,7 +104,7 @@ def _ensure_toolbar_rects(context):
     if text_data is None or context.region is None:
         return
     from ..utils.addon_prefs import get_addon_prefs
-    from ..utils.text_bounds import get_toolbar_anchor
+    from ..utils.text_bounds import resolve_hud_layout
     from ..utils.text_format import get_active_text
 
     if obj is None:
@@ -111,11 +112,10 @@ def _ensure_toolbar_rects(context):
     if obj is None:
         return
     prefs = get_addon_prefs(context)
-    anchor = get_toolbar_anchor(context, obj, prefs.toolbar_offset)
-    if anchor is None:
+    resolved = resolve_hud_layout(context, obj, text_data, toolbar_offset=prefs.toolbar_offset)
+    if resolved is None:
         return
-    scale = _ui_scale(context)
-    layout_mod.layout_toolbar(anchor[0], anchor[1], scale, text_data, context)
+    layout_mod._LAST_RECTS = resolved["layout"]["rects"]
 
 
 def _picker_position(context, panel_w, panel_h, scale):
@@ -169,8 +169,7 @@ def seed_picker_hover_apply(context):
 
 
 def _hover_apply_enabled(context):
-    prefs = get_addon_prefs(context)
-    return getattr(prefs, "font_preview_on_select", True)
+    return hud_font_picker_hover_apply_enabled(context)
 
 
 def _invoke_apply_weight(

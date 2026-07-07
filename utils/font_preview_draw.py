@@ -43,6 +43,7 @@ def draw_blf_preview(
     ui_font=0,
     warn_color=(0.96, 0.42, 0.30, 1.0),
     bind_imbuf=None,
+    skip_glyph_probe=False,
 ):
     """Render preview one glyph at a time with NO_FALLBACK (matches TextCurve)."""
     if font_id == -1 or not text:
@@ -74,7 +75,7 @@ def draw_blf_preview(
             cx += blf.dimensions(ui_font, ch)[0]
             continue
 
-        if not char_has_glyph(font_id, ch, point_size):
+        if not skip_glyph_probe and not char_has_glyph(font_id, ch, point_size):
             blf.size(ui_font, box_size)
             blf.color(ui_font, *warn_color)
             blf.position(ui_font, cx, y, 0)

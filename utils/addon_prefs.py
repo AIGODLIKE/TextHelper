@@ -10,10 +10,16 @@ class _DefaultPrefs:
     auto_layout_frame = True
     toolbar_offset = 100.0
     hud_scale = 0.8
+    hud_safe_margin = 10.0
     hud_accent_preset = "BLUE"
     hud_accent_custom = (71 / 255, 114 / 255, 179 / 255)
     font_preview_icons = True
     font_preview_on_select = True
+    font_preview_on_select_before_ultra = True
+    font_picker_performance_mode = "HIGH"
+    font_picker_performance_mode_prev = "HIGH"
+    font_picker_high_performance = False
+    font_picker_ultra_high_performance = False
     font_preview_sample = "Exploration witnesses courage, open source witnesses glory"
     font_preview_mode = "OBJECT"
     font_preview_size = 36
@@ -21,7 +27,7 @@ class _DefaultPrefs:
     font_preview_height = 56
     font_preview_ui_scale = 3.5
     n_panel_textbox_lines = 30
-    multiline_text_max_len = 20000
+    multiline_text_max_len = 500
     font_favorite_keys = "[]"
     font_recent_keys = "[]"
     font_display_mode = "FAMILY"

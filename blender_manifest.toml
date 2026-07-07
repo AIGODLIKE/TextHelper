@@ -2,7 +2,7 @@ schema_version = "1.0.0"
 id = "TextHelper"
 name = "Text Helper"
 tagline = "Easy text input & font management"
-version = "2.0.3"
+version = "2.1.10"
 type = "add-on"
 maintainer = "ACGGIT <1132692358@qq.com>"
 
@@ -11,8 +11,9 @@ blender_version_min = "5.2.0"
 website = "https://github.com/AIGODLIKE/TextHelper"
 support = "https://github.com/AIGODLIKE/TextHelper/issues"
 
-tags = ["User Interface"]
+tags = ["Text Editor"]
 license = ["SPDX:GPL-3.0-or-later"]
+copyright = ["2024-2026 ACGGIT"]
 
 [permissions]
 files = "Load fonts from disk and cache font preview thumbnails"
@@ -35,10 +36,8 @@ paths_exclude_pattern = [
     ".DS_Store",
     "Thumbs.db",
     "assets/",
-    "i18n/_audit_translations.py",
-    "i18n/_audit_full.py",
-    "i18n/_append_op_descriptions.py",
-    "i18n/_audit_rna_strings.py",
-    "i18n/_audit_zh_hant.py",
-    "i18n/_generate_zh_hant.py",
+    "i18n/_audit_*.py",
+    "i18n/_append_*.py",
+    "i18n/_list_*.py",
+    "i18n/_generate_*.py",
 ]

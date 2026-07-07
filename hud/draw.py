@@ -6,7 +6,7 @@ import gpu
 
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs
-from ..utils.text_bounds import get_toolbar_anchor
+from ..utils.text_bounds import resolve_hud_layout
 from ..utils.text_format import get_active_text
 from ..utils.toolbar_ui import tool_item_pressed as _is_toggle_on
 from ..hud.hit_test import hud_enabled
@@ -242,18 +242,18 @@ def draw_hud():
         return
 
     text_data = obj.data
-    anchor = get_toolbar_anchor(context, obj, prefs.toolbar_offset)
-    if anchor is None:
+    resolved = resolve_hud_layout(context, obj, text_data, toolbar_offset=prefs.toolbar_offset)
+    if resolved is None:
         return
 
-    scale = _ui_scale(context)
-    layout = layout_toolbar(anchor[0], anchor[1], scale, text_data, context)
+    layout = resolved["layout"]
     rects = layout["rects"]
     row1_rects = layout["row1_rects"]
     row2_rects = layout["row2_rects"]
     strike_rects = layout["strike_rects"]
     layout_mod._LAST_RECTS = rects
 
+    scale = resolved["scale"]
     gpu.state.blend_set("ALPHA")
     shader = gpu.shader.from_builtin("UNIFORM_COLOR")
     colors = _toolbar_colors(context)

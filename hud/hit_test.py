@@ -44,19 +44,17 @@ def get_last_rects():
 
 
 def get_rects_for_context(context, obj, text_data):
-    from ..utils.text_bounds import get_toolbar_anchor
+    from ..utils.text_bounds import resolve_hud_layout
 
     if not hud_enabled(context, text_data):
         return []
     prefs = get_addon_prefs(context)
     if prefs is None:
         return []
-    anchor = get_toolbar_anchor(context, obj, prefs.toolbar_offset)
-    if anchor is None:
+    resolved = resolve_hud_layout(context, obj, text_data, toolbar_offset=prefs.toolbar_offset)
+    if resolved is None:
         return []
-    scale = max(context.preferences.system.ui_scale, 0.5) * prefs.hud_scale
-    layout = layout_toolbar(anchor[0], anchor[1], scale, text_data, context)
-    return layout["rects"]
+    return resolved["layout"]["rects"]
 
 
 def get_hud_hit_rects(context, obj, text_data):

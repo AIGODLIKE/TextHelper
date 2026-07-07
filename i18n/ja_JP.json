@@ -2413,5 +2413,190 @@
     "context": "*",
     "msgid": "Adjust text shear (↺ reset · click value to type)",
     "ja_JP": "シアー（↺ リセット · 数値クリックで入力）"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Picker Performance",
+    "ja_JP": "フォントピッカー性能"
+  },
+  {
+    "context": "*",
+    "msgid": "Viewport font picker performance profile",
+    "ja_JP": "ビューポートのフォントピッカー性能プロファイル"
+  },
+  {
+    "context": "*",
+    "msgid": "Standard",
+    "ja_JP": "標準"
+  },
+  {
+    "context": "*",
+    "msgid": "Full glyph checks and hover preview",
+    "ja_JP": "完全なグリフ検査とホバープレビュー"
+  },
+  {
+    "context": "*",
+    "msgid": "High Performance",
+    "ja_JP": "高性能"
+  },
+  {
+    "context": "*",
+    "msgid": "Faster picker for long text with approximate filtering",
+    "ja_JP": "長文テキスト向けの高速モード（おおよそのフィルタ）"
+  },
+  {
+    "context": "*",
+    "msgid": "Ultra High Performance",
+    "ja_JP": "超高性能"
+  },
+  {
+    "context": "*",
+    "msgid": "Maximum speed; click to apply fonts, no hover preview",
+    "ja_JP": "最高速度。クリックで適用、ホバーでは切り替えない"
+  },
+  {
+    "context": "*",
+    "msgid": "Disabled in Ultra High Performance mode",
+    "ja_JP": "超高性能モードでは無効"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} characters — large text. Enable Ultra High Performance in add-on preferences.",
+    "ja_JP": "{:d} 文字 — 文字数が多いです。アドオン設定で超高性能を有効にしてください。"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Too many characters ({:d}) — performance may be reduced.",
+    "ja_JP": "{:d} 文字 — 文字数が多すぎるため、パフォーマンスが低下する場合があります"
+  },
+  {
+    "context": "*",
+    "msgid": "Too many characters ({:d}) — performance may be reduced.",
+    "ja_JP": "{:d} 文字 — 文字数が多すぎるため、パフォーマンスが低下する場合があります"
+  },
+  {
+    "context": "*",
+    "msgid": "Large text ({:d} characters). Enable Ultra High Performance in add-on preferences for smoother font browsing.",
+    "ja_JP": "{:d} 文字 — 文字数が多いとカクつく場合があります。アドオン設定で超高性能を有効にしてください。"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Reached the configured character limit ({:d} characters).",
+    "ja_JP": "設定した最大文字数上限（{:d} 文字）に達しました。"
+  },
+  {
+    "context": "*",
+    "msgid": "Reached the configured character limit ({:d} characters).",
+    "ja_JP": "設定した最大文字数上限（{:d} 文字）に達しました。"
+  },
+  {
+    "context": "*",
+    "msgid": "More than 200 characters may cause lag when browsing fonts.",
+    "ja_JP": "200 文字を超えるとフォント閲覧時にカクつく場合があります。文字数を抑えるか超高性能を有効にしてください。"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Safe Margin",
+    "ja_JP": "HUD 安全マージン"
+  },
+  {
+    "context": "*",
+    "msgid": "Keep the floating toolbar this many pixels away from the 3D viewport edges (N/T panels shrink the usable area automatically)",
+    "ja_JP": "フローティングツールバーを 3D ビューポート端からこのピクセル数だけ離して配置（N/T パネル分は自動的に除外）"
+  },
+  {
+    "context": "*",
+    "msgid": "How font names appear in lists, the font picker, HUD, and header toolbar",
+    "ja_JP": "リスト、フォントピッカー、HUD、ヘッダーツールバーでのフォント名表示"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the font file name",
+    "ja_JP": "フォントファイル名を使用"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the OpenType family name (default; prefers localized CJK names when available)",
+    "ja_JP": "OpenType ファミリー名を使用（既定。利用可能な場合はローカライズ CJK 名を優先）"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview While Browsing (Saved)",
+    "ja_JP": "閲覧時プレビュー（保存済み）"
+  },
+  {
+    "context": "*",
+    "msgid": "Stored preview preference restored when leaving Ultra High Performance mode",
+    "ja_JP": "超高性能モード終了時に復元するプレビュー設定"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Picker Performance (Previous)",
+    "ja_JP": "フォントピッカー性能（前回）"
+  },
+  {
+    "context": "*",
+    "msgid": "High Performance Font Picker (Legacy)",
+    "ja_JP": "高性能フォントピッカー（レガシー）"
+  },
+  {
+    "context": "*",
+    "msgid": "Ultra High Performance (Legacy)",
+    "ja_JP": "超高性能（レガシー）"
+  },
+  {
+    "context": "*",
+    "msgid": "JSON list of recently applied font family keys",
+    "ja_JP": "最近適用したフォントファミリーの JSON リスト"
+  },
+  {
+    "context": "*",
+    "msgid": "Recent Font Families",
+    "ja_JP": "最近のフォントファミリー"
+  },
+  {
+    "context": "*",
+    "msgid": "Legacy HUD drag offset (migrated to the text object; not used for new data)",
+    "ja_JP": "旧 HUD ドラッグオフセット（テキストオブジェクトへ移行済み。新規データでは未使用）"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD User Shown",
+    "ja_JP": "HUD ユーザー表示済み"
+  },
+  {
+    "context": "*",
+    "msgid": "User explicitly enabled the floating toolbar while auto-show is off",
+    "ja_JP": "自動表示オフ時にユーザーがフローティングツールバーを手動で有効化"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer A",
+    "ja_JP": "パネルバッファ A"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer B",
+    "ja_JP": "パネルバッファ B"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Active",
+    "ja_JP": "アクティブパネルバッファ"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Lines",
+    "ja_JP": "パネルバッファ行数"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Mode",
+    "ja_JP": "パネルバッファモード"
+  },
+  {
+    "context": "*",
+    "msgid": "Emit Status Report",
+    "ja_JP": "ステータスレポートを表示"
   }
 ]

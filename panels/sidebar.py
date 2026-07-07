@@ -34,7 +34,7 @@ def _draw_panel_header(layout, context, text_data=None):
     )
 
 
-def _char_count_text(text_data, *, vertical, context=None):
+def _text_stats(text_data, *, vertical, context=None):
     from ..utils.text_limits import multiline_char_count, text_body_max_len
 
     chars = multiline_char_count(text_data, vertical=vertical)
@@ -44,6 +44,10 @@ def _char_count_text(text_data, *, vertical, context=None):
         words = sum(1 for line in source.split("\n") if line.strip())
     else:
         words = len(text_data.body.split()) if text_data.body else 0
+    return chars, max_chars, words
+
+
+def _char_count_text(chars, max_chars, words):
     return _("{:d} / {:d} chars · {:d} words").format(chars, max_chars, words)
 
 
@@ -123,18 +127,37 @@ def _draw_align_warnings(col, text_data, *, vertical):
             )
 
 
-def _draw_footer(col, text_data, *, vertical, context=None):
+def _draw_footer(col, *, chars, max_chars, words):
     row = col.row(align=True)
     row.scale_y = 0.88
-    row.label(text=_char_count_text(text_data, vertical=vertical, context=context))
+    row.label(text=_char_count_text(chars, max_chars, words))
+
+
+def _draw_panel_status_hints(layout, *, chars, max_chars):
+    from ..utils.font_preview_text import PERF_HINT_CHAR_THRESHOLD
+
+    if chars >= max_chars:
+        message = _("Reached the configured character limit ({:d} characters).").format(max_chars)
+    elif chars > PERF_HINT_CHAR_THRESHOLD:
+        message = _("Too many characters ({:d}) — performance may be reduced.").format(chars)
+    else:
+        return
+
+    col = layout.column(align=True)
+    col.scale_y = 0.9
+    box = col.box()
+    row = box.row()
+    row.alert = True
+    row.label(text=message, icon="ERROR")
 
 
 def _draw_content_box(layout, context, text_data):
+    vertical = is_vertical(text_data)
+    chars, max_chars, words = _text_stats(text_data, vertical=vertical, context=context)
+
     plate = layout.box()
     col = plate.column(align=True)
     _draw_orientation_row(col, text_data)
-
-    vertical = is_vertical(text_data)
 
     if vertical:
         draw_multiline_field(
@@ -159,7 +182,9 @@ def _draw_content_box(layout, context, text_data):
 
     _draw_actions_row(col)
     _draw_align_warnings(col, text_data, vertical=vertical)
-    _draw_footer(col, text_data, vertical=vertical, context=context)
+    _draw_footer(col, chars=chars, max_chars=max_chars, words=words)
+
+    return chars, max_chars
 
 
 class VIEW3D_PT_text_helper(Panel):
@@ -187,7 +212,9 @@ class VIEW3D_PT_text_helper(Panel):
             layout.label(text=_("Editing in viewport"), icon="INFO")
             layout.label(text=_("Double-click empty space to exit edit mode"))
             return
-        _draw_content_box(self.layout, context, context.active_object.data)
+        text_data = context.active_object.data
+        chars, max_chars = _draw_content_box(self.layout, context, text_data)
+        _draw_panel_status_hints(self.layout, chars=chars, max_chars=max_chars)
 
 
 class VIEW3D_PT_text_helper_empty(Panel):

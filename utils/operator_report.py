@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import bpy
 
-
-def queue_operator_report(wm, msgid: str) -> None:
+def queue_operator_report(wm, msgid: str, *, value: int = -1) -> None:
     """Store an English msgid; translate when the modal operator reports it."""
     state = getattr(wm, "th_state", None)
     if state is None:
@@ -13,6 +11,7 @@ def queue_operator_report(wm, msgid: str) -> None:
     text = (msgid or "").strip()
     if text:
         state.th_pending_report = text
+        state.th_pending_report_value = value
 
 
 def _translate_operator_report(operator, msgid: str) -> str:
@@ -26,6 +25,15 @@ def flush_pending_report(operator, state) -> bool:
     message = (getattr(state, "th_pending_report", "") or "").strip()
     if not message:
         return False
+    value = int(getattr(state, "th_pending_report_value", -1) or -1)
     state.th_pending_report = ""
-    operator.report({"INFO"}, _translate_operator_report(operator, message))
+    state.th_pending_report_value = -1
+    text = _translate_operator_report(operator, message)
+    if value >= 0:
+        try:
+            text = text.format(value)
+        except Exception:
+            text = message.format(value)
+    operator.report({"INFO"}, text)
     return True
+

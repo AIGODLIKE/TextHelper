@@ -9,6 +9,7 @@ from .font_blf import blf_load, blf_no_fallback_flag, blf_unload, font_path_usab
 from .font_loader import disk_font_path_from_string, is_builtin_bfont_catalog
 
 _COVERAGE_CACHE = {}
+_FULL_COVERAGE_CACHE = {}
 _UNLOAD_HOOKS = []
 
 
@@ -141,22 +142,53 @@ def font_missing_count(filepath, text, point_size=24):
     return sum(1 for ok in status if not ok)
 
 
+def _font_id_has_full_coverage(font_id, text, point_size):
+    if font_id == -1:
+        return False
+    for char in text:
+        if char.isspace():
+            continue
+        if _char_missing_glyph(font_id, char, point_size):
+            return False
+    return True
+
+
 def font_has_full_coverage(filepath, text, point_size=24, font_id=None):
     if not text:
         return True
     if is_builtin_bfont_catalog(filepath):
         return True
-    if font_id is not None and font_id != -1:
-        status = glyph_status_for_font_id(font_id, text, point_size)
-    else:
-        status = font_glyph_status(filepath, text, point_size)
-    for i, char in enumerate(text):
-        if char.isspace():
-            continue
-        if i >= len(status) or not status[i]:
-            return False
-    return True
+
+    abs_path = disk_font_path_from_string(filepath)
+    if not abs_path:
+        abs_path = os.path.normcase(bpy.path.abspath(filepath))
+    cache_key = (abs_path, text, int(round(point_size * 2)))
+    if cache_key in _FULL_COVERAGE_CACHE:
+        return _FULL_COVERAGE_CACHE[cache_key]
+
+    if not font_path_usable(abs_path):
+        _FULL_COVERAGE_CACHE[cache_key] = False
+        return False
+
+    loaded_here = False
+    if font_id is None or font_id == -1:
+        font_id = blf_load(abs_path)
+        loaded_here = font_id != -1
+
+    try:
+        result = _font_id_has_full_coverage(font_id, text, point_size)
+    finally:
+        if loaded_here:
+            try:
+                blf_unload(abs_path)
+                _notify_blf_unload(abs_path)
+            except Exception:
+                pass
+
+    _FULL_COVERAGE_CACHE[cache_key] = result
+    return result
 
 
 def invalidate_glyph_cache():
     _COVERAGE_CACHE.clear()
+    _FULL_COVERAGE_CACHE.clear()

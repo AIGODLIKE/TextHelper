@@ -1722,7 +1722,7 @@
   {
     "context": "Operator",
     "msgid": "Text Helper HUD",
-    "zh_Hant": "Text Helper HUD"
+    "zh_Hant": "文字助手 HUD"
   },
   {
     "context": "Operator",
@@ -2413,5 +2413,190 @@
     "context": "*",
     "msgid": "Adjust text shear (↺ reset · click value to type)",
     "zh_Hant": "調整切變（↺ 重置 · 點選數值輸入）"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Picker Performance",
+    "zh_Hant": "字體選擇器效能"
+  },
+  {
+    "context": "*",
+    "msgid": "Viewport font picker performance profile",
+    "zh_Hant": "視圖區字體選擇器效能設定"
+  },
+  {
+    "context": "*",
+    "msgid": "Standard",
+    "zh_Hant": "預設"
+  },
+  {
+    "context": "*",
+    "msgid": "Full glyph checks and hover preview",
+    "zh_Hant": "完整字形檢測與懸停預覽"
+  },
+  {
+    "context": "*",
+    "msgid": "High Performance",
+    "zh_Hant": "高效能"
+  },
+  {
+    "context": "*",
+    "msgid": "Faster picker for long text with approximate filtering",
+    "zh_Hant": "長文本下更快瀏覽，字形篩選為近似結果"
+  },
+  {
+    "context": "*",
+    "msgid": "Ultra High Performance",
+    "zh_Hant": "極高效能"
+  },
+  {
+    "context": "*",
+    "msgid": "Maximum speed; click to apply fonts, no hover preview",
+    "zh_Hant": "最快速度；點選套用字體，懸停不切換"
+  },
+  {
+    "context": "*",
+    "msgid": "Disabled in Ultra High Performance mode",
+    "zh_Hant": "極高效能模式下已停用"
+  },
+  {
+    "context": "*",
+    "msgid": "{:d} characters — large text. Enable Ultra High Performance in add-on preferences.",
+    "zh_Hant": "{:d} 字 — 字數過多，建議在附加元件偏好設定中開啟極高效能。"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Too many characters ({:d}) — performance may be reduced.",
+    "zh_Hant": "{:d} 字 — 字元過多，效能降低"
+  },
+  {
+    "context": "*",
+    "msgid": "Too many characters ({:d}) — performance may be reduced.",
+    "zh_Hant": "{:d} 字 — 字元過多，效能降低"
+  },
+  {
+    "context": "*",
+    "msgid": "Large text ({:d} characters). Enable Ultra High Performance in add-on preferences for smoother font browsing.",
+    "zh_Hant": "{:d} 字 — 字元過多可能導致卡頓，建議在附加元件偏好設定中開啟極高效能。"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Reached the configured character limit ({:d} characters).",
+    "zh_Hant": "已達設定的最大字數上限（{:d} 字）。"
+  },
+  {
+    "context": "*",
+    "msgid": "Reached the configured character limit ({:d} characters).",
+    "zh_Hant": "已達設定的最大字數上限（{:d} 字）。"
+  },
+  {
+    "context": "*",
+    "msgid": "More than 200 characters may cause lag when browsing fonts.",
+    "zh_Hant": "超過 200 字可能導致卡頓，建議控制文本長度或開啟極高效能。"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD Safe Margin",
+    "zh_Hant": "HUD 安全邊距"
+  },
+  {
+    "context": "*",
+    "msgid": "Keep the floating toolbar this many pixels away from the 3D viewport edges (N/T panels shrink the usable area automatically)",
+    "zh_Hant": "浮動工具列與 3D 視圖區邊緣保持此像素距離（N/T 面板會自動縮小可用區域）"
+  },
+  {
+    "context": "*",
+    "msgid": "How font names appear in lists, the font picker, HUD, and header toolbar",
+    "zh_Hant": "字體名稱在列表、字體選擇器、HUD 與頂欄工具列中的顯示方式"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the font file name",
+    "zh_Hant": "使用字體檔案名稱"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the OpenType family name (default; prefers localized CJK names when available)",
+    "zh_Hant": "使用 OpenType 族名（預設；有則用在地化 CJK 名稱）"
+  },
+  {
+    "context": "*",
+    "msgid": "Preview While Browsing (Saved)",
+    "zh_Hant": "瀏覽時即時預覽（已儲存）"
+  },
+  {
+    "context": "*",
+    "msgid": "Stored preview preference restored when leaving Ultra High Performance mode",
+    "zh_Hant": "離開極高效能模式時恢復的預覽設定"
+  },
+  {
+    "context": "*",
+    "msgid": "Font Picker Performance (Previous)",
+    "zh_Hant": "字體選擇器效能（上一檔位）"
+  },
+  {
+    "context": "*",
+    "msgid": "High Performance Font Picker (Legacy)",
+    "zh_Hant": "高效能字體選擇器（舊版）"
+  },
+  {
+    "context": "*",
+    "msgid": "Ultra High Performance (Legacy)",
+    "zh_Hant": "極高效能（舊版）"
+  },
+  {
+    "context": "*",
+    "msgid": "JSON list of recently applied font family keys",
+    "zh_Hant": "最近使用字體族的 JSON 列表"
+  },
+  {
+    "context": "*",
+    "msgid": "Recent Font Families",
+    "zh_Hant": "最近使用的字體族"
+  },
+  {
+    "context": "*",
+    "msgid": "Legacy HUD drag offset (migrated to the text object; not used for new data)",
+    "zh_Hant": "舊版 HUD 拖曳偏移（已遷移至文字物件；新資料不再使用）"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD User Shown",
+    "zh_Hant": "HUD 使用者已顯示"
+  },
+  {
+    "context": "*",
+    "msgid": "User explicitly enabled the floating toolbar while auto-show is off",
+    "zh_Hant": "在關閉自動顯示時，使用者手動啟用了浮動工具列"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer A",
+    "zh_Hant": "面板緩衝 A"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer B",
+    "zh_Hant": "面板緩衝 B"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Active",
+    "zh_Hant": "使用中面板緩衝"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Lines",
+    "zh_Hant": "面板緩衝行數"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Mode",
+    "zh_Hant": "面板緩衝模式"
+  },
+  {
+    "context": "*",
+    "msgid": "Emit Status Report",
+    "zh_Hant": "發出狀態報告"
   }
 ]
