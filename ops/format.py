@@ -5,10 +5,7 @@ from ..i18n import _
 from ..utils.operator_poll import ActiveFontDataPollMixin
 from ..utils.text_format import (
     apply_spacing_value,
-    apply_strike_position,
-    default_strike_position,
     iter_selected_text_data,
-    preset_format_defaults,
     reset_format_value,
     spacing_display_char,
     spacing_display_line,

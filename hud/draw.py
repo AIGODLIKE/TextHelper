@@ -14,12 +14,10 @@ from .gpu_primitives import draw_rounded_rect
 from .tooltip import draw_hud_tooltip
 from . import layout as layout_mod
 from .layout import (
-    layout_toolbar,
     slider_header_font_size,
     slider_header_position_y,
     slider_reset_x,
     slider_row_center,
-    slider_row_height,
     slider_track_end,
     slider_track_start,
     slider_track_y,
@@ -224,7 +222,7 @@ def draw_hud():
     context = bpy.context
     prefs = _prefs(context)
     if not hud_enabled(context):
-        layout_mod._LAST_RECTS = []
+        layout_mod.clear_hud_rects_cache(context)
         return
     if not _is_view3d_draw_context(context):
         return
@@ -233,12 +231,12 @@ def draw_hud():
     from ..runtime import request_ensure
 
     sync_modal_running_state(context)
-    if not modal_running():
+    if not modal_running(context):
         request_ensure(context)
 
     obj = get_active_text(context)
     if obj is None:
-        layout_mod._LAST_RECTS = []
+        layout_mod.clear_hud_rects_cache(context)
         return
 
     text_data = obj.data
@@ -251,7 +249,7 @@ def draw_hud():
     row1_rects = layout["row1_rects"]
     row2_rects = layout["row2_rects"]
     strike_rects = layout["strike_rects"]
-    layout_mod._LAST_RECTS = rects
+    layout_mod.cache_hud_rects(context, rects)
 
     scale = resolved["scale"]
     gpu.state.blend_set("ALPHA")
@@ -287,7 +285,7 @@ def draw_hud():
         )
 
     state = _hud_state(context)
-    hover_id = state.th_hud_hover_id if state else ""
+    hover_id = layout_mod.get_region_hover(context)
     moving = state.th_hud_moving if state else False
 
     for rect in rects:

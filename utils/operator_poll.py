@@ -5,7 +5,7 @@ from __future__ import annotations
 import bpy
 
 from ..i18n import _
-from .text_format import get_active_text, get_active_text_data, has_selected_font, iter_selected_font_objects
+from .text_format import has_selected_font, iter_selected_font_objects
 
 
 def translate_operator_text(text: str, *, context: str = "Operator") -> str:

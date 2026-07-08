@@ -103,7 +103,6 @@ class TH_OT_paste_body(ActiveFontDataPollMixin, Operator):
             text_body_max_len,
             text_was_truncated,
         )
-        from ..utils.text_orientation import set_vertical_source
 
         obj = get_active_text(context)
         if obj is None:
@@ -139,7 +138,6 @@ class TH_OT_import_txt(ActiveFontDataPollMixin, Operator):
             text_body_max_len,
             text_was_truncated,
         )
-        from ..utils.text_orientation import set_vertical_source
 
         obj = get_active_text(context)
         if obj is None:

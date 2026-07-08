@@ -1,7 +1,6 @@
 """GPU language filter picker (confirm selection, then close)."""
 
 import blf
-import bpy
 import gpu
 
 from ..i18n import _

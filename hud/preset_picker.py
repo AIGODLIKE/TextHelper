@@ -57,7 +57,7 @@ def _picker_position(context, panel_w, panel_h, scale):
     region = context.region
     margin = 10.0 * scale
     gap = 6.0 * scale
-    preset_rect = layout_mod.get_hud_item_rect("preset")
+    preset_rect = layout_mod.get_hud_item_rect("preset", context)
     if preset_rect is not None:
         px = preset_rect.x
         panel_top = preset_rect.y - gap
@@ -70,8 +70,8 @@ def _picker_position(context, panel_w, panel_h, scale):
     return px, py
 
 
-def _panel_width(scale):
-    preset_rect = layout_mod.get_hud_item_rect("preset")
+def _panel_width(context, scale):
+    preset_rect = layout_mod.get_hud_item_rect("preset", context)
     base = 220.0 * scale
     if preset_rect is not None:
         base = max(base, preset_rect.w * 2.2)
@@ -148,7 +148,7 @@ def layout_picker(context):
         return None
 
     scale = _ui_scale(context)
-    panel_w = _panel_width(scale)
+    panel_w = _panel_width(context, scale)
     pad = 12.0 * scale
     header_h = 36.0 * scale
     row_h = 36.0 * scale

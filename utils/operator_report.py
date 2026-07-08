@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import bpy
 
 
 def queue_operator_report(wm, msgid: str) -> None:

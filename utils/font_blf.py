@@ -115,20 +115,12 @@ def blf_unload(filepath: str) -> None:
 
 
 def _blend_font_cache_dir() -> str:
-    try:
-        from .. import ADDON_PACKAGE
+    from .. import ADDON_PACKAGE
 
+    try:
         base = bpy.utils.extension_path_user(ADDON_PACKAGE)
     except Exception:
         base = ""
-    if not base:
-        for pkg in ("bl_ext.user_default.TextHelper", "TextHelper"):
-            try:
-                base = bpy.utils.extension_path_user(pkg)
-                if base:
-                    break
-            except Exception:
-                continue
     if not base:
         return ""
     cache = os.path.join(base, "blend_font_cache")

@@ -108,8 +108,8 @@ def _hover_row_index(context, event, area, region) -> int:
     state = context.window_manager.th_state
     if area is None or region is None:
         return -1
-    mx = event.mouse_x - (area.x + region.x)
-    my = event.mouse_y - (area.y + region.y)
+    mx = event.mouse_x - region.x
+    my = event.mouse_y - region.y
     if mx < 0 or my < 0 or mx > region.width or my > region.height:
         return -1
 
@@ -179,9 +179,11 @@ class TH_OT_header_picker_modal(TextHelperOperatorMixin, Operator):
     def _region_active(self, context):
         if self._region is None:
             return False
+        region_key = self._region.as_pointer()
         for area in context.window.screen.areas:
-            if self._region in area.regions:
-                return True
+            for region in area.regions:
+                if region.as_pointer() == region_key:
+                    return True
         return False
 
     def modal(self, context, event):

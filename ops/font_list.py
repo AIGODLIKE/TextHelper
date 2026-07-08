@@ -5,7 +5,7 @@ from bpy.types import Operator, UIList
 
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs, prefs_are_editable
-from ..utils.operator_poll import ActiveFontDataPollMixin, ActiveFontPollMixin, WindowManagerPollMixin
+from ..utils.operator_poll import ActiveFontDataPollMixin, WindowManagerPollMixin
 from ..utils.font_loader import (
     assign_font,
     ensure_font_catalog,
@@ -18,17 +18,14 @@ from ..utils.font_loader import (
 from ..utils.font_catalog_filter import (
     catalog_item_passes_filters,
     dedupe_header_font_filter_items,
-    filtered_font_groups,
     font_catalog_filter_state,
-    font_filters_differ_from_defaults,
-    invalidate_catalog_filter_cache,
     reset_font_catalog_filters,
     sorted_catalog_indices,
     visible_catalog_indices as shared_visible_catalog_indices,
 )
 from ..utils.font_family import family_weight_counts, header_font_display_label
-from ..utils.font_language import catalog_item_passes_language, catalog_item_passes_name, get_language_filter, get_language_label
-from ..utils.font_preview import get_font_icon, invalidate_font_previews, queue_font_preview, tag_ui_redraw
+from ..utils.font_language import get_language_filter, get_language_label
+from ..utils.font_preview import get_font_icon, queue_font_preview, tag_ui_redraw
 from ..utils.text_format import get_active_text_data
 from ..utils.text_frame import tag_view3d_redraw
 from ..hud.draw import tag_redraw
@@ -432,7 +429,6 @@ class TH_OT_toggle_weight_picker(ActiveFontDataPollMixin, Operator):
             return {"CANCELLED"}
 
         from ..hud.weight_picker import close_picker as close_weight_picker, seed_picker_hover_apply, variants_for_text
-        from ..utils.font_loader import ensure_font_catalog, refresh_font_catalog
 
         try:
             ensure_font_catalog(wm)

@@ -39,7 +39,7 @@ def ensure(context=None):
 
     prefetch_font_catalog(ctx)
 
-    return _ensure_modal(ctx)
+    return ensure_all_windows(ctx)
 
 
 def request_ensure(context=None):
@@ -65,7 +65,7 @@ def request_ensure(context=None):
     if not hud_enabled(ctx):
         return
 
-    if modal_running():
+    if modal_running(ctx) and _draw_registered:
         return
 
     if _ensure_timer is not None:
@@ -74,7 +74,7 @@ def request_ensure(context=None):
     def _deferred():
         global _ensure_timer
         _ensure_timer = None
-        ensure(None)
+        ensure(ctx)
         return None
 
     _ensure_timer = _deferred
@@ -87,7 +87,7 @@ def _ensure_modal(context):
     from .ops.hud_modal import modal_running, sync_modal_running_state
 
     sync_modal_running_state(context)
-    if modal_running():
+    if modal_running(context):
         return True
 
     try:
@@ -96,7 +96,45 @@ def _ensure_modal(context):
         return False
 
     sync_modal_running_state(context)
-    return modal_running()
+    return modal_running(context)
+
+
+def ensure_all_windows(context=None):
+    """Ensure one HUD modal per Blender window that can show the HUD."""
+    import bpy
+
+    from .hud.hit_test import hud_enabled
+    from .ops.hud_modal import modal_running, sync_modal_running_state
+    from .utils.text_format import get_active_text
+    from .utils.view3d_context import find_view3d_area_region
+
+    base = context or bpy.context
+    started = False
+    for window in bpy.context.window_manager.windows:
+        area, region = find_view3d_area_region(window)
+        if area is None or region is None:
+            continue
+        override = base.temp_override(
+            window=window,
+            screen=window.screen,
+            area=area,
+            region=region,
+            space_data=area.spaces.active,
+            region_data=region.data,
+        )
+        with override:
+            ctx = bpy.context
+            if get_active_text(ctx) is None or not hud_enabled(ctx):
+                continue
+            sync_modal_running_state(ctx)
+            if modal_running(ctx):
+                continue
+            try:
+                bpy.ops.wm.texthelper_hud_modal("INVOKE_DEFAULT")
+                started = True
+            except Exception:
+                pass
+    return started
 
 
 def shutdown():

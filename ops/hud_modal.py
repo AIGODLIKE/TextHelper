@@ -1,4 +1,5 @@
 import time
+from contextlib import contextmanager
 
 import bpy
 from bpy.types import Operator
@@ -9,9 +10,10 @@ from ..utils.operator_poll import ActiveFontPollMixin, TextHelperOperatorMixin
 from ..utils.operator_report import flush_pending_report
 from ..utils.view3d_context import (
     find_view3d_area_region,
-    mouse_in_view3d_ui,
+    hud_pointer_target,
+    override_view3d_window,
+    region_mouse_from_event,
     view3d_override,
-    view3d_region_context,
 )
 from ..utils.text_bounds import point_in_text_screen_bounds
 from ..utils.text_frame import tag_view3d_redraw
@@ -30,7 +32,6 @@ from ..hud.font_picker import (
     hit_test_picker as hit_test_font_picker,
     picker_open as font_picker_open,
     picker_search_blocks_keymap,
-    focus_search_field,
 )
 from ..hud.preset_picker import (
     close_picker as close_preset_picker,
@@ -71,7 +72,7 @@ from ..hud.slider_input import (
     slider_value_editing,
     try_begin_slider_value_edit,
 )
-from ..utils.text_format import get_active_text, iter_selected_font_objects
+from ..utils.text_format import get_active_text
 from ..utils.undo import push_undo
 from ..utils.hud_offset import get_hud_offset, set_hud_offset
 
@@ -83,32 +84,38 @@ def _is_hud_modal_operator(op) -> bool:
     return "texthelper_hud_modal" in name
 
 
-def _hud_modal_active(context=None) -> bool:
+def _iter_hud_modal_operators(window=None):
     import bpy
 
-    ctx = context or bpy.context
-    window = getattr(ctx, "window", None)
     if window is None:
-        return False
+        wm = bpy.context.window_manager
+        for win in wm.windows:
+            yield from _iter_hud_modal_operators(win)
+        return
     try:
         for op in window.modal_operators:
             if _is_hud_modal_operator(op):
-                return True
+                yield op
     except Exception:
-        return False
-    return False
+        return
+
+
+def _hud_modal_active(context=None) -> bool:
+    window = getattr(context, "window", None) if context is not None else None
+    if window is not None:
+        return any(_iter_hud_modal_operators(window))
+    return any(_iter_hud_modal_operators())
 
 
 def sync_modal_running_state(context=None) -> bool:
     """Keep the module flag aligned with Blender's modal operator stack."""
     global _RUNNING
-    active = _hud_modal_active(context)
-    _RUNNING = active
+    _RUNNING = _hud_modal_active(context)
     return _RUNNING
 
 
-def modal_running() -> bool:
-    return sync_modal_running_state()
+def modal_running(context=None) -> bool:
+    return sync_modal_running_state(context)
 
 
 _DOUBLE_CLICK_SEC = 0.4
@@ -126,29 +133,12 @@ _POINTER_EVENTS = frozenset(
 )
 
 
-def _hud_override(context, obj):
-    area, region = find_view3d_area_region(context.window)
-    if area is None:
-        return None
-    selected = [o for o in iter_selected_font_objects(context)]
-    if obj is not None and obj not in selected:
-        selected.insert(0, obj)
-    kwargs = {
-        "window": context.window,
-        "screen": context.window.screen,
-        "area": area,
-        "region": region,
-        "space_data": area.spaces.active,
-    }
-    if obj is not None:
-        kwargs["object"] = obj
-        kwargs["active_object"] = obj
-        kwargs["selected_objects"] = selected
-    return context.temp_override(**kwargs)
+def _hud_override(context, obj, area=None, region=None):
+    return override_view3d_window(context, area, region, obj)
 
 
-def _run_hud_op(context, obj, callback, *, undo=False):
-    override = _hud_override(context, obj)
+def _run_hud_op(context, obj, callback, *, undo=False, area=None, region=None):
+    override = _hud_override(context, obj, area, region)
     if override is None:
         return
     with override:
@@ -193,26 +183,21 @@ def _hud_reset_format(context, mode, *, undo=False):
     tag_view3d_redraw(context)
 
 
-def _hud_handles_pointer(context, event):
-    if event.type not in _POINTER_EVENTS:
-        return False
-    area = context.area
-    region = context.region
-    if area is not None and region is not None:
-        if area.type != "VIEW_3D":
-            return False
-        if region.type == "UI":
-            return False
-        if region.type == "WINDOW":
-            return True
-    window = context.window
-    if window is not None and mouse_in_view3d_ui(window, event.mouse_x, event.mouse_y):
-        return False
-    return False
+@contextmanager
+def _viewport_context(context, area, region):
+    """Run HUD interaction with bpy.context bound to one 3D View WINDOW."""
+    override = override_view3d_window(context, area, region)
+    if override is None:
+        yield False
+        return
+    with override:
+        yield True
 
 
-def _pointer_coords(event):
-    return event.mouse_region_x, event.mouse_region_y
+def _global_hud_interaction(state) -> bool:
+    if state is None:
+        return False
+    return bool(state.th_hud_moving or state.th_hud_dragging)
 
 
 def _hud_toolbar_row_hit(rects, mx, my, pad=4.0):
@@ -228,6 +213,7 @@ def _hud_toolbar_row_hit(rects, mx, my, pad=4.0):
     y0 = min(rect.y for rect in items) - pad
     y1 = max(rect.y + rect.h for rect in items) + pad
     return x0 <= mx <= x1 and y0 <= my <= y1
+
 
 def _safe_state(wm):
     return getattr(wm, "th_state", None)
@@ -248,10 +234,11 @@ def _is_double_click(state, mx, my, event):
     return is_double
 
 
-def _point_on_text(context, obj, mx, my):
-    with view3d_region_context(context) as ok:
-        if not ok:
-            return False
+def _point_on_text(context, obj, mx, my, area=None, region=None):
+    override = override_view3d_window(context, area, region, obj)
+    if override is None:
+        return False
+    with override:
         return point_in_text_screen_bounds(context, obj, mx, my)
 
 
@@ -263,7 +250,11 @@ def _clear_drag_state(state):
     clear_slider_value_edit(state)
 
 
-def _clear_hover(state):
+def _clear_hover(state, context=None):
+    from ..hud import layout as layout_mod
+
+    if context is not None:
+        layout_mod.clear_region_hover(context)
     if state.th_hud_hover_id:
         state.th_hud_hover_id = ""
         tag_redraw()
@@ -278,20 +269,13 @@ def _ensure_text_selected(context, obj):
         context.view_layer.objects.active = obj
 
 
-def _click_outside_hud_and_text(rects, obj, context, mx, my):
+def _click_outside_hud_and_text(rects, obj, context, mx, my, area=None, region=None):
     if _hud_toolbar_row_hit(rects, mx, my):
         return False
-    if obj is not None and _point_on_text(context, obj, mx, my):
+    if obj is not None and _point_on_text(context, obj, mx, my, area, region):
         return False
     return True
 
-
-def _cancel_modal(state):
-    global _RUNNING
-    _clear_drag_state(state)
-    _RUNNING = False
-    tag_redraw()
-    return {"CANCELLED"}
 
 
 def _close_all_pickers(context):
@@ -442,15 +426,24 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
     bl_options = {"INTERNAL"}
 
     def modal(self, context, event):
-        global _RUNNING
-
         wm = context.window_manager
         state = _safe_state(wm)
         if state is None:
             return {"PASS_THROUGH"}
 
-        handles_pointer = _hud_handles_pointer(context, event)
-        mx, my = _pointer_coords(event)
+        modal_area = getattr(self, "_modal_area", None)
+        modal_region = getattr(self, "_modal_region", None)
+
+        ptr_area, ptr_region, mx, my = hud_pointer_target(
+            event,
+            context.window,
+            context,
+            modal_area,
+            modal_region,
+        )
+        if event.type not in _POINTER_EVENTS:
+            mx, my = event.mouse_region_x, event.mouse_region_y
+        handles_pointer = ptr_area is not None and ptr_region is not None
         pointer_event = _HudPointerEvent(mx, my)
 
         prev_mode = getattr(self, "_th_prev_mode", "")
@@ -472,10 +465,13 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                 event.type == "LEFTMOUSE"
                 and event.value == "PRESS"
                 and obj is not None
+                and handles_pointer
                 and _is_double_click(state, mx, my, event)
-                and not _point_on_text(context, obj, mx, my)
+                and not _point_on_text(context, obj, mx, my, ptr_area, ptr_region)
             ):
-                exit_text_edit_mode(context, obj)
+                with _viewport_context(context, ptr_area, ptr_region) as active:
+                    if active:
+                        exit_text_edit_mode(context, obj)
                 tag_redraw()
                 return {"RUNNING_MODAL"}
             return {"PASS_THROUGH"}
@@ -483,235 +479,261 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
         obj = get_active_text(context)
         if obj is None:
             _close_all_pickers(context)
-            return _cancel_modal(state)
-
-        if event.type in _POINTER_EVENTS and not handles_pointer:
-            if event.type == "MOUSEMOVE":
-                _clear_hover(state)
-            return {"PASS_THROUGH"}
+            self.cancel(context)
+            return {"CANCELLED"}
 
         text_data = obj.data
-        show_hud = hud_enabled(context, text_data)
-        font_picker_active = font_picker_open(context)
-        weight_picker_active = weight_picker_open(context)
-        preset_picker_active = preset_picker_open(context)
-        language_picker_active = language_picker_open(context)
-        picker_active = font_picker_active or weight_picker_active or preset_picker_active or language_picker_active
-        rects = get_hud_hit_rects(context, obj, text_data) if show_hud else []
 
-        if show_hud and slider_value_editing(context):
-            if getattr(event, "is_compose", False):
-                tag_redraw()
-                return {"RUNNING_MODAL"}
-            if handle_slider_value_key(context, event) or slider_value_blocks_keymap(event):
-                tag_redraw()
-                return {"RUNNING_MODAL"}
-
-        if picker_active:
-            search_focused = (
-                font_picker_active
-                and state is not None
-                and getattr(state, "th_font_picker_search_focus", False)
-            )
-            if search_focused and getattr(event, "is_compose", False):
-                tag_redraw()
-                return {"PASS_THROUGH"}
-
-            if font_picker_active and search_focused:
-                if handle_picker_key(context, event) or picker_search_blocks_keymap(event):
-                    tag_redraw()
-                    return {"RUNNING_MODAL"}
-
-            if font_picker_active and event.type in {"WHEELUPMOUSE", "WHEELDOWNMOUSE"} and event.value == "PRESS":
-                if not language_picker_active:
-                    delta = 1 if event.type == "WHEELUPMOUSE" else -1
-                    handle_picker_wheel(context, delta)
-                tag_redraw()
-                return {"RUNNING_MODAL"}
-
-            if event.type == "MOUSEMOVE":
-                if (
-                    font_picker_active
-                    and not language_picker_active
-                    and getattr(state, "th_text_field_selecting", False)
-                    and search_focused
-                ):
-                    handle_search_field_mouse_move(context, mx, my)
-                elif (
-                    font_picker_active
-                    and not language_picker_active
-                    and getattr(state, "th_font_picker_scroll_drag", False)
-                ):
-                    handle_picker_drag(context, my)
-                else:
-                    if language_picker_active:
-                        handle_language_picker_hover(context, mx, my)
-                    elif weight_picker_active:
-                        handle_weight_picker_hover(context, mx, my)
-                    elif preset_picker_active:
-                        handle_preset_picker_hover(context, mx, my)
-                    elif font_picker_active:
-                        handle_font_picker_hover(context, mx, my)
-                tag_redraw()
-                return {"RUNNING_MODAL"}
-
-            if event.type == "LEFTMOUSE" and event.value == "RELEASE":
-                if font_picker_active and handle_picker_release(context):
-                    tag_redraw()
-                    return {"RUNNING_MODAL"}
-
-            if event.type == "ESC" and event.value == "PRESS":
-                _close_all_pickers(context)
-                tag_redraw()
-                return {"RUNNING_MODAL"}
-
-            if event.type == "LEFTMOUSE" and event.value == "PRESS":
-                if language_picker_active:
-                    language_hit = hit_test_language_picker(context, mx, my)
-                    if language_hit is not None:
-                        handle_language_picker_click(context, language_hit)
-                    elif not language_picker_panel_contains(context, mx, my):
-                        close_language_picker(context)
-                    tag_redraw()
-                    return {"RUNNING_MODAL"}
-
-                if preset_picker_active:
-                    preset_hit = hit_test_preset_picker(context, mx, my)
-                    if preset_hit is not None:
-                        handle_preset_picker_click(context, preset_hit)
-                        tag_redraw()
-                        return {"RUNNING_MODAL"}
-
-                if weight_picker_active:
-                    weight_hit = hit_test_weight_picker(context, mx, my)
-                    if weight_hit is not None:
-                        handle_weight_picker_click(context, weight_hit)
-                        tag_redraw()
-                        return {"RUNNING_MODAL"}
-
-                if font_picker_active:
-                    font_hit = hit_test_font_picker(context, mx, my)
-                    if font_hit is not None:
-                        handle_font_picker_click(context, font_hit, mx, my)
-                        flush_pending_report(self, state)
-                        tag_redraw()
-                        return {"RUNNING_MODAL"}
-
-                toolbar_hit = hit_test(rects, mx, my) if rects else None
-                if toolbar_hit is not None:
-                    _ensure_text_selected(context, obj)
-                    if toolbar_hit.item.id not in _picker_keep_open_ids():
-                        _close_all_pickers(context)
-                    result = _handle_hud_press(context, pointer_event, obj, text_data, state, rects)
-                    tag_redraw()
-                    return result or {"RUNNING_MODAL"}
-
-                _close_all_pickers(context)
-                tag_redraw()
-                return {"PASS_THROUGH"}
-
-        if event.type == "MOUSEMOVE":
-            if show_hud and slider_value_editing(context) and getattr(state, "th_text_field_selecting", False):
-                handle_slider_value_mouse_move(context, mx, _hud_ui_scale(context))
-                tag_redraw()
-                return {"RUNNING_MODAL"}
-            if show_hud and rects:
-                rect = hit_test(rects, mx, my)
-                state.th_hud_hover_id = rect.id if rect else ""
-                if state.th_hud_moving:
-                    dx = mx - state.th_hud_move_start_x
-                    dy = my - state.th_hud_move_start_y
-                    from ..utils.text_bounds import clamp_hud_drag_offset
-
-                    clamp_hud_drag_offset(
-                        context,
-                        obj,
-                        text_data,
-                        state.th_hud_move_base_x + dx,
-                        state.th_hud_move_base_y + dy,
-                    )
-                    tag_redraw()
-                    return {"RUNNING_MODAL"}
-                if state.th_hud_dragging and state.th_hud_drag_id in SPACING_SLIDER_IDS:
-                    drag_rect = next(r for r in rects if r.id == state.th_hud_drag_id)
-                    drag_scale = _hud_ui_scale(context)
-                    val = slider_value_from_mouse(
-                        drag_rect, mx, text_data, state.th_hud_drag_id, drag_scale
-                    )
-                    mode = _spacing_mode(state.th_hud_drag_id)
-                    _hud_apply_spacing(context, mode, val)
-                tag_redraw()
+        # The cursor is over a real 3D View WINDOW region -> interact there.
+        # During an in-progress drag/move the cursor may leave the region, so
+        # fall back to the modal's own viewport to keep the drag alive.
+        active_area, active_region = ptr_area, ptr_region
+        if active_area is None or active_region is None:
+            active_area, active_region = find_view3d_area_region(context.window)
+        if active_area is None or active_region is None:
             return {"PASS_THROUGH"}
 
-        if event.type == "LEFTMOUSE":
-            if event.value == "PRESS":
-                if show_hud and rects:
-                    result = _handle_hud_press(context, pointer_event, obj, text_data, state, rects)
-                    if result is not None:
-                        return result
-                    if _hud_toolbar_row_hit(rects, mx, my):
-                        _ensure_text_selected(context, obj)
-                        tag_redraw()
-                        return {"RUNNING_MODAL"}
+        if event.type in _POINTER_EVENTS and not handles_pointer and not _global_hud_interaction(state):
+            return {"PASS_THROUGH"}
 
-                if slider_value_editing(context):
-                    commit_slider_value_edit(context, undo=True)
-                    tag_redraw()
-                    return {"RUNNING_MODAL"}
-
-                if _click_outside_hud_and_text(rects, obj, context, mx, my):
-                    return {"PASS_THROUGH"}
-
-                if obj and _is_double_click(state, mx, my, event) and _point_on_text(context, obj, mx, my):
-                    _close_all_pickers(context)
-                    if enter_text_edit_mode(context, obj):
-                        tag_redraw()
-                    return {"RUNNING_MODAL"}
-
+        with _viewport_context(context, active_area, active_region) as active:
+            if not active:
                 return {"PASS_THROUGH"}
 
-            if event.value == "RELEASE" and show_hud:
-                if slider_value_editing(context) and handle_slider_value_mouse_release(context):
+            # mx/my from hud_pointer_target are already correct region-local
+            # coordinates for the region under the cursor. Only recompute when
+            # the pointer is outside any viewport (e.g. mid-drag fallback).
+            if event.type in _POINTER_EVENTS and (mx is None or my is None):
+                mx, my = region_mouse_from_event(event, active_area, active_region)
+            pointer_event = _HudPointerEvent(mx, my)
+
+            show_hud = hud_enabled(context, text_data)
+            font_picker_active = font_picker_open(context)
+            weight_picker_active = weight_picker_open(context)
+            preset_picker_active = preset_picker_open(context)
+            language_picker_active = language_picker_open(context)
+            picker_active = font_picker_active or weight_picker_active or preset_picker_active or language_picker_active
+            rects = get_hud_hit_rects(context, obj, text_data) if show_hud else []
+    
+            if show_hud and slider_value_editing(context):
+                if getattr(event, "is_compose", False):
                     tag_redraw()
                     return {"RUNNING_MODAL"}
-                if state.th_hud_dragging or state.th_hud_moving:
-                    state.th_hud_dragging = False
-                    state.th_hud_drag_id = ""
-                    state.th_hud_moving = False
+                if handle_slider_value_key(context, event) or slider_value_blocks_keymap(event):
                     tag_redraw()
                     return {"RUNNING_MODAL"}
+    
+            if picker_active:
+                search_focused = (
+                    font_picker_active
+                    and state is not None
+                    and getattr(state, "th_font_picker_search_focus", False)
+                )
+                if search_focused and getattr(event, "is_compose", False):
+                    tag_redraw()
+                    return {"PASS_THROUGH"}
+    
+                if font_picker_active and search_focused:
+                    if handle_picker_key(context, event) or picker_search_blocks_keymap(event):
+                        tag_redraw()
+                        return {"RUNNING_MODAL"}
+    
+                if font_picker_active and event.type in {"WHEELUPMOUSE", "WHEELDOWNMOUSE"} and event.value == "PRESS":
+                    if not language_picker_active:
+                        delta = 1 if event.type == "WHEELUPMOUSE" else -1
+                        handle_picker_wheel(context, delta)
+                    tag_redraw()
+                    return {"RUNNING_MODAL"}
+    
+                if event.type == "MOUSEMOVE":
+                    if (
+                        font_picker_active
+                        and not language_picker_active
+                        and getattr(state, "th_text_field_selecting", False)
+                        and search_focused
+                    ):
+                        handle_search_field_mouse_move(context, mx, my)
+                    elif (
+                        font_picker_active
+                        and not language_picker_active
+                        and getattr(state, "th_font_picker_scroll_drag", False)
+                    ):
+                        handle_picker_drag(context, my)
+                    else:
+                        if language_picker_active:
+                            handle_language_picker_hover(context, mx, my)
+                        elif weight_picker_active:
+                            handle_weight_picker_hover(context, mx, my)
+                        elif preset_picker_active:
+                            handle_preset_picker_hover(context, mx, my)
+                        elif font_picker_active:
+                            handle_font_picker_hover(context, mx, my)
+                    tag_redraw()
+                    return {"RUNNING_MODAL"}
+    
+                if event.type == "LEFTMOUSE" and event.value == "RELEASE":
+                    if font_picker_active and handle_picker_release(context):
+                        tag_redraw()
+                        return {"RUNNING_MODAL"}
+    
+                if event.type == "ESC" and event.value == "PRESS":
+                    _close_all_pickers(context)
+                    tag_redraw()
+                    return {"RUNNING_MODAL"}
+    
+                if event.type == "LEFTMOUSE" and event.value == "PRESS":
+                    if language_picker_active:
+                        language_hit = hit_test_language_picker(context, mx, my)
+                        if language_hit is not None:
+                            handle_language_picker_click(context, language_hit)
+                        elif not language_picker_panel_contains(context, mx, my):
+                            close_language_picker(context)
+                        tag_redraw()
+                        return {"RUNNING_MODAL"}
+    
+                    if preset_picker_active:
+                        preset_hit = hit_test_preset_picker(context, mx, my)
+                        if preset_hit is not None:
+                            handle_preset_picker_click(context, preset_hit)
+                            tag_redraw()
+                            return {"RUNNING_MODAL"}
+    
+                    if weight_picker_active:
+                        weight_hit = hit_test_weight_picker(context, mx, my)
+                        if weight_hit is not None:
+                            handle_weight_picker_click(context, weight_hit)
+                            tag_redraw()
+                            return {"RUNNING_MODAL"}
+    
+                    if font_picker_active:
+                        font_hit = hit_test_font_picker(context, mx, my)
+                        if font_hit is not None:
+                            handle_font_picker_click(context, font_hit, mx, my)
+                            flush_pending_report(self, state)
+                            tag_redraw()
+                            return {"RUNNING_MODAL"}
+    
+                    toolbar_hit = hit_test(rects, mx, my) if rects else None
+                    if toolbar_hit is not None:
+                        _ensure_text_selected(context, obj)
+                        if toolbar_hit.item.id not in _picker_keep_open_ids():
+                            _close_all_pickers(context)
+                        result = _handle_hud_press(context, pointer_event, obj, text_data, state, rects)
+                        tag_redraw()
+                        return result or {"RUNNING_MODAL"}
+    
+                    _close_all_pickers(context)
+                    tag_redraw()
+                    return {"PASS_THROUGH"}
+    
+            if event.type == "MOUSEMOVE":
+                if show_hud and slider_value_editing(context) and getattr(state, "th_text_field_selecting", False):
+                    handle_slider_value_mouse_move(context, mx, _hud_ui_scale(context))
+                    tag_redraw()
+                    return {"RUNNING_MODAL"}
+                if show_hud and rects:
+                    rect = hit_test(rects, mx, my)
+                    from ..hud import layout as layout_mod
 
-        if show_hud and event.type in {"ESC", "RIGHTMOUSE"} and (state.th_hud_dragging or state.th_hud_moving):
-            if state.th_hud_moving:
-                set_hud_offset(obj, state.th_hud_move_base_x, state.th_hud_move_base_y)
-            state.th_hud_dragging = False
-            state.th_hud_drag_id = ""
-            state.th_hud_moving = False
-            tag_redraw()
-            return {"RUNNING_MODAL"}
+                    layout_mod.clear_all_region_hovers()
+                    hover_id = rect.id if rect else ""
+                    layout_mod.set_region_hover(context, hover_id)
+                    if state.th_hud_moving:
+                        dx = mx - state.th_hud_move_start_x
+                        dy = my - state.th_hud_move_start_y
+                        from ..utils.text_bounds import clamp_hud_drag_offset
+    
+                        clamp_hud_drag_offset(
+                            context,
+                            obj,
+                            text_data,
+                            state.th_hud_move_base_x + dx,
+                            state.th_hud_move_base_y + dy,
+                        )
+                        tag_redraw()
+                        return {"RUNNING_MODAL"}
+                    if state.th_hud_dragging and state.th_hud_drag_id in SPACING_SLIDER_IDS:
+                        drag_rect = next(r for r in rects if r.id == state.th_hud_drag_id)
+                        drag_scale = _hud_ui_scale(context)
+                        val = slider_value_from_mouse(
+                            drag_rect, mx, text_data, state.th_hud_drag_id, drag_scale
+                        )
+                        mode = _spacing_mode(state.th_hud_drag_id)
+                        _hud_apply_spacing(context, mode, val)
+                    tag_redraw()
+                return {"PASS_THROUGH"}
+    
+            if event.type == "LEFTMOUSE":
+                if event.value == "PRESS":
+                    if show_hud and rects:
+                        result = _handle_hud_press(context, pointer_event, obj, text_data, state, rects)
+                        if result is not None:
+                            return result
+                        if _hud_toolbar_row_hit(rects, mx, my):
+                            _ensure_text_selected(context, obj)
+                            tag_redraw()
+                            return {"RUNNING_MODAL"}
+    
+                    if slider_value_editing(context):
+                        commit_slider_value_edit(context, undo=True)
+                        tag_redraw()
+                        return {"RUNNING_MODAL"}
+    
+                    if _click_outside_hud_and_text(rects, obj, context, mx, my, ptr_area, ptr_region):
+                        return {"PASS_THROUGH"}
 
-        return {"PASS_THROUGH"}
+                    if obj and _is_double_click(state, mx, my, event) and _point_on_text(context, obj, mx, my, ptr_area, ptr_region):
+                        _close_all_pickers(context)
+                        if enter_text_edit_mode(context, obj):
+                            tag_redraw()
+                        return {"RUNNING_MODAL"}
+    
+                    return {"PASS_THROUGH"}
+    
+                if event.value == "RELEASE" and show_hud:
+                    if slider_value_editing(context) and handle_slider_value_mouse_release(context):
+                        tag_redraw()
+                        return {"RUNNING_MODAL"}
+                    if state.th_hud_dragging or state.th_hud_moving:
+                        state.th_hud_dragging = False
+                        state.th_hud_drag_id = ""
+                        state.th_hud_moving = False
+                        tag_redraw()
+                        return {"RUNNING_MODAL"}
+    
+            if show_hud and event.type in {"ESC", "RIGHTMOUSE"} and (state.th_hud_dragging or state.th_hud_moving):
+                if state.th_hud_moving:
+                    set_hud_offset(obj, state.th_hud_move_base_x, state.th_hud_move_base_y)
+                state.th_hud_dragging = False
+                state.th_hud_drag_id = ""
+                state.th_hud_moving = False
+                tag_redraw()
+                return {"RUNNING_MODAL"}
+    
+            return {"PASS_THROUGH"}
 
     def cancel(self, context):
-        global _RUNNING
-        _RUNNING = False
         state = _safe_state(context.window_manager)
         if state:
             _clear_drag_state(state)
+        sync_modal_running_state(context)
         tag_redraw()
 
     def invoke(self, context, event):
-        global _RUNNING
         sync_modal_running_state(context)
-        if modal_running():
+        if modal_running(context):
             return {"CANCELLED"}
+
         obj = get_active_text(context)
         if obj is None:
             return {"CANCELLED"}
 
         area, region = find_view3d_area_region(context.window)
-        if area is None:
+        if area is None or region is None:
             return {"CANCELLED"}
+
+        self._modal_area = area
+        self._modal_region = region
 
         with context.temp_override(
             window=context.window,
@@ -719,9 +741,10 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
             area=area,
             region=region,
             space_data=area.spaces.active,
+            region_data=region.data,
         ):
             context.window_manager.modal_handler_add(self)
-        _RUNNING = True
+        sync_modal_running_state(context)
         tag_redraw()
         return {"RUNNING_MODAL"}
 
@@ -734,13 +757,14 @@ class TH_OT_hud_ensure_modal(TextHelperOperatorMixin, Operator):
 
     def execute(self, context):
         sync_modal_running_state(context)
-        if modal_running() or get_active_text(context) is None:
+        if modal_running(context) or get_active_text(context) is None:
             return {"FINISHED"}
         override = view3d_override(context)
         if override is None:
             return {"FINISHED"}
         with override:
             bpy.ops.wm.texthelper_hud_modal("INVOKE_DEFAULT")
+        sync_modal_running_state(context)
         return {"FINISHED"}
 
 

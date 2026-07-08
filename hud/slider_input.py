@@ -24,7 +24,6 @@ from .layout import (
 from .text_field_edit import (
     begin_mouse_select,
     caret_index,
-    draw_text_field_selection,
     draw_text_field_text,
     end_mouse_select,
     handle_text_field_key,

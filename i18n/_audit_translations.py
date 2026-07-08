@@ -1,5 +1,4 @@
 """Compare _('...') usage in code against locale JSON tables."""
-import ast
 import json
 import re
 from pathlib import Path

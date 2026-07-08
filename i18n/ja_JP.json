@@ -2428,5 +2428,15 @@
     "context": "*",
     "msgid": "Reached the configured character limit ({:d} characters).",
     "ja_JP": "設定された文字数上限（{:d} 文字）に達しました。"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Type to filter fonts (native field, supports IME / Chinese input)",
+    "ja_JP": "入力してフォントを絞り込み（ネイティブ入力欄、IME / 日本語入力対応）"
+  },
+  {
+    "context": "*",
+    "msgid": "Search fonts (IME supported)",
+    "ja_JP": "フォントを検索（IME 対応）"
   }
 ]

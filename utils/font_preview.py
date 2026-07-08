@@ -35,22 +35,12 @@ def _ensure_clean_cache():
 
 
 def _addon_cache_root():
-    try:
-        from .. import ADDON_PACKAGE
+    from .. import ADDON_PACKAGE
 
-        path = bpy.utils.extension_path_user(ADDON_PACKAGE)
-        if path:
-            return path
+    try:
+        return bpy.utils.extension_path_user(ADDON_PACKAGE) or ""
     except Exception:
-        pass
-    for pkg in ("bl_ext.user_default.TextHelper", "TextHelper"):
-        try:
-            path = bpy.utils.extension_path_user(pkg)
-            if path:
-                return path
-        except Exception:
-            continue
-    return ""
+        return ""
 
 
 def _cache_dir():

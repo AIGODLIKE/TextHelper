@@ -2428,5 +2428,15 @@
     "context": "*",
     "msgid": "Reached the configured character limit ({:d} characters).",
     "zh_Hant": "已達設定的最大字數上限（{:d} 字）。"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Type to filter fonts (native field, supports IME / Chinese input)",
+    "zh_Hant": "輸入以篩選字型（原生輸入框，支援 IME / 中文輸入）"
+  },
+  {
+    "context": "*",
+    "msgid": "Search fonts (IME supported)",
+    "zh_Hant": "搜尋字型（支援 IME 輸入）"
   }
 ]

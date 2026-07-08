@@ -6,8 +6,7 @@ import gpu
 
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs
-from ..utils.font_family import short_weight_label
-from ..utils.font_loader import disk_font_path, is_current_font, queue_font_catalog, resolve_font_filepath
+from ..utils.font_loader import is_current_font, queue_font_catalog, resolve_font_filepath
 from ..utils.text_format import get_active_text_data
 from ..utils.view3d_context import run_active_font_op
 from . import layout as layout_mod
@@ -96,7 +95,7 @@ def _make_regular_variant(filepath, display_name):
 
 def _ensure_toolbar_rects(context):
     """Rebuild HUD rects when the picker opens before the next draw pass."""
-    if layout_mod.get_hud_item_rect("font_weight") is not None:
+    if layout_mod.get_hud_item_rect("font_weight", context) is not None:
         return
     text_data = get_active_text_data(context)
     obj = context.active_object
@@ -115,7 +114,8 @@ def _ensure_toolbar_rects(context):
     if anchor is None:
         return
     scale = _ui_scale(context)
-    layout_mod.layout_toolbar(anchor[0], anchor[1], scale, text_data, context)
+    layout = layout_mod.layout_toolbar(anchor[0], anchor[1], scale, text_data, context)
+    layout_mod.cache_hud_rects(context, layout["rects"])
 
 
 def _picker_position(context, panel_w, panel_h, scale):
@@ -123,7 +123,7 @@ def _picker_position(context, panel_w, panel_h, scale):
     region = context.region
     margin = 10.0 * scale
     gap = 6.0 * scale
-    weight_rect = layout_mod.get_hud_item_rect("font_weight")
+    weight_rect = layout_mod.get_hud_item_rect("font_weight", context)
     if weight_rect is not None:
         px = weight_rect.x
         panel_top = weight_rect.y - gap
@@ -131,7 +131,7 @@ def _picker_position(context, panel_w, panel_h, scale):
         px = max(margin, min(px, region.width - panel_w - margin))
         py = max(margin, py)
         return px, py
-    font_rect = layout_mod.get_hud_item_rect("font")
+    font_rect = layout_mod.get_hud_item_rect("font", context)
     if font_rect is not None:
         px = font_rect.x
         panel_top = font_rect.y - gap

@@ -94,7 +94,7 @@ def prepare_font_edit_ui(context):
     try:
         from ..hud import layout as layout_mod
 
-        layout_mod._LAST_RECTS = []
+        layout_mod.clear_hud_rects_cache(context)
     except Exception:
         pass
     try:

@@ -54,7 +54,7 @@ def _auto_show_floating_toolbar_changed(_self, context):
 
 
 class TH_Preferences(AddonPreferences):
-    bl_idname = "TextHelper"
+    bl_idname = __package__
 
     show_floating_toolbar: BoolProperty(
         name="Floating Toolbar",
@@ -322,29 +322,8 @@ class TH_Preferences(AddonPreferences):
         box.prop(self, "font_family_group_mode")
 
 
-def _migrate_removed_accent_presets():
-    import bpy
-
-    from .utils.addon_prefs import _addon_pref_keys
-
-    removed = {"GREEN", "CYAN"}
-    addons = getattr(getattr(bpy.context, "preferences", None), "addons", None)
-    if addons is None:
-        return
-    for key in _addon_pref_keys():
-        if key not in addons:
-            continue
-        prefs = addons[key].preferences
-        if prefs is not None and getattr(prefs, "hud_accent_preset", None) in removed:
-            prefs.hud_accent_preset = "BLUE"
-
-
 def register():
-    from . import ADDON_PACKAGE
-
-    TH_Preferences.bl_idname = ADDON_PACKAGE
     bpy.utils.register_class(TH_Preferences)
-    _migrate_removed_accent_presets()
 
 
 def unregister():

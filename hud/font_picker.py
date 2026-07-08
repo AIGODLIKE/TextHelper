@@ -16,7 +16,7 @@ from ..utils.font_glyph import (
     register_blf_unload_hook,
     unregister_blf_unload_hook,
 )
-from ..utils.font_blf import blf_load, blf_unload, font_path_usable
+from ..utils.font_blf import blf_load, blf_unload
 from ..utils.font_loader import is_builtin_bfont_catalog, is_current_font, queue_font_catalog
 from ..utils.font_catalog_filter import filtered_font_groups, glyph_filter_refining, invalidate_catalog_filter_cache
 from ..utils.font_favorites import is_family_favorite
@@ -33,7 +33,6 @@ from .gpu_primitives import draw_refresh_icon, draw_rounded_rect
 from .text_field_edit import (
     begin_mouse_select,
     caret_index,
-    draw_text_field_selection,
     draw_text_field_text,
     end_mouse_select,
     handle_text_field_key,
@@ -128,7 +127,7 @@ def _release_picker_blf():
 
 
 def _acquire_picker_blf(filepath):
-    from ..utils.font_blf import blf_load, resolve_catalog_blf_path
+    from ..utils.font_blf import resolve_catalog_blf_path
 
     abs_path = resolve_catalog_blf_path(filepath) or bpy.path.abspath(filepath)
     if not abs_path or not os.path.isfile(abs_path):
@@ -157,7 +156,7 @@ def _picker_position(context, panel_w, panel_h, scale):
     region = context.region
     margin = 10.0 * scale
     gap = 6.0 * scale
-    font_rect = layout_mod.get_hud_item_rect("font")
+    font_rect = layout_mod.get_hud_item_rect("font", context)
     if font_rect is not None:
         px = font_rect.x
         panel_top = font_rect.y - gap
@@ -1488,10 +1487,17 @@ def handle_picker_click(context, hit, mx=0.0, my=0.0):
         close_picker(context)
         return True
     if hit.kind == "search":
-        if not getattr(state, "th_font_picker_search_focus", False):
+        # A GPU field inside a modal operator cannot trigger the OS IME, so CJK
+        # input is impossible there. Route typing through a native popup field
+        # (full IME support) that mirrors into the filter live.
+        state.th_font_picker_search_focus = False
+        _stop_caret_timer()
+        try:
+            bpy.ops.wm.texthelper_font_search_input("INVOKE_DEFAULT")
+        except Exception:
             focus_search_field(context)
-        idx = _search_cursor_index_from_mx(context, mx, my, _ui_scale(context))
-        begin_mouse_select(state, idx)
+            idx = _search_cursor_index_from_mx(context, mx, my, _ui_scale(context))
+            begin_mouse_select(state, idx)
         return True
     if hit.kind == "clear_filters":
         from ..utils.font_catalog_filter import report_font_filters_reset
@@ -1692,15 +1698,38 @@ def _on_field_changed(state):
     state.th_font_picker_scroll = 0
 
 
-def _typing_text_from_event(event):
-    """Extract printable input from TEXTINPUT or KEY events in the 3D viewport."""
-    if event.value not in {"PRESS", "REPEAT"}:
+def _event_value(event):
+    try:
+        return str(event.value)
+    except Exception:
         return ""
+
+
+def _typing_text_from_event(event):
+    """Extract printable input from TEXTINPUT/IME or KEY events in the viewport.
+
+    ASCII rides on KEY ``PRESS``/``REPEAT`` events (``event.unicode`` set).
+    Finalized IME text (e.g. Chinese) arrives on a separate ``TEXTINPUT`` event
+    whose ``value`` is ``NOTHING`` and whose ``type`` may not even map to a
+    Python enum in this build. So: accept any non-modifier, non-composing,
+    non-release event that carries a unicode payload, regardless of value/type.
+    """
     if event.ctrl or event.alt or event.oskey:
         return ""
+    if getattr(event, "is_compose", False):
+        # Composition still in progress; wait for the committed event.
+        return ""
+    value = _event_value(event)
+    if value == "RELEASE":
+        return ""
+
     utf8 = getattr(event, "utf8", None) or getattr(event, "unicode", None) or ""
     if utf8:
         return _sanitize_field_text(utf8)
+
+    # Fallback for plain key events that expose no unicode payload.
+    if value not in {"PRESS", "REPEAT"}:
+        return ""
     if event.type == "SPACE":
         return " "
     etype = str(getattr(event, "type", ""))

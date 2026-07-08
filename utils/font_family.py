@@ -17,7 +17,12 @@ _STEM_SUFFIXES = (
     (" ExtraBold", "ExtraBold", 800),
     (" Extra Bold", "ExtraBold", 800),
     ("ExtraBold", "ExtraBold", 800),
-    ("-SemiBold", "SemiBold", 600),
+    ("-SemiLight", "Semilight", 350),
+    (" SemiLight", "Semilight", 350),
+    ("SemiLight", "Semilight", 350),
+    ("-Semilight", "Semilight", 350),
+    (" Semilight", "Semilight", 350),
+    ("Semilight", "Semilight", 350),
     (" SemiBold", "SemiBold", 600),
     (" Semi Bold", "SemiBold", 600),
     ("SemiBold", "SemiBold", 600),
@@ -135,6 +140,23 @@ def _parse_abbreviated_stem(stem: str):
     return None
 
 
+def _looks_like_postscript_weight(tail: str) -> bool:
+    """True when the PostScript suffix after the last hyphen is a weight/style token."""
+    if not tail:
+        return False
+    compact = tail.replace(" ", "").replace("-", "")
+    if not compact or len(compact) > 20:
+        return False
+    if compact.upper() in _ABBREV_WEIGHT_CODES:
+        return True
+    compact_lower = compact.lower()
+    for _suffix, label, _rank in _STEM_SUFFIXES:
+        known = label.lower().replace(" ", "")
+        if compact_lower == known:
+            return True
+    return compact.isalpha() and 2 <= len(compact) <= 16
+
+
 def _parse_postscript_parts(filepath: str) -> tuple[str, str]:
     """Return (family_prefix, weight_code) from PostScript name, e.g. GenYoGothic2-B."""
     from .font_name_meta import read_font_name_id
@@ -143,7 +165,7 @@ def _parse_postscript_parts(filepath: str) -> tuple[str, str]:
     if not ps or "-" not in ps:
         return "", ""
     head, tail = ps.rsplit("-", 1)
-    if not head or not tail or len(tail) > 8:
+    if not head or not tail or not _looks_like_postscript_weight(tail):
         return "", ""
     return head, tail
 
@@ -152,11 +174,6 @@ def _family_key_from_postscript(filepath: str) -> str:
     head, _tail = _parse_postscript_parts(filepath)
     if head:
         return _normalize_family_key(head)
-    from .font_name_meta import read_font_name_id
-
-    ps = read_font_name_id(filepath, 6)
-    if ps:
-        return _normalize_family_key(ps)
     return ""
 
 

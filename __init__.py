@@ -1,7 +1,5 @@
 ADDON_PACKAGE = __package__
 
-import bpy
-
 from . import i18n, ops, panels, preferences, props, runtime, sync
 
 

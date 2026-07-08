@@ -25,6 +25,70 @@ _SLIDER_HEADER_TOP = 12.0
 _SLIDER_TRACK_BOTTOM = 11.0
 
 _LAST_RECTS = []
+_LAST_RECTS_BY_REGION: dict[int, list] = {}
+
+
+def _region_key(context) -> int | None:
+    region = getattr(context, "region", None)
+    if region is None:
+        return None
+    return region.as_pointer()
+
+
+def cache_hud_rects(context, rects) -> None:
+    """Store HUD rects for the current 3D View WINDOW region."""
+    global _LAST_RECTS
+    _LAST_RECTS = rects
+    key = _region_key(context)
+    if key is not None:
+        _LAST_RECTS_BY_REGION[key] = rects
+
+
+def clear_hud_rects_cache(context=None) -> None:
+    global _LAST_RECTS
+    _LAST_RECTS = []
+    if context is None:
+        _LAST_RECTS_BY_REGION.clear()
+        return
+    key = _region_key(context)
+    if key is not None:
+        _LAST_RECTS_BY_REGION.pop(key, None)
+
+
+def get_cached_hud_rects(context):
+    key = _region_key(context)
+    if key is None:
+        return []
+    return _LAST_RECTS_BY_REGION.get(key, [])
+
+
+def set_region_hover(context, hover_id: str) -> None:
+    key = _region_key(context)
+    if key is not None:
+        _LAST_HOVER_BY_REGION[key] = hover_id or ""
+
+
+def get_region_hover(context) -> str:
+    key = _region_key(context)
+    if key is None:
+        return ""
+    return _LAST_HOVER_BY_REGION.get(key, "")
+
+
+def clear_all_region_hovers() -> None:
+    _LAST_HOVER_BY_REGION.clear()
+
+
+def clear_region_hover(context=None) -> None:
+    if context is None:
+        _LAST_HOVER_BY_REGION.clear()
+        return
+    key = _region_key(context)
+    if key is not None:
+        _LAST_HOVER_BY_REGION.pop(key, None)
+
+
+_LAST_HOVER_BY_REGION: dict[int, str] = {}
 
 
 @dataclass
@@ -254,7 +318,7 @@ def _visible_row_items(items):
 
 def _update_item_labels(items, text_data, context=None):
     from ..utils.font_family import short_weight_label, toolbar_weight_label
-    from ..utils.font_loader import disk_font_path, queue_font_catalog, resolve_font_filepath
+    from ..utils.font_loader import queue_font_catalog, resolve_font_filepath
     from ..utils.text_format import (
         STYLE_PRESETS,
         format_size_display,
@@ -407,8 +471,11 @@ def layout_strike_panel(_anchor_x, _tool_row_y, _row_h, scale, text_data, tool_r
     return [HudRect(item.id, x, y, panel_w, panel_h, item)]
 
 
-def get_hud_item_rect(item_id):
-    for rect in _LAST_RECTS:
+def get_hud_item_rect(item_id, context=None):
+    rects = get_cached_hud_rects(context) if context is not None else []
+    if not rects:
+        rects = _LAST_RECTS
+    for rect in rects:
         if rect.id == item_id:
             return rect
     return None

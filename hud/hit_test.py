@@ -1,9 +1,9 @@
-from .layout import hit_test, slider_value_from_mouse, layout_toolbar
+from .layout import hit_test, slider_value_from_mouse
 from . import layout as layout_mod
 from ..utils.addon_prefs import get_addon_prefs
 from ..utils.font_context import is_font_edit_mode
 from ..utils.text_format import get_active_text
-from ..utils.view3d_context import view3d_override
+from ..utils.view3d_context import context_view3d_window, override_view3d_window
 
 __all__ = [
     "hit_test",
@@ -39,8 +39,10 @@ def set_hud_visibility(text_helper, visible: bool) -> None:
     text_helper.th_hud_user_shown = visible
 
 
-def get_last_rects():
-    return getattr(layout_mod, "_LAST_RECTS", [])
+def get_last_rects(context=None):
+    if context is None:
+        return []
+    return layout_mod.get_cached_hud_rects(context)
 
 
 def get_rects_for_context(context, obj, text_data):
@@ -58,13 +60,15 @@ def get_rects_for_context(context, obj, text_data):
 
 
 def get_hud_hit_rects(context, obj, text_data):
-    """Rects for modal hit-testing — prefer last draw pass, else compute in 3D View."""
+    """Rects for modal hit-testing — use the viewport that owns context.region."""
     if not hud_enabled(context, text_data):
         return []
-    rects = get_last_rects()
+    rects = get_last_rects(context)
     if rects:
         return rects
-    override = view3d_override(context)
+    if context_view3d_window(context)[0] is not None:
+        return get_rects_for_context(context, obj, text_data)
+    override = override_view3d_window(context)
     if override is None:
         return []
     with override:

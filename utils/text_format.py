@@ -1,6 +1,5 @@
 """TextCurve formatting helpers."""
 
-import bpy
 
 STYLE_PRESETS = {
     "BODY": {

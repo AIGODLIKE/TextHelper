@@ -47,12 +47,7 @@ class TH_OT_open_addon_preferences(PreferencesPollMixin, Operator):
     bl_options = {"INTERNAL"}
 
     def execute(self, context):
-        module = prefs_bl_idname()
-        for candidate in (module, "bl_ext.user_default.TextHelper", "TextHelper"):
-            if candidate in context.preferences.addons:
-                module = candidate
-                break
-        bpy.ops.preferences.addon_show(module=module)
+        bpy.ops.preferences.addon_show(module=prefs_bl_idname())
         return {"FINISHED"}
 
 
