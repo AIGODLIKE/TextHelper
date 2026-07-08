@@ -97,7 +97,13 @@ def _undo_redo_post(_scene):
 def _load_post(_dummy):
     def _deferred():
         from .runtime import request_ensure
+        from .utils.font_loader import prefetch_font_catalog, reset_font_catalog_scan
 
+        wm = bpy.context.window_manager
+        if wm is not None and getattr(wm, "th_state", None) is not None:
+            if len(wm.th_state.font_catalog) == 0:
+                reset_font_catalog_scan()
+        prefetch_font_catalog(bpy.context)
         request_ensure()
         return None
 

@@ -481,21 +481,19 @@ def refresh_font_catalog(wm, force=False):
 
 def ensure_font_catalog(wm):
     """Scan fonts once synchronously; use from operators, not draw handlers."""
-    global _catalog_scan_done
     if wm is None:
         return
     if len(getattr(wm.th_state, "font_catalog", [])) > 0:
         return
-    if _catalog_scan_done:
-        return
+    reset_font_catalog_scan()
     try:
         refresh_font_catalog(wm, force=True)
     except Exception:
-        _catalog_scan_done = True
+        pass
 
 
 def _do_deferred_catalog_load():
-    global _catalog_scan_done, _catalog_timer_registered
+    global _catalog_timer_registered
 
     _catalog_timer_registered = False
     wm = bpy.context.window_manager
@@ -503,12 +501,10 @@ def _do_deferred_catalog_load():
         return None
     if len(getattr(wm.th_state, "font_catalog", [])) > 0:
         return None
-    if _catalog_scan_done:
-        return None
     try:
         refresh_font_catalog(wm, force=True)
     except Exception:
-        _catalog_scan_done = True
+        pass
     try:
         from .font_preview import tag_ui_redraw
 
@@ -526,8 +522,8 @@ def queue_font_catalog(wm):
         return
     if len(getattr(wm.th_state, "font_catalog", [])) > 0:
         return
-    if _catalog_scan_done:
-        return
+    # Catalog empty but scan flagged done (new file, failed scan, etc.) — rescan.
+    reset_font_catalog_scan()
     if not _catalog_timer_registered:
         _catalog_timer_registered = True
         bpy.app.timers.register(_do_deferred_catalog_load, first_interval=0.0)
