@@ -5,6 +5,8 @@ import bpy
 _MSG_BUS_OWNER = object()
 _subscribers_active = False
 _history_handlers_active = False
+_bootstrap_timer = None
+_load_timer = None
 
 
 def refresh_text_objects_after_history(context=None):
@@ -77,9 +79,9 @@ def _on_active_object_changed():
     context = bpy.context
     obj = get_active_text(context)
     if obj is None:
-        from .ops.hud_modal import sync_modal_running_state
+        from .runtime import release_window
 
-        sync_modal_running_state(context)
+        release_window(context)
         return
 
     if obj.type == "FONT":
@@ -95,7 +97,18 @@ def _undo_redo_post(_scene):
 
 @bpy.app.handlers.persistent
 def _load_post(_dummy):
+    global _load_timer
+
+    if _load_timer is not None:
+        try:
+            bpy.app.timers.unregister(_load_timer)
+        except ValueError:
+            pass
+
     def _deferred():
+        global _load_timer
+
+        _load_timer = None
         from .runtime import request_ensure
         from .utils.font_loader import prefetch_font_catalog, reset_font_catalog_scan
 
@@ -107,7 +120,8 @@ def _load_post(_dummy):
         request_ensure()
         return None
 
-    bpy.app.timers.register(_deferred, first_interval=0.1)
+    _load_timer = _deferred
+    bpy.app.timers.register(_load_timer, first_interval=0.1)
 
 
 def _register_history_handlers():
@@ -138,7 +152,7 @@ def _unregister_history_handlers():
 
 def ensure_subscribers():
     """Register msgbus, undo/redo, and load_post when Text Helper is first used."""
-    global _subscribers_active
+    global _subscribers_active, _bootstrap_timer
     if _subscribers_active:
         return
     _subscribers_active = True
@@ -162,19 +176,41 @@ def ensure_subscribers():
         bpy.app.handlers.load_post.append(_load_post)
 
     def _bootstrap_hud():
+        global _bootstrap_timer
+
+        _bootstrap_timer = None
         _on_active_object_changed()
         return None
 
-    bpy.app.timers.register(_bootstrap_hud, first_interval=0.0)
+    _bootstrap_timer = _bootstrap_hud
+    bpy.app.timers.register(_bootstrap_timer, first_interval=0.0)
 
 
 def register():
-    """Msgbus and undo/redo handlers attach lazily via ensure_subscribers()."""
-    return
+    """Install event subscribers only when the optional HUD is enabled."""
+    from .utils.addon_prefs import get_addon_prefs
+
+    prefs = get_addon_prefs(bpy.context)
+    if bool(getattr(prefs, "show_floating_toolbar", True)):
+        ensure_subscribers()
 
 
 def unregister():
-    global _subscribers_active
+    global _subscribers_active, _bootstrap_timer, _load_timer
+
+    if _load_timer is not None:
+        try:
+            bpy.app.timers.unregister(_load_timer)
+        except ValueError:
+            pass
+        _load_timer = None
+
+    if _bootstrap_timer is not None:
+        try:
+            bpy.app.timers.unregister(_bootstrap_timer)
+        except ValueError:
+            pass
+        _bootstrap_timer = None
 
     if _subscribers_active:
         _unregister_history_handlers()

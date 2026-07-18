@@ -15,9 +15,23 @@ def _tag_hud_redraw(_self, context):
     tag_redraw()
 
 
+def _floating_toolbar_changed(self, context):
+    from . import runtime, sync
+
+    if bool(getattr(self, "show_floating_toolbar", True)):
+        sync.ensure_subscribers()
+        runtime.request_ensure(context)
+    else:
+        runtime.disable(context)
+        sync.unregister()
+    _tag_hud_redraw(self, context)
+
+
 def _tag_font_grouping_changed(_self, context):
     from .utils.font_catalog_filter import invalidate_catalog_filter_cache
+    from .utils.font_family import invalidate_font_family_cache
 
+    invalidate_font_family_cache()
     invalidate_catalog_filter_cache()
     _tag_hud_redraw(_self, context)
 
@@ -50,6 +64,12 @@ def _invalidate_font_previews(_self, context):
 
 
 def _auto_show_floating_toolbar_changed(_self, context):
+    from . import runtime
+
+    if bool(getattr(_self, "auto_show_floating_toolbar", True)):
+        runtime.request_ensure(context)
+    else:
+        runtime.disable(context)
     _tag_hud_redraw(_self, context)
 
 
@@ -60,7 +80,7 @@ class TH_Preferences(AddonPreferences):
         name="Floating Toolbar",
         description="Show the floating toolbar near selected text in the 3D viewport",
         default=True,
-        update=_tag_hud_redraw,
+        update=_floating_toolbar_changed,
     )
     auto_show_floating_toolbar: BoolProperty(
         name="Auto-Show Floating Toolbar",
@@ -70,7 +90,7 @@ class TH_Preferences(AddonPreferences):
     )
     show_header_toolbar: BoolProperty(
         name="Header Toolbar",
-        description="Show formatting controls in the 3D viewport top header when a text object is selected",
+        description="Show formatting controls in the 3D Viewport header when a text object is selected",
         default=True,
         update=_tag_hud_redraw,
     )
@@ -273,7 +293,7 @@ class TH_Preferences(AddonPreferences):
         for line in (
             _("Multi-line N-panel editor (Blender 5.2+)"),
             _("Floating toolbar near selected text in the viewport"),
-            _("Header toolbar in the 3D viewport top bar"),
+            _("Header toolbar in the 3D Viewport header"),
             _("Style presets, alignment, and spacing controls"),
             _("Double-click text in the viewport to edit"),
         ):
@@ -320,6 +340,32 @@ class TH_Preferences(AddonPreferences):
         box.prop(self, "font_preview_on_select")
         box.prop(self, "font_display_mode")
         box.prop(self, "font_family_group_mode")
+        from .utils.font_search import font_search_cache_stats
+
+        stats = font_search_cache_stats()
+        row = box.row(align=True)
+        if stats["warming"]:
+            row.label(
+                text=_("Indexing font names… {:d}/{:d}").format(
+                    int(stats["reused"]) + int(stats["built"]),
+                    int(stats["total"]),
+                ),
+                icon="TIME",
+            )
+        else:
+            cached = max(
+                int(stats["memory_records"]),
+                int(stats["persistent_records"]),
+            )
+            row.label(
+                text=_("Font search index: {:d} cached").format(cached),
+                icon="INFO",
+            )
+        row.operator(
+            "font.texthelper_rebuild_font_search_index",
+            text=_("Rebuild Index"),
+            icon="FILE_REFRESH",
+        )
 
 
 def register():

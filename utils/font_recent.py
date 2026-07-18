@@ -9,6 +9,7 @@ from .addon_prefs import get_addon_prefs
 from .font_family import family_key_for_filepath
 
 _MAX_RECENT = 64
+_RECENT_GENERATION = 0
 
 
 def _load_recent_entries(context) -> list[dict]:
@@ -31,10 +32,42 @@ def _load_recent_entries(context) -> list[dict]:
     return entries
 
 
-def _save_recent_entries(context, entries: list[dict]) -> None:
+def _notify_recent_changed(context) -> None:
+    """Invalidate every picker view that can be sorted by recent use."""
+    from .font_catalog_filter import invalidate_catalog_filter_cache
+
+    invalidate_catalog_filter_cache()
+    try:
+        from .font_preview import tag_ui_redraw
+
+        tag_ui_redraw(context, all_windows=True)
+    except Exception:
+        pass
+    try:
+        from ..hud.draw import tag_redraw
+
+        tag_redraw()
+    except Exception:
+        pass
+
+
+def _save_recent_entries(context, entries: list[dict]) -> bool:
+    global _RECENT_GENERATION
+
     prefs = get_addon_prefs(context)
     trimmed = entries[:_MAX_RECENT]
-    prefs.font_recent_keys = json.dumps(trimmed, ensure_ascii=False)
+    serialized = json.dumps(trimmed, ensure_ascii=False)
+    if (getattr(prefs, "font_recent_keys", "") or "[]") == serialized:
+        return False
+    prefs.font_recent_keys = serialized
+    _RECENT_GENERATION += 1
+    _notify_recent_changed(context)
+    return True
+
+
+def recent_generation() -> int:
+    """Return a cheap cache key that changes whenever recent ordering changes."""
+    return _RECENT_GENERATION
 
 
 def recent_family_keys(context) -> list[str]:
@@ -49,8 +82,11 @@ def touch_recent_family(context, filepath: str) -> None:
     key = family_key_for_filepath(filepath, context)
     if not key:
         return
+    current = _load_recent_entries(context)
+    if current and current[0]["key"] == key:
+        return
+    entries = [entry for entry in current if entry["key"] != key]
     now = time.time()
-    entries = [entry for entry in _load_recent_entries(context) if entry["key"] != key]
     entries.insert(0, {"key": key, "ts": now})
     _save_recent_entries(context, entries)
 

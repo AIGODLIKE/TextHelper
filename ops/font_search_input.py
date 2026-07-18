@@ -38,6 +38,19 @@ class TH_OT_font_search_input(TextHelperOperatorMixin, Operator):
     bl_description = "Type to filter fonts (native field, supports IME / Chinese input)"
     bl_options = {"INTERNAL"}
 
+    @classmethod
+    def poll(cls, context):
+        state = getattr(getattr(context, "window_manager", None), "th_state", None)
+        if state is None:
+            cls.poll_message_set(_("Text Helper is not ready yet"))
+            return False
+        from ..hud.font_picker import picker_open
+
+        if not picker_open(context):
+            cls.poll_message_set(_("Open the font picker first"))
+            return False
+        return True
+
     def _update(self, context):
         _apply_query(context, self.query)
 

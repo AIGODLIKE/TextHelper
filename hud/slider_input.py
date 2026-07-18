@@ -411,7 +411,8 @@ def _start_caret_timer():
             return None
         return 0.25
 
-    _CARET_TIMER = bpy.app.timers.register(_tick, first_interval=0.25)
+    _CARET_TIMER = _tick
+    bpy.app.timers.register(_CARET_TIMER, first_interval=0.25)
 
 
 def _stop_caret_timer():
@@ -419,6 +420,6 @@ def _stop_caret_timer():
     if _CARET_TIMER is not None:
         try:
             bpy.app.timers.unregister(_CARET_TIMER)
-        except Exception:
+        except ValueError:
             pass
         _CARET_TIMER = None

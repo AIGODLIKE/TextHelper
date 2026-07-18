@@ -5,13 +5,19 @@ import gpu
 
 from ..i18n import _
 from ..utils.font_language import LANGUAGE_FILTER_ITEMS, get_language_filter, invalidate_font_language_cache
+from ..utils.picker_context import (
+    ViewportCache,
+    claim_picker,
+    picker_is_open,
+    release_picker,
+)
 from ..utils.text_frame import tag_view3d_redraw
 from .font_picker import get_last_layout as get_font_picker_layout
 from .gpu_primitives import draw_rounded_rect
 from .blf_layout import draw_centered_glyph
 
 _UI_FONT = 0
-_LAST_LAYOUT = None
+_LAYOUTS = ViewportCache()
 _LANG_ORDER = tuple(code for code, _label, _desc in LANGUAGE_FILTER_ITEMS)
 
 
@@ -36,7 +42,12 @@ def _state(context):
 
 def picker_open(context):
     state = _state(context)
-    return bool(state and getattr(state, "th_language_picker_open", False))
+    return picker_is_open(
+        state,
+        "th_language_picker_open",
+        "th_language_picker_window",
+        context,
+    )
 
 
 def _ui_scale(context):
@@ -54,29 +65,39 @@ def _theme(context):
 
 def _picker_position(context, panel_w, panel_h, scale):
     region = context.region
-    margin = 10.0 * scale
-    font_layout = get_font_picker_layout()
+    font_layout = get_font_picker_layout(context)
     if font_layout is not None:
         for hit in reversed(font_layout.get("hits", [])):
             if hit.kind == "language_menu":
                 gap = 6.0 * scale
                 px = hit.x
                 py = hit.y + hit.h + gap
-                px = max(margin, min(px, region.width - panel_w - margin))
-                if py + panel_h > region.height - margin:
-                    py = max(margin, hit.y - panel_h - gap)
-                return px, py
-    px = max(margin, region.width * 0.5 - panel_w * 0.5)
-    py = max(margin, region.height * 0.5 - panel_h * 0.5)
-    return px, py
+                if py + panel_h > region.height:
+                    py = hit.y - panel_h - gap
+                break
+        else:
+            px = region.width * 0.5 - panel_w * 0.5
+            py = region.height * 0.5 - panel_h * 0.5
+    else:
+        px = region.width * 0.5 - panel_w * 0.5
+        py = region.height * 0.5 - panel_h * 0.5
+    from ..utils.text_bounds import clamp_popup_to_hud_safe_bounds
+
+    return clamp_popup_to_hud_safe_bounds(context, px, py, panel_w, panel_h, scale)
 
 
-def close_picker(context):
-    state = _state(context)
-    if state is None:
+def close_picker(context, *, force=False):
+    state = _state(context) if context is not None else None
+    if not release_picker(
+        state,
+        "th_language_picker_open",
+        "th_language_picker_window",
+        context,
+        force=force,
+    ):
         return
-    state.th_language_picker_open = False
     state.th_language_picker_hover = ""
+    _LAYOUTS.clear()
 
 
 def open_picker(context):
@@ -86,7 +107,12 @@ def open_picker(context):
     state = _state(context)
     if state is None:
         return
-    state.th_language_picker_open = True
+    claim_picker(
+        state,
+        "th_language_picker_open",
+        "th_language_picker_window",
+        context,
+    )
     state.th_language_picker_hover = get_language_filter(context.window_manager)
 
 
@@ -109,14 +135,17 @@ def _apply_language(context, language):
 
 
 def layout_picker(context):
-    global _LAST_LAYOUT
     region = context.region
     if region is None:
-        _LAST_LAYOUT = None
+        _LAYOUTS.pop(context)
         return None
 
     scale = _ui_scale(context)
-    panel_w = 200.0 * scale
+    from ..utils.text_bounds import get_hud_safe_bounds
+
+    safe = get_hud_safe_bounds(context, scale)
+    safe_w = (safe[2] - safe[0]) if safe else float(region.width)
+    panel_w = min(200.0 * scale, max(1.0, safe_w))
     pad = 12.0 * scale
     header_h = 34.0 * scale
     row_h = 30.0 * scale
@@ -146,7 +175,7 @@ def layout_picker(context):
         row_hits.append(hit)
         hits.append(hit)
 
-    _LAST_LAYOUT = {
+    layout = {
         "scale": scale,
         "px": px,
         "py": py,
@@ -159,12 +188,13 @@ def layout_picker(context):
         "row_hits": row_hits,
         "hits": hits,
     }
-    return _LAST_LAYOUT
+    return _LAYOUTS.set(context, layout)
 
 
 def hit_test_picker(context, mx, my):
     layout_picker(context)
-    hits = _LAST_LAYOUT.get("hits", []) if _LAST_LAYOUT else []
+    layout = _LAYOUTS.get(context)
+    hits = layout.get("hits", []) if layout else []
     for hit in reversed(hits):
         if hit.kind != "panel" and hit.contains(mx, my):
             return hit

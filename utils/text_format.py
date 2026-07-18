@@ -213,7 +213,10 @@ def apply_strike_position(text_data, value):
     if helper is None:
         return
     pos = max(UNDERLINE_POS_MIN, min(UNDERLINE_POS_MAX, float(value)))
-    helper.th_strike_position = pos
+    # This helper is also called by th_strike_position's RNA update callback.
+    # Reassigning the same property from that callback recursively re-enters it.
+    if abs(float(helper.th_strike_position) - pos) > 1e-6:
+        helper.th_strike_position = pos
     if helper.th_strike_enabled:
         text_data.underline_position = pos
         if _sync_body_format(text_data):

@@ -24,20 +24,10 @@ from .utils.header_sliders import (
 PRESET_ITEMS = tuple((k, v["label"], v["label"]) for k, v in STYLE_PRESETS.items())
 
 _FONT_INDEX_GUARD = False
-_pending_font_index = None
-_font_index_timer_registered = False
 
 
 def unregister_font_index_deferred():
-    global _font_index_timer_registered, _pending_font_index
-
-    if _font_index_timer_registered:
-        try:
-            bpy.app.timers.unregister(_do_deferred_font_index_apply)
-        except Exception:
-            pass
-    _font_index_timer_registered = False
-    _pending_font_index = None
+    """Compatibility hook retained for older register/unregister call sites."""
 
 
 def set_font_catalog_index(wm, index):
@@ -88,63 +78,14 @@ def _update_strike_position(self, context):
         pass
 
 
-def _apply_font_index_from_catalog(wm, index):
-    from .utils.addon_prefs import get_addon_prefs
-    from .utils.font_loader import assign_font, is_current_font
-    from .utils.text_format import get_active_text_data
-    from .utils.text_frame import tag_view3d_redraw
-
-    state = wm.th_state
-    prefs = get_addon_prefs(bpy.context)
-    if not getattr(prefs, "font_preview_on_select", True):
-        return
-    if index < 0 or index >= len(state.font_catalog):
-        return
-    text_data = get_active_text_data(bpy.context)
-    if text_data is None:
-        return
-    item = state.font_catalog[index]
-    if is_current_font(text_data, item.filepath):
-        return
-    try:
-        assign_font(text_data, item.filepath)
-        tag_view3d_redraw(bpy.context)
-    except Exception:
-        pass
-    from .utils.font_preview import tag_ui_redraw
-
-    tag_ui_redraw(bpy.context)
-
-
-def _do_deferred_font_index_apply():
-    global _font_index_timer_registered, _pending_font_index
-
-    wm, index = _pending_font_index if _pending_font_index else (None, -1)
-    _pending_font_index = None
-    if wm is not None:
-        try:
-            _apply_font_index_from_catalog(wm, index)
-        except Exception:
-            pass
-    _font_index_timer_registered = False
-    return None
-
-
-def _queue_font_index_apply(wm, index):
-    global _font_index_timer_registered, _pending_font_index
-
-    _pending_font_index = (wm, index)
-    if not _font_index_timer_registered:
-        _font_index_timer_registered = True
-        bpy.app.timers.register(_do_deferred_font_index_apply, first_interval=0.0)
-
-
 def _update_font_index(self, context):
     if _FONT_INDEX_GUARD:
         return
     if context is None:
         return
-    _queue_font_index_apply(context.window_manager, self.font_index)
+    from .utils.font_preview import tag_ui_redraw
+
+    tag_ui_redraw(context)
 
 
 def _update_panel_buf_a(self, context):
@@ -305,6 +246,7 @@ class TH_WindowManagerProps(PropertyGroup):
     th_last_click_x: FloatProperty(default=0.0)
     th_last_click_y: FloatProperty(default=0.0)
     th_font_picker_open: BoolProperty(default=False)
+    th_font_picker_window: StringProperty(default="", options={"HIDDEN"})
     th_font_picker_scroll: IntProperty(default=0, min=0)
     th_font_picker_hover: IntProperty(default=-1)
     th_font_picker_search_focus: BoolProperty(default=False)
@@ -338,10 +280,14 @@ class TH_WindowManagerProps(PropertyGroup):
     th_font_picker_pointer_y: FloatProperty(default=-1.0)
     th_pending_report: StringProperty(default="")
     th_weight_picker_open: BoolProperty(default=False)
+    th_weight_picker_window: StringProperty(default="", options={"HIDDEN"})
     th_weight_picker_hover: IntProperty(default=-1)
+    th_weight_picker_scroll: IntProperty(default=0, min=0, options={"HIDDEN"})
     th_preset_picker_open: BoolProperty(default=False)
+    th_preset_picker_window: StringProperty(default="", options={"HIDDEN"})
     th_preset_picker_hover: StringProperty(default="")
     th_language_picker_open: BoolProperty(default=False)
+    th_language_picker_window: StringProperty(default="", options={"HIDDEN"})
     th_language_picker_hover: StringProperty(default="")
     th_hud_open_menu: StringProperty(default="")
     th_hud_expand_id: StringProperty(
@@ -349,10 +295,6 @@ class TH_WindowManagerProps(PropertyGroup):
         description="Expanded slider row below the floating toolbar",
         default="",
     )
-    th_header_picker_modal: BoolProperty(default=False, options={"HIDDEN"})
-    th_header_picker_type: StringProperty(default="", options={"HIDDEN"})
-    th_header_picker_list_top: FloatProperty(default=0.0, options={"HIDDEN"})
-    th_header_picker_row_height: FloatProperty(default=20.0, options={"HIDDEN"})
     font_catalog: CollectionProperty(type=TH_FontCatalogItem)
     font_index: IntProperty(name="Font Index", default=0, update=_update_font_index)
     font_filter: StringProperty(

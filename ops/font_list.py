@@ -9,6 +9,7 @@ from ..utils.operator_poll import ActiveFontDataPollMixin, WindowManagerPollMixi
 from ..utils.font_loader import (
     assign_font,
     ensure_font_catalog,
+    font_catalog_load_progress,
     font_catalog_loading,
     font_catalog_needs_refresh,
     is_current_font,
@@ -26,10 +27,11 @@ from ..utils.font_catalog_filter import (
 from ..utils.font_family import family_weight_counts, header_font_display_label
 from ..utils.font_language import get_language_filter, get_language_label
 from ..utils.font_preview import get_font_icon, queue_font_preview, tag_ui_redraw
+from ..utils.font_search import font_search_warm_progress, font_search_warming
 from ..utils.text_format import get_active_text_data
 from ..utils.text_frame import tag_view3d_redraw
 from ..hud.draw import tag_redraw
-from ..hud.font_picker import close_picker
+from ..hud.font_picker import close_picker, picker_open as font_picker_open
 
 _MENU_FONT_ROWS = 8
 
@@ -255,12 +257,26 @@ def _draw_font_catalog_status(layout, wm):
     if wm.th_state.font_catalog:
         return False
     if font_catalog_loading():
-        layout.label(text=_("Loading fonts…"), icon="TIME")
+        progress = font_catalog_load_progress()
+        label = _("Loading fonts…")
+        if progress["scanned"]:
+            label = f"{label}  {progress['found']}/{progress['scanned']}"
+        layout.label(text=label, icon="TIME")
     elif font_catalog_needs_refresh(wm):
         layout.label(text=_("Click refresh to load system fonts"), icon="INFO")
     else:
         layout.label(text=_("Loading fonts…"), icon="TIME")
     return True
+
+
+def _draw_font_search_status(layout):
+    if not font_search_warming():
+        return
+    processed, total = font_search_warm_progress()
+    layout.label(
+        text=_("Indexing font names… {:d}/{:d}").format(processed, total),
+        icon="TIME",
+    )
 
 
 def draw_font_picker_popup(layout, context):
@@ -273,6 +289,7 @@ def draw_font_picker_popup(layout, context):
 
     if _draw_font_catalog_status(layout, wm):
         return
+    _draw_font_search_status(layout)
 
     text_data = get_active_text_data(context)
     filters = font_catalog_filter_state(context)
@@ -302,6 +319,7 @@ def draw_system_font_list(layout, context, rows=6, list_id="th_font_sidebar"):
 
     if _draw_font_catalog_status(layout, wm):
         return
+    _draw_font_search_status(layout)
 
     list_col = layout.column(align=False)
     list_col.template_list(
@@ -332,8 +350,6 @@ class TH_OT_refresh_system_fonts(WindowManagerPollMixin, Operator):
         "Rescan system font folders, clear failed-load caches, "
         "and rebuild font preview thumbnails"
     )
-    bl_options = {"REGISTER"}
-
     def execute(self, context):
         from ..utils.font_refresh import perform_font_system_refresh
 
@@ -342,7 +358,10 @@ class TH_OT_refresh_system_fonts(WindowManagerPollMixin, Operator):
         except Exception as exc:
             self.report({"ERROR"}, str(exc))
             return {"CANCELLED"}
-        self.report({"INFO"}, _("Font information refreshed"))
+        self.report(
+            {"INFO"},
+            _("Font refresh complete — preview thumbnails are rebuilding"),
+        )
         return {"FINISHED"}
 
 
@@ -350,13 +369,35 @@ class TH_OT_regenerate_font_previews(WindowManagerPollMixin, Operator):
     bl_idname = "font.texthelper_regenerate_font_previews"
     bl_label = "Regenerate Font Previews"
     bl_description = "Clear cached thumbnails and rebuild them with current preview settings"
-    bl_options = {"REGISTER"}
-
     def execute(self, context):
         from ..utils.font_preview import invalidate_and_rebuild_font_previews
 
         invalidate_and_rebuild_font_previews(context, clear_files=True)
         self.report({"INFO"}, _("Font preview cache cleared — rebuilding thumbnails"))
+        return {"FINISHED"}
+
+
+class TH_OT_rebuild_font_search_index(WindowManagerPollMixin, Operator):
+    bl_idname = "font.texthelper_rebuild_font_search_index"
+    bl_label = "Rebuild Font Search Index"
+    bl_description = "Clear persisted font-name metadata and rebuild it in the background"
+    def execute(self, context):
+        from ..utils.font_search import (
+            clear_font_search_disk_cache,
+            queue_font_search_warm,
+        )
+
+        wm = context.window_manager
+        clear_font_search_disk_cache()
+        queue_font_catalog(wm)
+        if wm.th_state.font_catalog:
+            queue_font_search_warm(wm.th_state.font_catalog)
+        tag_ui_redraw(context, all_windows=True)
+        tag_redraw()
+        self.report(
+            {"INFO"},
+            _("Font search index cleared — rebuilding in background"),
+        )
         return {"FINISHED"}
 
 
@@ -376,7 +417,7 @@ class TH_OT_toggle_font_picker(ActiveFontDataPollMixin, Operator):
         if state is None:
             return {"CANCELLED"}
 
-        opening = not getattr(state, "th_font_picker_open", False)
+        opening = not font_picker_open(context)
 
         if not opening:
             close_picker(context)
@@ -395,11 +436,23 @@ class TH_OT_toggle_font_picker(ActiveFontDataPollMixin, Operator):
         from ..ops.hud_modal import _dismiss_popup_menus
 
         _dismiss_popup_menus(context)
-        state.th_font_picker_open = True
+        from ..utils.picker_context import claim_picker
+        from ..utils.picker_preview import cancel_owner_previews
+
+        cancel_owner_previews("HUD_FONT")
+        claim_picker(
+            state,
+            "th_font_picker_open",
+            "th_font_picker_window",
+            context,
+        )
         state.th_font_picker_scroll = 0
         state.th_font_picker_hover = -1
 
         queue_font_catalog(wm)
+        from ..utils.picker_preview import begin_preview
+
+        begin_preview(context, "HUD_FONT")
         from ..hud.font_picker import _ensure_picker_blf_hooks, focus_search_field, seed_picker_hover_apply
 
         _ensure_picker_blf_hooks()
@@ -428,7 +481,12 @@ class TH_OT_toggle_weight_picker(ActiveFontDataPollMixin, Operator):
         if state is None:
             return {"CANCELLED"}
 
-        from ..hud.weight_picker import close_picker as close_weight_picker, seed_picker_hover_apply, variants_for_text
+        from ..hud.weight_picker import (
+            close_picker as close_weight_picker,
+            picker_open as weight_picker_open,
+            seed_picker_hover_apply,
+            variants_for_text,
+        )
 
         try:
             ensure_font_catalog(wm)
@@ -437,7 +495,7 @@ class TH_OT_toggle_weight_picker(ActiveFontDataPollMixin, Operator):
         except Exception:
             pass
 
-        opening = not getattr(state, "th_weight_picker_open", False)
+        opening = not weight_picker_open(context)
 
         if not opening:
             close_weight_picker(context)
@@ -455,11 +513,23 @@ class TH_OT_toggle_weight_picker(ActiveFontDataPollMixin, Operator):
         dismiss_slider_value_edit(context, undo=False)
         state.th_hud_open_menu = ""
         _dismiss_popup_menus(context)
-        state.th_weight_picker_open = True
         if not variants_for_text(context, text_data):
-            state.th_weight_picker_open = False
             self.report({"WARNING"}, _("No font weight information available"))
             return {"CANCELLED"}
+        from ..utils.picker_context import claim_picker
+        from ..utils.picker_preview import cancel_owner_previews
+
+        cancel_owner_previews("HUD_WEIGHT")
+        claim_picker(
+            state,
+            "th_weight_picker_open",
+            "th_weight_picker_window",
+            context,
+        )
+        state.th_weight_picker_scroll = 0
+        from ..utils.picker_preview import begin_preview
+
+        begin_preview(context, "HUD_WEIGHT")
         seed_picker_hover_apply(context)
         bpy.ops.wm.texthelper_hud_ensure_modal()
         tag_redraw()
@@ -479,6 +549,9 @@ class TH_OT_apply_system_font(ActiveFontDataPollMixin, Operator):
 
     def execute(self, context):
         from ..utils.text_format import iter_selected_text_data
+        from ..utils.picker_preview import prepare_preview_commit
+
+        prepare_preview_commit(context)
 
         applied = False
         font = None
@@ -539,6 +612,7 @@ classes = (
     TEXTHELPER_UL_system_fonts,
     TH_OT_refresh_system_fonts,
     TH_OT_regenerate_font_previews,
+    TH_OT_rebuild_font_search_index,
     TH_OT_toggle_font_picker,
     TH_OT_toggle_weight_picker,
     TH_OT_apply_system_font,

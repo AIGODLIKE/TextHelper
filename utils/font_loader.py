@@ -2,6 +2,7 @@
 
 import os
 import sys
+from time import perf_counter
 
 import bpy
 
@@ -10,6 +11,10 @@ BLEND_FONT_PREFIX = "blend://"
 _catalog_scan_done = False
 _catalog_timer_registered = False
 _catalog_generation = 0
+_catalog_scan_state = None
+
+_CATALOG_SCAN_BUDGET_SECONDS = 0.006
+_CATALOG_SCAN_MAX_CANDIDATES = 64
 
 
 def catalog_generation() -> int:
@@ -356,36 +361,57 @@ def font_hud_label(font, context=None):
     return name
 
 
+def _iter_system_font_candidates():
+    """Yield unique font paths without doing file-content validation."""
+    seen = set()
+    visited_dirs = set()
+    for directory in system_font_directories():
+        stack = [directory]
+        while stack:
+            current = stack.pop()
+            current_key = os.path.normcase(os.path.abspath(current))
+            if current_key in visited_dirs:
+                continue
+            visited_dirs.add(current_key)
+            try:
+                dir_entries = list(os.scandir(current))
+            except OSError:
+                continue
+            for entry in dir_entries:
+                try:
+                    if entry.is_dir(follow_symlinks=False):
+                        stack.append(entry.path)
+                        continue
+                    if not entry.is_file(follow_symlinks=True):
+                        continue
+                except OSError:
+                    continue
+                name = entry.name
+                ext = os.path.splitext(name)[1].lower()
+                if ext not in _FONT_EXTENSIONS:
+                    continue
+                filepath = entry.path
+                key = os.path.normcase(os.path.abspath(filepath))
+                if key in seen:
+                    continue
+                seen.add(key)
+                yield _font_display_name(name), filepath
+
+
 def iter_system_fonts():
-    """Yield sorted dicts: display_name, filepath."""
+    """Return sorted system fonts, including nested macOS/Linux folders."""
     from .font_blf import font_magic_ok
 
-    seen = set()
     entries = []
-    for directory in system_font_directories():
-        try:
-            names = os.listdir(directory)
-        except OSError:
+    for display_name, filepath in _iter_system_font_candidates():
+        if not font_magic_ok(filepath):
             continue
-        for name in names:
-            ext = os.path.splitext(name)[1].lower()
-            if ext not in _FONT_EXTENSIONS:
-                continue
-            filepath = os.path.join(directory, name)
-            if not os.path.isfile(filepath):
-                continue
-            if not font_magic_ok(filepath):
-                continue
-            key = os.path.normcase(filepath)
-            if key in seen:
-                continue
-            seen.add(key)
-            entries.append(
-                {
-                    "display_name": _font_display_name(name),
-                    "filepath": filepath,
-                }
-            )
+        entries.append(
+            {
+                "display_name": display_name,
+                "filepath": filepath,
+            }
+        )
     entries.sort(key=lambda item: item["display_name"].lower())
     return entries
 
@@ -439,25 +465,7 @@ def iter_catalog_fonts():
     return blend + system
 
 
-def refresh_font_catalog(wm, force=False):
-    """Fill WindowManager.th_state.font_catalog from disk."""
-    global _catalog_scan_done, _catalog_generation
-    if wm is None:
-        return 0
-    if not force and len(getattr(wm.th_state, "font_catalog", [])) > 0:
-        return len(wm.th_state.font_catalog)
-    wm.th_state.font_catalog.clear()
-    try:
-        for entry in iter_catalog_fonts():
-            item = wm.th_state.font_catalog.add()
-            item.display_name = entry["display_name"]
-            item.filepath = entry["filepath"]
-    except Exception:
-        wm.th_state.font_catalog.clear()
-        raise
-    finally:
-        _catalog_scan_done = True
-        _catalog_generation += 1
+def _invalidate_catalog_dependents():
     try:
         from .font_catalog_filter import invalidate_catalog_filter_cache
 
@@ -466,17 +474,52 @@ def refresh_font_catalog(wm, force=False):
         pass
     try:
         from .font_language import invalidate_font_language_cache
+        from .font_family import invalidate_font_family_cache
         from .font_name_meta import invalidate_font_name_cache
         from .font_search import invalidate_font_search_cache
 
         invalidate_font_language_cache()
+        invalidate_font_family_cache()
         invalidate_font_name_cache()
         invalidate_font_search_cache()
     except Exception:
         pass
+
+
+def _replace_font_catalog(wm, entries):
+    global _catalog_scan_done, _catalog_generation
+
+    wm.th_state.font_catalog.clear()
+    try:
+        for entry in entries:
+            item = wm.th_state.font_catalog.add()
+            item.display_name = entry["display_name"]
+            item.filepath = entry["filepath"]
+    except Exception:
+        wm.th_state.font_catalog.clear()
+        raise
+    _catalog_scan_done = True
+    _catalog_generation += 1
+    _invalidate_catalog_dependents()
     if wm.th_state.font_index >= len(wm.th_state.font_catalog):
         wm.th_state.font_index = max(0, len(wm.th_state.font_catalog) - 1)
+    try:
+        from .font_search import queue_font_search_warm
+
+        queue_font_search_warm(wm.th_state.font_catalog)
+    except Exception:
+        pass
     return len(wm.th_state.font_catalog)
+
+
+def refresh_font_catalog(wm, force=False):
+    """Fill WindowManager.th_state.font_catalog synchronously from disk."""
+    if wm is None:
+        return 0
+    if not force and len(getattr(wm.th_state, "font_catalog", [])) > 0:
+        return len(wm.th_state.font_catalog)
+    _cancel_deferred_catalog_load()
+    return _replace_font_catalog(wm, iter_catalog_fonts())
 
 
 def ensure_font_catalog(wm):
@@ -492,45 +535,129 @@ def ensure_font_catalog(wm):
         pass
 
 
-def _do_deferred_catalog_load():
-    global _catalog_timer_registered
-
-    _catalog_timer_registered = False
-    wm = bpy.context.window_manager
-    if wm is None:
-        return None
-    if len(getattr(wm.th_state, "font_catalog", [])) > 0:
-        return None
+def _new_catalog_scan_state(wm):
     try:
-        refresh_font_catalog(wm, force=True)
-    except Exception:
-        pass
+        wm_key = wm.as_pointer()
+    except (AttributeError, ReferenceError):
+        wm_key = id(wm)
+    return {
+        "wm_key": wm_key,
+        "candidates": iter(_iter_system_font_candidates()),
+        "entries": [],
+        "scanned": 0,
+        "found": 0,
+        "last_redraw": 0.0,
+    }
+
+
+def _catalog_scan_matches_wm(state, wm):
+    if state is None or wm is None:
+        return False
+    try:
+        return state["wm_key"] == wm.as_pointer()
+    except (AttributeError, ReferenceError):
+        return state["wm_key"] == id(wm)
+
+
+def _tag_catalog_progress_redraw(state, *, force=False):
+    now = perf_counter()
+    if not force and now - float(state.get("last_redraw", 0.0)) < 0.1:
+        return
+    state["last_redraw"] = now
     try:
         from .font_preview import tag_ui_redraw
 
-        tag_ui_redraw(bpy.context)
+        tag_ui_redraw(bpy.context, all_windows=True)
     except Exception:
         pass
+
+
+def _finish_deferred_catalog_load(wm, state):
+    global _catalog_scan_state, _catalog_timer_registered
+
+    system = state["entries"]
+    system.sort(key=lambda item: item["display_name"].lower())
+    seen_disk = {os.path.normcase(entry["filepath"]) for entry in system}
+    entries = iter_blend_catalog_fonts(seen_disk) + system
+    try:
+        _replace_font_catalog(wm, entries)
+    except Exception:
+        wm.th_state.font_catalog.clear()
+    _catalog_scan_state = None
+    _catalog_timer_registered = False
+    _tag_catalog_progress_redraw(state, force=True)
     return None
 
 
+def _do_deferred_catalog_load():
+    global _catalog_scan_state, _catalog_timer_registered
+
+    state = _catalog_scan_state
+    wm = getattr(bpy.context, "window_manager", None)
+    if not _catalog_scan_matches_wm(state, wm):
+        _catalog_scan_state = None
+        _catalog_timer_registered = False
+        return None
+    if len(getattr(wm.th_state, "font_catalog", [])) > 0:
+        _catalog_scan_state = None
+        _catalog_timer_registered = False
+        return None
+
+    from .font_blf import font_magic_ok
+
+    deadline = perf_counter() + _CATALOG_SCAN_BUDGET_SECONDS
+    processed = 0
+    while processed < _CATALOG_SCAN_MAX_CANDIDATES and perf_counter() < deadline:
+        try:
+            display_name, filepath = next(state["candidates"])
+        except StopIteration:
+            return _finish_deferred_catalog_load(wm, state)
+        state["scanned"] += 1
+        processed += 1
+        if not font_magic_ok(filepath):
+            continue
+        state["entries"].append(
+            {
+                "display_name": display_name,
+                "filepath": filepath,
+            }
+        )
+        state["found"] += 1
+
+    _tag_catalog_progress_redraw(state)
+    return 0.01
+
+
 def queue_font_catalog(wm):
-    """Request an async catalog scan; safe to call from UI draw handlers."""
-    global _catalog_timer_registered
+    """Request a time-sliced catalog scan; safe from UI draw handlers."""
+    global _catalog_scan_state, _catalog_timer_registered
 
     if wm is None:
         return
     if len(getattr(wm.th_state, "font_catalog", [])) > 0:
         return
+    if _catalog_timer_registered and _catalog_scan_matches_wm(_catalog_scan_state, wm):
+        return
     # Catalog empty but scan flagged done (new file, failed scan, etc.) — rescan.
     reset_font_catalog_scan()
-    if not _catalog_timer_registered:
-        _catalog_timer_registered = True
-        bpy.app.timers.register(_do_deferred_catalog_load, first_interval=0.0)
+    _catalog_scan_state = _new_catalog_scan_state(wm)
+    _catalog_timer_registered = True
+    bpy.app.timers.register(_do_deferred_catalog_load, first_interval=0.0)
 
 
 def font_catalog_loading():
-    return _catalog_timer_registered
+    return bool(_catalog_timer_registered and _catalog_scan_state is not None)
+
+
+def font_catalog_load_progress():
+    """Return stable counters without exposing mutable scan state."""
+    state = _catalog_scan_state
+    if state is None:
+        return {"scanned": 0, "found": 0}
+    return {
+        "scanned": int(state.get("scanned", 0)),
+        "found": int(state.get("found", 0)),
+    }
 
 
 def font_catalog_needs_refresh(wm):
@@ -539,19 +666,25 @@ def font_catalog_needs_refresh(wm):
     return _catalog_scan_done and len(getattr(wm.th_state, "font_catalog", [])) == 0
 
 
-def unregister_font_catalog_queue():
-    global _catalog_timer_registered
-
+def _cancel_deferred_catalog_load():
+    global _catalog_scan_state, _catalog_timer_registered
     if _catalog_timer_registered:
         try:
             bpy.app.timers.unregister(_do_deferred_catalog_load)
-        except Exception:
+        except ValueError:
             pass
+    _catalog_scan_state = None
     _catalog_timer_registered = False
+
+
+def unregister_font_catalog_queue():
+    _cancel_deferred_catalog_load()
 
 
 def reset_font_catalog_scan():
     global _catalog_scan_done
+
+    _cancel_deferred_catalog_load()
     _catalog_scan_done = False
 
 

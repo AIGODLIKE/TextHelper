@@ -296,7 +296,7 @@
   },
   {
     "context": "*",
-    "msgid": "Header toolbar in the 3D viewport top bar",
+    "msgid": "Header toolbar in the 3D Viewport header",
     "zh_Hant": "3D 視圖區頂欄排版工具欄"
   },
   {
@@ -2438,5 +2438,160 @@
     "context": "*",
     "msgid": "Search fonts (IME supported)",
     "zh_Hant": "搜尋字型（支援 IME 輸入）"
+  },
+  {
+    "context": "*",
+    "msgid": "Open the font picker first",
+    "zh_Hant": "請先開啟字型選擇器"
+  },
+  {
+    "context": "*",
+    "msgid": "Open a 3D Viewport first",
+    "zh_Hant": "請先開啟一個 3D 視圖"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Reset HUD Position",
+    "zh_Hant": "重設 HUD 位置"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Return this text object's floating toolbar to its default position",
+    "zh_Hant": "將此文字物件的浮動工具列恢復到預設位置"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD User Shown",
+    "zh_Hant": "HUD 已由使用者顯示"
+  },
+  {
+    "context": "*",
+    "msgid": "How font names appear in lists, the font picker, HUD, and header toolbar",
+    "zh_Hant": "字型名稱在清單、字型選擇器、HUD 與頂部列工具中顯示的方式"
+  },
+  {
+    "context": "*",
+    "msgid": "JSON list of recently applied font family keys",
+    "zh_Hant": "最近使用字型家族鍵的 JSON 清單"
+  },
+  {
+    "context": "*",
+    "msgid": "Keep the floating toolbar this many pixels away from the 3D viewport edges (N/T panels shrink the usable area automatically)",
+    "zh_Hant": "浮動工具列與 3D 視埠邊緣保持的像素距離（N/T 面板會自動縮小可用區域）"
+  },
+  {
+    "context": "*",
+    "msgid": "Legacy HUD drag offset (migrated to the text object; not used for new data)",
+    "zh_Hant": "舊版 HUD 拖曳偏移（已移轉至文字物件；新資料不再使用）"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer A",
+    "zh_Hant": "面板緩衝區 A"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Active",
+    "zh_Hant": "面板緩衝區已啟用"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer B",
+    "zh_Hant": "面板緩衝區 B"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Lines",
+    "zh_Hant": "面板緩衝區行數"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Mode",
+    "zh_Hant": "面板緩衝區模式"
+  },
+  {
+    "context": "*",
+    "msgid": "Recent Font Families",
+    "zh_Hant": "最近使用的字型家族"
+  },
+  {
+    "context": "*",
+    "msgid": "Show formatting controls in the 3D Viewport header when a text object is selected",
+    "zh_Hant": "選取文字物件時，在 3D 視埠頂部列顯示格式控制項"
+  },
+  {
+    "context": "*",
+    "msgid": "User explicitly enabled the floating toolbar while auto-show is off",
+    "zh_Hant": "關閉自動顯示時，使用者已明確啟用浮動工具列"
+  },
+  {
+    "context": "*",
+    "msgid": "Font refresh complete — preview thumbnails are rebuilding",
+    "zh_Hant": "字型重新整理完成——正在重建預覽縮圖"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font refresh complete — preview thumbnails are rebuilding",
+    "zh_Hant": "字型重新整理完成——正在重建預覽縮圖"
+  },
+  {
+    "context": "*",
+    "msgid": "Indexing font names… {:d}/{:d}",
+    "zh_Hant": "正在建立字型名稱索引… {:d}/{:d}"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the OpenType family name (default; prefers localized CJK names when available)",
+    "zh_Hant": "使用 OpenType 字型家族名稱（預設；優先使用本地化 CJK 名稱）"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the font file name",
+    "zh_Hant": "使用字型檔案名稱"
+  },
+  {
+    "context": "*",
+    "msgid": "Word",
+    "zh_Hant": "單字"
+  },
+  {
+    "context": "*",
+    "msgid": "Rebuild Font Search Index",
+    "zh_Hant": "重新建立字型搜尋索引"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Rebuild Font Search Index",
+    "zh_Hant": "重新建立字型搜尋索引"
+  },
+  {
+    "context": "*",
+    "msgid": "Clear persisted font-name metadata and rebuild it in the background",
+    "zh_Hant": "清除已儲存的字型名稱中繼資料，並在背景重新建立"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear persisted font-name metadata and rebuild it in the background",
+    "zh_Hant": "清除已儲存的字型名稱中繼資料，並在背景重新建立"
+  },
+  {
+    "context": "*",
+    "msgid": "Font search index cleared — rebuilding in background",
+    "zh_Hant": "字型搜尋索引已清除——正在背景重新建立"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font search index cleared — rebuilding in background",
+    "zh_Hant": "字型搜尋索引已清除——正在背景重新建立"
+  },
+  {
+    "context": "*",
+    "msgid": "Font search index: {:d} cached",
+    "zh_Hant": "字型搜尋索引：已快取 {:d} 項"
+  },
+  {
+    "context": "*",
+    "msgid": "Rebuild Index",
+    "zh_Hant": "重新建立索引"
   }
 ]

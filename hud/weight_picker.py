@@ -7,6 +7,7 @@ import gpu
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs
 from ..utils.font_loader import is_current_font, queue_font_catalog, resolve_font_filepath
+from ..utils.picker_context import ViewportCache, picker_is_open, release_picker
 from ..utils.text_format import get_active_text_data
 from ..utils.view3d_context import run_active_font_op
 from . import layout as layout_mod
@@ -14,8 +15,9 @@ from .gpu_primitives import draw_rounded_rect
 from .blf_layout import draw_centered_glyph
 
 _UI_FONT = 0
-_LAST_LAYOUT = None
+_LAYOUTS = ViewportCache()
 _HOVER_APPLY_INDEX = -1
+_PREVIEW_OWNER = "HUD_WEIGHT"
 
 
 class WeightHit:
@@ -40,7 +42,12 @@ def _state(context):
 
 def picker_open(context):
     state = _state(context)
-    return bool(state and getattr(state, "th_weight_picker_open", False))
+    return picker_is_open(
+        state,
+        "th_weight_picker_open",
+        "th_weight_picker_window",
+        context,
+    )
 
 
 def _ui_scale(context):
@@ -121,27 +128,24 @@ def _ensure_toolbar_rects(context):
 def _picker_position(context, panel_w, panel_h, scale):
     _ensure_toolbar_rects(context)
     region = context.region
-    margin = 10.0 * scale
     gap = 6.0 * scale
     weight_rect = layout_mod.get_hud_item_rect("font_weight", context)
     if weight_rect is not None:
         px = weight_rect.x
         panel_top = weight_rect.y - gap
         py = panel_top - panel_h
-        px = max(margin, min(px, region.width - panel_w - margin))
-        py = max(margin, py)
-        return px, py
-    font_rect = layout_mod.get_hud_item_rect("font", context)
-    if font_rect is not None:
-        px = font_rect.x
-        panel_top = font_rect.y - gap
-        py = panel_top - panel_h
-        px = max(margin, min(px, region.width - panel_w - margin))
-        py = max(margin, py)
-        return px, py
-    px = max(margin, region.width * 0.5 - panel_w * 0.5)
-    py = max(margin, region.height - 56.0 * scale - panel_h)
-    return px, py
+    else:
+        font_rect = layout_mod.get_hud_item_rect("font", context)
+        if font_rect is not None:
+            px = font_rect.x
+            panel_top = font_rect.y - gap
+            py = panel_top - panel_h
+        else:
+            px = region.width * 0.5 - panel_w * 0.5
+            py = region.height - 56.0 * scale - panel_h
+    from ..utils.text_bounds import clamp_popup_to_hud_safe_bounds
+
+    return clamp_popup_to_hud_safe_bounds(context, px, py, panel_w, panel_h, scale)
 
 
 def _panel_width(scale, variant_count):
@@ -211,43 +215,61 @@ def _try_hover_apply_weight(context, filepath, catalog_index=-1):
     if text_data is not None and is_current_font(text_data, filepath):
         _HOVER_APPLY_INDEX = catalog_index
         return False
-    if not _invoke_apply_weight(
-        context, filepath, catalog_index, keep_picker_open=True, undo=False, record_recent=False
-    ):
+    from ..utils.picker_preview import preview_font
+
+    if not preview_font(context, _PREVIEW_OWNER, filepath, catalog_index):
         return False
     _HOVER_APPLY_INDEX = catalog_index
     return True
 
 
-def close_picker(context):
-    reset_picker_hover_apply()
-    state = _state(context)
-    if state is None:
+def close_picker(context, *, cancel_preview=True, force=False):
+    state = _state(context) if context is not None else None
+    if not release_picker(
+        state,
+        "th_weight_picker_open",
+        "th_weight_picker_window",
+        context,
+        force=force,
+    ):
         return
-    state.th_weight_picker_open = False
+    if cancel_preview:
+        from ..utils.picker_preview import cancel_preview as cancel_picker_preview
+
+        cancel_picker_preview(context, _PREVIEW_OWNER)
+    reset_picker_hover_apply()
     state.th_weight_picker_hover = -1
+    _LAYOUTS.clear()
 
 
 def layout_picker(context):
-    global _LAST_LAYOUT
     region = context.region
     if region is None:
-        _LAST_LAYOUT = None
+        _LAYOUTS.pop(context)
         return None
 
     _ensure_toolbar_rects(context)
     text_data = get_active_text_data(context)
     variants = variants_for_text(context, text_data)
     if not variants:
-        _LAST_LAYOUT = None
+        _LAYOUTS.pop(context)
         return None
 
     scale = _ui_scale(context)
-    panel_w = _panel_width(scale, len(variants))
+    from ..utils.text_bounds import get_hud_safe_bounds
+
+    safe = get_hud_safe_bounds(context, scale)
+    safe_w = (safe[2] - safe[0]) if safe else float(region.width)
+    safe_h = (safe[3] - safe[1]) if safe else float(region.height)
+    panel_w = min(_panel_width(scale, len(variants)), max(1.0, safe_w))
     pad = 12.0 * scale
     header_h = 36.0 * scale
     row_h = 34.0 * scale
-    rows = len(variants)
+    rows = max(1, min(len(variants), int((safe_h - header_h - pad) // row_h)))
+    state = _state(context)
+    max_scroll = max(0, len(variants) - rows)
+    scroll = min(max(0, int(getattr(state, "th_weight_picker_scroll", 0))), max_scroll)
+    visible_variants = variants[scroll : scroll + rows]
     panel_h = header_h + row_h * rows + pad
     px, py = _picker_position(context, panel_w, panel_h, scale)
     panel_top = py + panel_h
@@ -267,7 +289,7 @@ def layout_picker(context):
     list_w = panel_w - pad * 2
     row_hits = []
     row_body_h = row_h - 4.0 * scale
-    for i, variant in enumerate(variants):
+    for i, variant in enumerate(visible_variants):
         ry = py + pad + i * row_h
         hit = WeightHit(
             "row",
@@ -281,7 +303,7 @@ def layout_picker(context):
         row_hits.append(hit)
         hits.append(hit)
 
-    _LAST_LAYOUT = {
+    layout = {
         "scale": scale,
         "px": px,
         "py": py,
@@ -298,14 +320,17 @@ def layout_picker(context):
         "list_x": list_x,
         "list_w": list_w,
         "row_h": row_h,
-        "variants": variants,
+        "variants": visible_variants,
+        "scroll": scroll,
+        "max_scroll": max_scroll,
     }
-    return _LAST_LAYOUT
+    return _LAYOUTS.set(context, layout)
 
 
 def hit_test_picker(context, mx, my):
     layout_picker(context)
-    hits = _LAST_LAYOUT.get("hits", []) if _LAST_LAYOUT else []
+    layout = _LAYOUTS.get(context)
+    hits = layout.get("hits", []) if layout else []
     for hit in reversed(hits):
         if hit.kind != "panel" and hit.contains(mx, my):
             return hit
@@ -333,9 +358,12 @@ def handle_picker_click(context, hit):
             if catalog and catalog_index < len(catalog):
                 filepath = catalog[catalog_index].filepath
         if filepath:
+            from ..utils.picker_preview import prepare_preview_commit
+
+            prepare_preview_commit(context, _PREVIEW_OWNER)
             _invoke_apply_weight(context, filepath, catalog_index, keep_picker_open=False)
             _HOVER_APPLY_INDEX = catalog_index
-        close_picker(context)
+        close_picker(context, cancel_preview=False)
         return True
     if hit.kind == "panel":
         return True
@@ -360,6 +388,19 @@ def handle_picker_hover(context, mx, my):
     else:
         state.th_weight_picker_hover = -1
     return applied
+
+
+def handle_picker_wheel(context, delta):
+    state = _state(context)
+    layout = layout_picker(context)
+    if state is None or layout is None:
+        return False
+    current = int(getattr(state, "th_weight_picker_scroll", 0))
+    state.th_weight_picker_scroll = max(
+        0,
+        min(int(layout.get("max_scroll", 0)), current - int(delta)),
+    )
+    return True
 
 
 def draw_weight_picker(context):

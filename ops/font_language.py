@@ -4,9 +4,8 @@ import bpy
 from bpy.types import Menu, Operator
 
 from ..i18n import _
-from ..utils.addon_prefs import prefs_bl_idname
 from ..utils.font_language import LANGUAGE_FILTER_ITEMS, get_language_filter, invalidate_font_language_cache
-from ..utils.operator_poll import PreferencesPollMixin, WindowManagerPollMixin
+from ..utils.operator_poll import WindowManagerPollMixin
 from ..utils.text_frame import tag_view3d_redraw
 
 
@@ -40,17 +39,6 @@ class TH_OT_set_font_language(WindowManagerPollMixin, Operator):
         return {"FINISHED"}
 
 
-class TH_OT_open_addon_preferences(PreferencesPollMixin, Operator):
-    bl_idname = "font.texthelper_open_addon_preferences"
-    bl_label = "Text Helper Preferences"
-    bl_description = "Open Text Helper add-on preferences"
-    bl_options = {"INTERNAL"}
-
-    def execute(self, context):
-        bpy.ops.preferences.addon_show(module=prefs_bl_idname())
-        return {"FINISHED"}
-
-
 class TEXTHELPER_MT_font_language(Menu):
     bl_idname = "TEXTHELPER_MT_font_language"
     bl_label = "Language"
@@ -69,7 +57,6 @@ class TEXTHELPER_MT_font_language(Menu):
 
 classes = (
     TH_OT_set_font_language,
-    TH_OT_open_addon_preferences,
     TEXTHELPER_MT_font_language,
 )
 

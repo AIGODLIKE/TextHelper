@@ -28,11 +28,20 @@ def _draw_panel_header(layout, context, text_data=None):
         icon="OVERLAY",
         depress=floating_toolbar_pressed(context, text_data),
     )
-    row.operator(
-        "font.texthelper_open_addon_preferences",
+    if text_data is not None:
+        row.operator(
+            "wm.texthelper_reset_hud_position",
+            text="",
+            icon="LOOP_BACK",
+        )
+    op = row.operator(
+        "preferences.addon_show",
         text="",
         icon="PREFERENCES",
     )
+    from ..utils.addon_prefs import prefs_bl_idname
+
+    op.module = prefs_bl_idname()
 
 
 def _char_count_text(chars, max_chars, words):
@@ -197,12 +206,7 @@ class VIEW3D_PT_text_helper(Panel):
 
     @classmethod
     def poll(cls, context):
-        if get_active_text(context) is None:
-            return False
-        from ..sync import ensure_subscribers
-
-        ensure_subscribers()
-        return True
+        return get_active_text(context) is not None
 
     def draw_header(self, context):
         _draw_panel_header(self.layout, context, context.active_object.data)
@@ -227,9 +231,6 @@ class VIEW3D_PT_text_helper_empty(Panel):
 
     @classmethod
     def poll(cls, context):
-        from ..sync import ensure_subscribers
-
-        ensure_subscribers()
         return get_active_text(context) is None
 
     def draw_header(self, context):

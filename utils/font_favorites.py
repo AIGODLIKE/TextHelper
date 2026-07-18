@@ -7,24 +7,42 @@ import json
 from .addon_prefs import get_addon_prefs
 from .font_family import family_key_for_filepath
 
+_CACHE_RAW = None
+_CACHE_KEYS = frozenset()
+
 
 def get_favorite_keys(context) -> set[str]:
+    global _CACHE_RAW, _CACHE_KEYS
+
     prefs = get_addon_prefs(context)
     raw = getattr(prefs, "font_favorite_keys", "") or "[]"
+    if raw == _CACHE_RAW:
+        return set(_CACHE_KEYS)
     try:
         data = json.loads(raw)
     except json.JSONDecodeError:
+        _CACHE_RAW = raw
+        _CACHE_KEYS = frozenset()
         return set()
     if not isinstance(data, list):
+        _CACHE_RAW = raw
+        _CACHE_KEYS = frozenset()
         return set()
-    return {str(key) for key in data if key}
+    _CACHE_RAW = raw
+    _CACHE_KEYS = frozenset(str(key) for key in data if key)
+    return set(_CACHE_KEYS)
 
 
 def _save_favorite_keys(context, keys: set[str]) -> None:
+    global _CACHE_RAW, _CACHE_KEYS
+
     prefs = get_addon_prefs(context)
     if not hasattr(prefs, "font_favorite_keys"):
         return
-    prefs.font_favorite_keys = json.dumps(sorted(keys), ensure_ascii=False)
+    raw = json.dumps(sorted(keys), ensure_ascii=False)
+    prefs.font_favorite_keys = raw
+    _CACHE_RAW = raw
+    _CACHE_KEYS = frozenset(keys)
 
 
 def is_family_favorite(context, filepath: str) -> bool:

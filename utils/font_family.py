@@ -116,6 +116,16 @@ _ABBREV_STEM_SUFFIXES = tuple(
     )
 )
 
+_FAMILY_KEY_CACHE: dict[tuple[str, str], str] = {}
+_WEIGHT_CACHE: dict[tuple[str, str], tuple[str, int]] = {}
+_WEIGHT_COUNTS_CACHE: dict[tuple, dict[str, int]] = {}
+
+
+def invalidate_font_family_cache() -> None:
+    _FAMILY_KEY_CACHE.clear()
+    _WEIGHT_CACHE.clear()
+    _WEIGHT_COUNTS_CACHE.clear()
+
 
 def _display_family(stem: str) -> str:
     return stem.replace("_", " ").replace("-", " ").strip()
@@ -264,26 +274,40 @@ def family_key_for_filepath(filepath: str, context=None) -> str:
         return family_key_from_stem(stem) if stem else ""
 
     mode = get_font_family_group_mode(context)
+    cache_key = (os.path.normcase(filepath), mode)
+    cached = _FAMILY_KEY_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
     ps_key = _family_key_from_postscript(filepath)
 
     if mode == "AUTO":
         if ps_key:
-            return ps_key
+            result = ps_key
+            _FAMILY_KEY_CACHE[cache_key] = result
+            return result
         family = _opentype_family_name(filepath)
         if family:
-            return _normalize_family_key(family)
+            result = _normalize_family_key(family)
+            _FAMILY_KEY_CACHE[cache_key] = result
+            return result
     elif mode == "OPENTYPE":
         family = _opentype_family_name(filepath)
         if family:
-            return _normalize_family_key(family)
+            result = _normalize_family_key(family)
+            _FAMILY_KEY_CACHE[cache_key] = result
+            return result
         if ps_key:
+            _FAMILY_KEY_CACHE[cache_key] = ps_key
             return ps_key
     elif mode == "POSTSCRIPT":
         if ps_key:
+            _FAMILY_KEY_CACHE[cache_key] = ps_key
             return ps_key
 
     stem = os.path.splitext(os.path.basename(filepath))[0]
-    return family_key_from_stem(stem)
+    result = family_key_from_stem(stem)
+    _FAMILY_KEY_CACHE[cache_key] = result
+    return result
 
 
 def _rank_from_weight_label(label: str) -> int:
@@ -309,17 +333,27 @@ def weight_label_and_rank_for_filepath(filepath: str, context=None) -> tuple[str
         return label, rank
 
     mode = get_font_family_group_mode(context)
+    cache_key = (os.path.normcase(filepath), mode)
+    cached = _WEIGHT_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
     if mode in {"OPENTYPE", "AUTO", "POSTSCRIPT"}:
         _head, ps_code = _parse_postscript_parts(filepath)
         if ps_code:
-            return _weight_from_postscript_code(ps_code)
+            result = _weight_from_postscript_code(ps_code)
+            _WEIGHT_CACHE[cache_key] = result
+            return result
         sub = _opentype_subfamily_name(filepath)
         if sub and mode != "POSTSCRIPT":
-            return sub, _rank_from_weight_label(sub)
+            result = (sub, _rank_from_weight_label(sub))
+            _WEIGHT_CACHE[cache_key] = result
+            return result
 
     stem = os.path.splitext(os.path.basename(filepath))[0]
     _family, label, rank = parse_font_stem(stem)
-    return label, rank
+    result = (label, rank)
+    _WEIGHT_CACHE[cache_key] = result
+    return result
 
 
 @dataclass(frozen=True)
@@ -490,12 +524,28 @@ def family_weight_counts(catalog, context=None):
     counts = {}
     if not catalog:
         return counts
+    from .font_loader import catalog_generation
+
+    first = getattr(catalog[0], "filepath", "") if len(catalog) else ""
+    last = getattr(catalog[-1], "filepath", "") if len(catalog) else ""
+    cache_key = (
+        catalog_generation(),
+        len(catalog),
+        get_font_family_group_mode(context),
+        first,
+        last,
+    )
+    cached = _WEIGHT_COUNTS_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
     for item in catalog:
         filepath = getattr(item, "filepath", "") or ""
         key = family_key_for_filepath(filepath, context)
         if not key:
             continue
         counts[key] = counts.get(key, 0) + 1
+    _WEIGHT_COUNTS_CACHE.clear()
+    _WEIGHT_COUNTS_CACHE[cache_key] = counts
     return counts
 
 

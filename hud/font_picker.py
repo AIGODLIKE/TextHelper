@@ -27,6 +27,12 @@ from ..utils.font_language import (
 )
 from ..utils.font_preview_draw import draw_blf_preview
 from ..utils.font_preview_text import get_font_coverage_text, get_font_preview_text
+from ..utils.font_search import font_search_warm_progress, font_search_warming
+from ..utils.picker_context import (
+    ViewportCache,
+    picker_is_open,
+    release_picker,
+)
 from ..utils.text_format import get_active_text_data
 from . import layout as layout_mod
 from .gpu_primitives import draw_refresh_icon, draw_rounded_rect
@@ -47,10 +53,11 @@ _UI_FONT = 0
 _PICKER_BLF_LOADED = OrderedDict()
 _PICKER_BLF_MAX = 8
 _BLF_HOOKS_REGISTERED = False
-_LAST_LAYOUT = None
+_LAYOUTS = ViewportCache()
 _WHEEL_ROWS = 3
 _HOVER_APPLY_INDEX = -1
 _CARET_TIMER = None
+_PREVIEW_OWNER = "HUD_FONT"
 
 
 class PickerHit:
@@ -74,7 +81,12 @@ def _state(context):
 
 def picker_open(context):
     state = _state(context)
-    return bool(state and getattr(state, "th_font_picker_open", False))
+    return picker_is_open(
+        state,
+        "th_font_picker_open",
+        "th_font_picker_window",
+        context,
+    )
 
 
 def _ui_scale(context):
@@ -154,19 +166,18 @@ def _acquire_picker_blf(filepath):
 
 def _picker_position(context, panel_w, panel_h, scale):
     region = context.region
-    margin = 10.0 * scale
     gap = 6.0 * scale
     font_rect = layout_mod.get_hud_item_rect("font", context)
     if font_rect is not None:
         px = font_rect.x
         panel_top = font_rect.y - gap
         py = panel_top - panel_h
-        px = max(margin, min(px, region.width - panel_w - margin))
-        py = max(margin, py)
-        return px, py
-    px = max(margin, region.width * 0.5 - panel_w * 0.5)
-    py = max(margin, region.height - 56.0 * scale - panel_h)
-    return px, py
+    else:
+        px = region.width * 0.5 - panel_w * 0.5
+        py = region.height - 56.0 * scale - panel_h
+    from ..utils.text_bounds import clamp_popup_to_hud_safe_bounds
+
+    return clamp_popup_to_hud_safe_bounds(context, px, py, panel_w, panel_h, scale)
 
 
 def _panel_width(scale):
@@ -243,7 +254,10 @@ def _invoke_refresh_system_fonts(context):
         perform_font_system_refresh(context)
     except Exception:
         return False
-    queue_operator_report(context.window_manager, "Font information refreshed")
+    queue_operator_report(
+        context.window_manager,
+        "Font refresh complete — preview thumbnails are rebuilding",
+    )
     return True
 
 
@@ -287,14 +301,9 @@ def _try_hover_apply_font(context, catalog_index):
         _HOVER_APPLY_INDEX = catalog_index
         return False
 
-    if not _invoke_apply_system_font(
-        context,
-        item.filepath,
-        catalog_index,
-        keep_picker_open=True,
-        undo=False,
-        record_recent=False,
-    ):
+    from ..utils.picker_preview import preview_font
+
+    if not preview_font(context, _PREVIEW_OWNER, item.filepath, catalog_index):
         return False
     _HOVER_APPLY_INDEX = catalog_index
     return True
@@ -328,7 +337,7 @@ def _search_field_text_y(hit, scale):
 
 
 def _search_cursor_index_from_mx(context, mx, my, scale):
-    layout = _LAST_LAYOUT
+    layout = _LAYOUTS.get(context)
     if layout is None:
         return 0
     search_hit = next((h for h in layout.get("hits", []) if h.kind == "search"), None)
@@ -361,19 +370,22 @@ def picker_search_blocks_keymap(event):
     return event.value in {"PRESS", "REPEAT"}
 
 
-def close_picker(context):
-    from ..utils.font_recent import commit_recent_from_active_text
+def close_picker(context, *, cancel_preview=True, force=False):
+    state = _state(context) if context is not None else None
+    if not release_picker(
+        state,
+        "th_font_picker_open",
+        "th_font_picker_window",
+        context,
+        force=force,
+    ):
+        return
+    if cancel_preview:
+        from ..utils.picker_preview import cancel_preview as cancel_picker_preview
 
-    try:
-        commit_recent_from_active_text(context)
-    except Exception:
-        pass
+        cancel_picker_preview(context, _PREVIEW_OWNER)
     reset_picker_hover_apply()
     _stop_caret_timer()
-    state = _state(context)
-    if state is None:
-        return
-    state.th_font_picker_open = False
     state.th_font_picker_search_focus = False
     reset_text_field_cursor(state, 0)
     state.th_font_picker_scroll_drag = False
@@ -389,6 +401,7 @@ def close_picker(context):
     except Exception:
         pass
     release_blf_cache()
+    _LAYOUTS.clear()
 
 
 def _chip_button_bg(theme, *, hovered=False, pressed=False, active=False):
@@ -629,15 +642,19 @@ def _scrollbar_geometry(layout):
 
 
 def layout_picker(context):
-    global _LAST_LAYOUT
     wm = context.window_manager
     region = context.region
     if region is None:
-        _LAST_LAYOUT = None
+        _LAYOUTS.pop(context)
         return None
 
     scale = _ui_scale(context)
-    panel_w = _panel_width(scale)
+    from ..utils.text_bounds import get_hud_safe_bounds
+
+    safe = get_hud_safe_bounds(context, scale)
+    safe_w = (safe[2] - safe[0]) if safe else float(region.width)
+    safe_h = (safe[3] - safe[1]) if safe else float(region.height)
+    panel_w = min(_panel_width(scale), max(1.0, safe_w))
     pad = 12.0 * scale
     header_h = 40.0 * scale
     search_h = 30.0 * scale
@@ -647,7 +664,8 @@ def layout_picker(context):
     row_h = 52.0 * scale
     footer_h = 22.0 * scale
     scrollbar_w = 8.0 * scale
-    visible_rows = 7
+    fixed_h = header_h + search_h + filter_h + footer_h + pad * 0.5
+    visible_rows = max(1, min(7, int((safe_h - fixed_h) // row_h)))
     list_h = row_h * visible_rows
     panel_h = header_h + search_h + filter_h + list_h + footer_h + pad * 0.5
     px, py = _picker_position(context, panel_w, panel_h, scale)
@@ -818,7 +836,7 @@ def layout_picker(context):
         hits.append(PickerHit("scroll_track", sb["track_x"], sb["track_y"], sb["track_w"], sb["track_h"]))
         hits.append(PickerHit("scroll_thumb", sb["thumb_x"], sb["thumb_y"], sb["thumb_w"], sb["thumb_h"]))
 
-    _LAST_LAYOUT = {
+    layout = {
         "scale": scale,
         "px": px,
         "py": py,
@@ -851,17 +869,18 @@ def layout_picker(context):
         "scrollbar": sb,
         "refresh_draw": refresh_draw,
     }
-    return _LAST_LAYOUT
+    return _LAYOUTS.set(context, layout)
 
 
-def get_last_layout():
-    return _LAST_LAYOUT
+def get_last_layout(context=None):
+    return _LAYOUTS.get(context or bpy.context)
 
 
-def get_picker_hits():
-    if _LAST_LAYOUT is None:
+def get_picker_hits(context=None):
+    layout = get_last_layout(context)
+    if layout is None:
         return []
-    return _LAST_LAYOUT.get("hits", [])
+    return layout.get("hits", [])
 
 
 _CHIP_HIT_KINDS = frozenset(
@@ -885,7 +904,7 @@ _CHIP_HIT_KINDS = frozenset(
 
 def hit_test_picker(context, mx, my):
     layout_picker(context)
-    hits = get_picker_hits()
+    hits = get_picker_hits(context)
     for hit in reversed(hits):
         if hit.kind in _CHIP_HIT_KINDS and hit.contains(mx, my):
             return hit
@@ -1051,7 +1070,7 @@ def draw_font_picker(context):
     queue_font_catalog(wm)
     catalog = getattr(getattr(wm, "th_state", None), "font_catalog", None)
     if not catalog:
-        from ..utils.font_loader import font_catalog_loading
+        from ..utils.font_loader import font_catalog_load_progress, font_catalog_loading
 
         scale = _ui_scale(context)
         theme = _theme(context)
@@ -1059,7 +1078,11 @@ def draw_font_picker(context):
 
         gpu.state.blend_set("ALPHA")
         shader = gpu.shader.from_builtin("UNIFORM_COLOR")
-        panel_w = _panel_width(scale)
+        from ..utils.text_bounds import get_hud_safe_bounds
+
+        safe = get_hud_safe_bounds(context, scale)
+        safe_w = (safe[2] - safe[0]) if safe else float(context.region.width)
+        panel_w = min(_panel_width(scale), max(1.0, safe_w))
         pad = 12.0 * scale
         header_h = 40.0 * scale
         search_h = 30.0 * scale
@@ -1070,7 +1093,13 @@ def draw_font_picker(context):
         draw_rounded_rect(shader, px, py, panel_w, panel_h, theme["panel_bg"], 8.0 * scale)
         blf.size(_UI_FONT, int(11 * scale))
         blf.color(_UI_FONT, *theme.get("muted", theme["text"]))
-        msg = _("Loading fonts…") if font_catalog_loading() else _("Click refresh to load system fonts")
+        if font_catalog_loading():
+            progress = font_catalog_load_progress()
+            msg = _("Loading fonts…")
+            if progress["scanned"]:
+                msg = f"{msg}  {progress['found']}/{progress['scanned']}"
+        else:
+            msg = _("Click refresh to load system fonts")
         blf.position(_UI_FONT, px + pad, py + panel_h * 0.5 - 6.0 * scale, 0)
         blf.draw(_UI_FONT, msg)
         gpu.state.blend_set("NONE")
@@ -1423,7 +1452,10 @@ def draw_font_picker(context):
     blf.size(_UI_FONT, footer_size)
     blf.color(_UI_FONT, *theme.get("row_text", theme.get("muted", theme["text"])))
     hide_unsupported = bool(state and getattr(state, "th_font_picker_hide_unsupported", True))
-    if hide_unsupported and glyph_filter_refining():
+    if font_search_warming():
+        processed, total = font_search_warm_progress()
+        count_text = _("Indexing font names… {:d}/{:d}").format(processed, total)
+    elif hide_unsupported and glyph_filter_refining():
         count_text = _("Filtering unsupported fonts… ({:d} shown)").format(len(items))
     else:
         count_text = _("{:d} families · □ = missing").format(len(items))
@@ -1454,7 +1486,7 @@ def draw_font_picker(context):
 
 def handle_picker_wheel(context, delta):
     state = _state(context)
-    layout = _LAST_LAYOUT
+    layout = _LAYOUTS.get(context)
     if state is None or layout is None:
         return False
     scroll = int(state.th_font_picker_scroll)
@@ -1568,14 +1600,7 @@ def handle_picker_click(context, hit, mx=0.0, my=0.0):
         handle_picker_scroll_track_click(context, my)
         return True
     if hit.kind == "row" and hit.index >= 0:
-        wm = context.window_manager
-        if hit.index < len(wm.th_state.font_catalog):
-            item = wm.th_state.font_catalog[hit.index]
-            _invoke_apply_system_font(
-                context, item.filepath, hit.index, keep_picker_open=False, record_recent=False
-            )
-            _HOVER_APPLY_INDEX = hit.index
-        close_picker(context)
+        _commit_catalog_index(context, hit.index)
         return True
     if hit.kind == "panel":
         state.th_font_picker_search_focus = False
@@ -1585,7 +1610,7 @@ def handle_picker_click(context, hit, mx=0.0, my=0.0):
 
 
 def handle_picker_scroll_track_click(context, my):
-    layout = _LAST_LAYOUT
+    layout = _LAYOUTS.get(context)
     state = _state(context)
     if layout is None or state is None:
         return False
@@ -1600,7 +1625,7 @@ def handle_picker_scroll_track_click(context, my):
 
 def handle_picker_drag(context, my):
     state = _state(context)
-    layout = _LAST_LAYOUT
+    layout = _LAYOUTS.get(context)
     if state is None or layout is None or not getattr(state, "th_font_picker_scroll_drag", False):
         return False
     sb = layout.get("scrollbar")
@@ -1661,6 +1686,82 @@ def handle_picker_hover(context, mx, my):
     else:
         state.th_font_picker_hover = -1
     return applied
+
+
+def _commit_catalog_index(context, catalog_index):
+    global _HOVER_APPLY_INDEX
+
+    wm = context.window_manager
+    catalog = getattr(getattr(wm, "th_state", None), "font_catalog", None)
+    if not catalog or catalog_index < 0 or catalog_index >= len(catalog):
+        return False
+    item = catalog[catalog_index]
+    from ..utils.picker_preview import prepare_preview_commit
+
+    prepare_preview_commit(context, _PREVIEW_OWNER)
+    applied = _invoke_apply_system_font(
+        context,
+        item.filepath,
+        catalog_index,
+        keep_picker_open=False,
+        record_recent=True,
+    )
+    if applied:
+        _HOVER_APPLY_INDEX = catalog_index
+    close_picker(context, cancel_preview=False)
+    return applied
+
+
+def _navigate_picker_rows(context, event_type):
+    state = _state(context)
+    layout = layout_picker(context)
+    if state is None or layout is None:
+        return False
+    items = layout.get("items", ())
+    if not items:
+        return False
+
+    hover = int(getattr(state, "th_font_picker_hover", -1))
+    current = -1
+    for index, group in enumerate(items):
+        if group.representative_index == hover:
+            current = index
+            break
+    if current < 0:
+        text_data = _picker_text_data(context)
+        current = next(
+            (index for index, group in enumerate(items) if _group_is_active(text_data, group)),
+            int(layout.get("scroll", 0)),
+        )
+
+    page = max(1, int(layout.get("visible_rows", 1)) - 1)
+    if event_type == "UP_ARROW":
+        target = current - 1
+    elif event_type == "DOWN_ARROW":
+        target = current + 1
+    elif event_type == "PAGE_UP":
+        target = current - page
+    elif event_type == "PAGE_DOWN":
+        target = current + page
+    elif event_type == "HOME":
+        target = 0
+    elif event_type == "END":
+        target = len(items) - 1
+    else:
+        return False
+    target = max(0, min(len(items) - 1, target))
+
+    visible = max(1, int(layout.get("visible_rows", 1)))
+    scroll = int(layout.get("scroll", 0))
+    if target < scroll:
+        scroll = target
+    elif target >= scroll + visible:
+        scroll = target - visible + 1
+    state.th_font_picker_scroll = max(0, min(int(layout.get("max_scroll", 0)), scroll))
+    catalog_index = items[target].representative_index
+    state.th_font_picker_hover = catalog_index
+    _try_hover_apply_font(context, catalog_index)
+    return True
 
 
 def _event_text(event):
@@ -1744,22 +1845,41 @@ def handle_picker_key(context, event):
         return False
 
     wm = context.window_manager
-    if not getattr(state, "th_font_picker_search_focus", False):
-        return False
+    focused = bool(getattr(state, "th_font_picker_search_focus", False))
+
+    if event.value in {"PRESS", "REPEAT"} and event.type in {
+        "UP_ARROW",
+        "DOWN_ARROW",
+        "PAGE_UP",
+        "PAGE_DOWN",
+        "HOME",
+        "END",
+    }:
+        return _navigate_picker_rows(context, event.type)
 
     max_len = 128
 
     if event.type in {"RET", "NUMPAD_ENTER"} and event.value == "PRESS":
+        catalog_index = int(getattr(state, "th_font_picker_hover", -1))
+        if catalog_index < 0:
+            layout = layout_picker(context)
+            items = layout.get("items", ()) if layout else ()
+            if items:
+                catalog_index = items[0].representative_index
+        if catalog_index >= 0:
+            _commit_catalog_index(context, catalog_index)
+            return True
         state.th_font_picker_search_focus = False
         reset_text_field_cursor(state, 0)
         _stop_caret_timer()
         return True
 
     if event.type == "ESC" and event.value == "PRESS":
-        state.th_font_picker_search_focus = False
-        reset_text_field_cursor(state, 0)
-        _stop_caret_timer()
+        close_picker(context)
         return True
+
+    if not focused:
+        return False
 
     def _get_text():
         return _get_font_filter(wm)

@@ -9,9 +9,11 @@ def perform_font_system_refresh(context) -> int:
     from .font_language import invalidate_font_language_cache
     from .font_loader import refresh_font_catalog, reset_font_catalog_scan
     from .font_preview import invalidate_font_previews, tag_ui_redraw, warm_font_preview_queue
+    from .font_search import invalidate_font_search_cache
 
     reset_font_catalog_scan()
     invalidate_font_previews(clear_files=True)
+    invalidate_font_search_cache(clear_disk=True)
     try:
         invalidate_font_language_cache()
     except Exception:

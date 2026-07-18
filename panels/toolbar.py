@@ -187,10 +187,7 @@ def _draw_texthelper_tool_header(self, context):
     if region is None or region.type != "TOOL_HEADER":
         return
 
-    from ..sync import ensure_subscribers
     from ..utils.font_context import is_font_edit_mode
-
-    ensure_subscribers()
 
     obj = get_active_text(context)
     if obj is None:

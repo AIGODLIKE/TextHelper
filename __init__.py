@@ -14,6 +14,9 @@ def register():
 
 def unregister():
     runtime.shutdown()
+    from .utils.picker_preview import cancel_all_previews
+
+    cancel_all_previews()
     panels.unregister()
     ops.unregister()
     sync.unregister()
@@ -23,6 +26,12 @@ def unregister():
 
     unregister_ui_textbox()
     unregister_font_catalog_queue()
+    from .utils.font_search import unregister_font_search_warm
+
+    unregister_font_search_warm()
+    from .utils.font_catalog_filter import invalidate_catalog_filter_cache
+
+    invalidate_catalog_filter_cache()
     unregister_font_index_deferred()
     props.unregister()
     preferences.unregister()

@@ -32,6 +32,9 @@ class TH_OT_apply_preset(ActiveFontDataPollMixin, Operator):
     keep_picker_open: bpy.props.BoolProperty(default=False, options={"HIDDEN"})
 
     def execute(self, context):
+        from ..utils.picker_preview import prepare_preview_commit
+
+        prepare_preview_commit(context)
         state = getattr(context.window_manager, "th_state", None)
         if state is not None:
             state.th_hud_open_menu = ""
@@ -65,7 +68,9 @@ class TH_OT_toggle_preset_picker(ActiveFontDataPollMixin, Operator):
         if state is None:
             return {"CANCELLED"}
 
-        opening = not getattr(state, "th_preset_picker_open", False)
+        from ..hud.preset_picker import picker_open as preset_picker_open
+
+        opening = not preset_picker_open(context)
 
         if not opening:
             from ..hud.preset_picker import close_picker
@@ -87,7 +92,19 @@ class TH_OT_toggle_preset_picker(ActiveFontDataPollMixin, Operator):
         dismiss_slider_value_edit(context, undo=False)
         state.th_hud_open_menu = ""
         _dismiss_popup_menus(context)
-        state.th_preset_picker_open = True
+        from ..utils.picker_context import claim_picker
+        from ..utils.picker_preview import cancel_owner_previews
+
+        cancel_owner_previews("HUD_PRESET")
+        claim_picker(
+            state,
+            "th_preset_picker_open",
+            "th_preset_picker_window",
+            context,
+        )
+        from ..utils.picker_preview import begin_preview
+
+        begin_preview(context, "HUD_PRESET")
         seed_picker_hover_apply(context)
         bpy.ops.wm.texthelper_hud_ensure_modal()
         tag_redraw()

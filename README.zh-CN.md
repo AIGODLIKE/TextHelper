@@ -147,7 +147,7 @@ blender --command extension validate
 blender --command extension build
 ```
 
-生成：`TextHelper-2.0.0.zip`
+生成：`TextHelper-X.X.X.zip`
 
 上级 `DATA` 目录中的 `_build_texthelper_zip.py` 可用于快速本地复制；提交 Extension Store 请使用 Blender CLI 生成的 zip。
 

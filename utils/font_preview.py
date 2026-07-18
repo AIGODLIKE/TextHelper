@@ -2,6 +2,7 @@
 
 import hashlib
 import os
+from collections import deque
 
 import bpy
 import blf
@@ -18,10 +19,12 @@ _PREVIEW_COLLECTION = None
 _ACTIVE_SETTINGS_HASH = ""
 _DEFAULT_SAMPLE = "Exploration witnesses courage, open source witnesses glory"
 _FALLBACK_SAMPLE = "Aa"
-_PREVIEW_QUEUE = []
+_PREVIEW_QUEUE = deque()
 _QUEUE_KEYS = set()
 _QUEUE_SCHEDULED = False
+_QUEUE_TIMER = None
 _REDRAW_SCHEDULED = False
+_REDRAW_TIMER = None
 _FAILED_KEYS = set()
 _CACHE_CLEANED = False
 
@@ -150,9 +153,9 @@ def _write_png(path, ibuf) -> bool:
 def _fit_point_size(font_id, text, width, height, max_size):
     inner_w = max(32.0, width - 28.0)
     inner_h = max(16.0, height - 10.0)
-    size = int(max_size)
     no_fallback = blf_no_fallback_flag()
-    while size >= 10:
+
+    def _measure(size):
         drawn = trim_text_to_width(font_id, text, inner_w, size) or text
         blf.size(font_id, float(size))
         blf.enable(font_id, no_fallback)
@@ -160,17 +163,22 @@ def _fit_point_size(font_id, text, width, height, max_size):
             tw, th = blf.dimensions(font_id, drawn)
         finally:
             blf.disable(font_id, no_fallback)
-        if tw <= inner_w and th <= inner_h:
-            return size, tw, th
-        size -= 1
-    blf.size(font_id, 10.0)
-    drawn = trim_text_to_width(font_id, text, inner_w, 10) or text
-    blf.enable(font_id, no_fallback)
-    try:
-        tw, th = blf.dimensions(font_id, drawn)
-    finally:
-        blf.disable(font_id, no_fallback)
-    return 10, tw, th
+        return tw, th
+
+    low = 10
+    high = max(low, int(max_size))
+    best = low
+    best_dims = _measure(low)
+    while low <= high:
+        mid = (low + high) // 2
+        dims = _measure(mid)
+        if dims[0] <= inner_w and dims[1] <= inner_h:
+            best = mid
+            best_dims = dims
+            low = mid + 1
+        else:
+            high = mid - 1
+    return best, best_dims[0], best_dims[1]
 
 
 def _draw_preview_chars(ibuf, font_id, text, width, height, point_size, glyph_status):
@@ -216,18 +224,20 @@ def _ensure_settings(context):
 
 
 def _schedule_redraw():
-    global _REDRAW_SCHEDULED
+    global _REDRAW_SCHEDULED, _REDRAW_TIMER
     if _REDRAW_SCHEDULED:
         return
 
     def _run():
-        global _REDRAW_SCHEDULED
+        global _REDRAW_SCHEDULED, _REDRAW_TIMER
         _REDRAW_SCHEDULED = False
-        tag_ui_redraw(bpy.context)
+        _REDRAW_TIMER = None
+        tag_ui_redraw(bpy.context, all_windows=True)
         return None
 
     _REDRAW_SCHEDULED = True
-    bpy.app.timers.register(_run, first_interval=0.05)
+    _REDRAW_TIMER = _run
+    bpy.app.timers.register(_REDRAW_TIMER, first_interval=0.05)
 
 
 def _load_icon_from_png(coll, key, png_path):
@@ -263,7 +273,7 @@ def _process_queue_step(max_items=3):
 
     processed = 0
     while _PREVIEW_QUEUE and processed < max_items:
-        filepath, display_name = _PREVIEW_QUEUE.pop(0)
+        filepath, display_name = _PREVIEW_QUEUE.popleft()
         abs_path = _preview_abs_path(filepath)
         if not abs_path:
             continue
@@ -306,17 +316,22 @@ def _process_queue_step(max_items=3):
 
 
 def _schedule_queue():
-    global _QUEUE_SCHEDULED
+    global _QUEUE_SCHEDULED, _QUEUE_TIMER
     if _QUEUE_SCHEDULED:
         return
     _QUEUE_SCHEDULED = True
 
-    def _kick():
-        global _QUEUE_SCHEDULED
-        _QUEUE_SCHEDULED = False
-        return _process_queue_step()
+    def _step():
+        global _QUEUE_SCHEDULED, _QUEUE_TIMER
 
-    bpy.app.timers.register(_kick, first_interval=0.01)
+        interval = _process_queue_step()
+        if interval is None:
+            _QUEUE_SCHEDULED = False
+            _QUEUE_TIMER = None
+        return interval
+
+    _QUEUE_TIMER = _step
+    bpy.app.timers.register(_QUEUE_TIMER, first_interval=0.01)
 
 
 def init_font_preview_cache():
@@ -472,16 +487,39 @@ def invalidate_and_rebuild_font_previews(context, *, clear_files=True):
         pass
 
 
+def _cancel_preview_timers():
+    global _QUEUE_SCHEDULED, _QUEUE_TIMER, _REDRAW_SCHEDULED, _REDRAW_TIMER
+
+    for callback in (_QUEUE_TIMER, _REDRAW_TIMER):
+        if callback is None:
+            continue
+        try:
+            bpy.app.timers.unregister(callback)
+        except ValueError:
+            pass
+    _QUEUE_SCHEDULED = False
+    _QUEUE_TIMER = None
+    _REDRAW_SCHEDULED = False
+    _REDRAW_TIMER = None
+
+
 def release_font_previews():
     global _PREVIEW_COLLECTION
+    _cancel_preview_timers()
     if _PREVIEW_COLLECTION is not None:
         bpy.utils.previews.remove(_PREVIEW_COLLECTION)
         _PREVIEW_COLLECTION = None
 
 
-def tag_ui_redraw(context):
+def tag_ui_redraw(context, *, all_windows=False):
     if context is None:
         return
-    for window in context.window_manager.windows:
+    wm = getattr(context, "window_manager", None)
+    if wm is None:
+        return
+    window = getattr(context, "window", None)
+    windows = wm.windows if all_windows or window is None else (window,)
+    for window in windows:
         for area in window.screen.areas:
-            area.tag_redraw()
+            if area.type in {"VIEW_3D", "PREFERENCES"}:
+                area.tag_redraw()

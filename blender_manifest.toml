@@ -2,7 +2,7 @@ schema_version = "1.0.0"
 id = "TextHelper"
 name = "Text Helper"
 tagline = "Easy text input & font management"
-version = "2.2.28"
+version = "2.4.0"
 type = "add-on"
 maintainer = "ACGGIT <1132692358@qq.com>"
 
@@ -16,7 +16,7 @@ copyright = ["2024-2026 ACGGIT"]
 license = ["SPDX:GPL-3.0-or-later"]
 
 [permissions]
-files = "Load fonts from disk and cache font preview thumbnails"
+files = "Load fonts from disk and cache font previews and search metadata"
 clipboard = "Paste text into the active text object"
 
 [build]
@@ -36,6 +36,7 @@ paths_exclude_pattern = [
     ".DS_Store",
     "Thumbs.db",
     "assets/",
+    "tests/",
     "i18n/_audit_*.py",
     "i18n/_generate_*.py",
     "i18n/_append_*.py",

@@ -146,7 +146,7 @@ blender --command extension validate
 blender --command extension build
 ```
 
-Output: `TextHelper-2.0.0.zip`
+Output: `TextHelper-X.X.X.zip`
 
 A helper script `_build_texthelper_zip.py` is also available in the parent `DATA` folder for quick local copies; use the Blender CLI output for Extension Store submissions.
 

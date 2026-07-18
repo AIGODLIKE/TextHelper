@@ -6,6 +6,7 @@ import gpu
 
 from ..i18n import _
 from ..utils.addon_prefs import get_addon_prefs
+from ..utils.picker_context import ViewportCache, picker_is_open, release_picker
 from ..utils.text_format import STYLE_PRESETS, get_active_text_data
 from ..utils.view3d_context import run_active_font_op
 from . import layout as layout_mod
@@ -13,9 +14,10 @@ from .gpu_primitives import draw_rounded_rect
 from .blf_layout import draw_centered_glyph
 
 _UI_FONT = 0
-_LAST_LAYOUT = None
+_LAYOUTS = ViewportCache()
 _HOVER_APPLY_PRESET = ""
 _PRESET_ORDER = tuple(STYLE_PRESETS.keys())
+_PREVIEW_OWNER = "HUD_PRESET"
 
 
 class PresetHit:
@@ -39,7 +41,12 @@ def _state(context):
 
 def picker_open(context):
     state = _state(context)
-    return bool(state and getattr(state, "th_preset_picker_open", False))
+    return picker_is_open(
+        state,
+        "th_preset_picker_open",
+        "th_preset_picker_window",
+        context,
+    )
 
 
 def _ui_scale(context):
@@ -55,19 +62,18 @@ def _theme(context):
 
 def _picker_position(context, panel_w, panel_h, scale):
     region = context.region
-    margin = 10.0 * scale
     gap = 6.0 * scale
     preset_rect = layout_mod.get_hud_item_rect("preset", context)
     if preset_rect is not None:
         px = preset_rect.x
         panel_top = preset_rect.y - gap
         py = panel_top - panel_h
-        px = max(margin, min(px, region.width - panel_w - margin))
-        py = max(margin, py)
-        return px, py
-    px = max(margin, region.width * 0.5 - panel_w * 0.5)
-    py = max(margin, region.height - 56.0 * scale - panel_h)
-    return px, py
+    else:
+        px = region.width * 0.5 - panel_w * 0.5
+        py = region.height - 56.0 * scale - panel_h
+    from ..utils.text_bounds import clamp_popup_to_hud_safe_bounds
+
+    return clamp_popup_to_hud_safe_bounds(context, px, py, panel_w, panel_h, scale)
 
 
 def _panel_width(context, scale):
@@ -125,30 +131,45 @@ def _try_hover_apply_preset(context, preset_id):
     if text_data is not None and getattr(text_data.text_helper, "th_preset", "BODY") == preset_id:
         _HOVER_APPLY_PRESET = preset_id
         return False
-    if not _invoke_apply_preset(context, preset_id, keep_picker_open=True):
+    from ..utils.picker_preview import preview_preset
+
+    if not preview_preset(context, _PREVIEW_OWNER, preset_id):
         return False
     _HOVER_APPLY_PRESET = preset_id
     return True
 
 
-def close_picker(context):
-    reset_picker_hover_apply()
-    state = _state(context)
-    if state is None:
+def close_picker(context, *, cancel_preview=True, force=False):
+    state = _state(context) if context is not None else None
+    if not release_picker(
+        state,
+        "th_preset_picker_open",
+        "th_preset_picker_window",
+        context,
+        force=force,
+    ):
         return
-    state.th_preset_picker_open = False
+    if cancel_preview:
+        from ..utils.picker_preview import cancel_preview as cancel_picker_preview
+
+        cancel_picker_preview(context, _PREVIEW_OWNER)
+    reset_picker_hover_apply()
     state.th_preset_picker_hover = ""
+    _LAYOUTS.clear()
 
 
 def layout_picker(context):
-    global _LAST_LAYOUT
     region = context.region
     if region is None:
-        _LAST_LAYOUT = None
+        _LAYOUTS.pop(context)
         return None
 
     scale = _ui_scale(context)
-    panel_w = _panel_width(context, scale)
+    from ..utils.text_bounds import get_hud_safe_bounds
+
+    safe = get_hud_safe_bounds(context, scale)
+    safe_w = (safe[2] - safe[0]) if safe else float(region.width)
+    panel_w = min(_panel_width(context, scale), max(1.0, safe_w))
     pad = 12.0 * scale
     header_h = 36.0 * scale
     row_h = 36.0 * scale
@@ -178,7 +199,7 @@ def layout_picker(context):
         row_hits.append(hit)
         hits.append(hit)
 
-    _LAST_LAYOUT = {
+    layout = {
         "scale": scale,
         "px": px,
         "py": py,
@@ -193,12 +214,13 @@ def layout_picker(context):
         "row_hits": row_hits,
         "hits": hits,
     }
-    return _LAST_LAYOUT
+    return _LAYOUTS.set(context, layout)
 
 
 def hit_test_picker(context, mx, my):
     layout_picker(context)
-    hits = _LAST_LAYOUT.get("hits", []) if _LAST_LAYOUT else []
+    layout = _LAYOUTS.get(context)
+    hits = layout.get("hits", []) if layout else []
     for hit in reversed(hits):
         if hit.kind != "panel" and hit.contains(mx, my):
             return hit
@@ -217,10 +239,13 @@ def handle_picker_click(context, hit):
         close_picker(context)
         return True
     if hit.kind == "row" and hit.preset_id:
+        from ..utils.picker_preview import prepare_preview_commit
+
+        prepare_preview_commit(context, _PREVIEW_OWNER)
         _invoke_apply_preset(context, hit.preset_id, keep_picker_open=False)
         global _HOVER_APPLY_PRESET
         _HOVER_APPLY_PRESET = hit.preset_id
-        close_picker(context)
+        close_picker(context, cancel_preview=False)
         return True
     if hit.kind == "panel":
         return True

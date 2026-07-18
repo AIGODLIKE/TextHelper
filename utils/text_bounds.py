@@ -43,34 +43,34 @@ def _window_region_insets(context):
         return 0.0, 0.0, 0.0, 0.0
 
     left = right = bottom = top = 0.0
-    wx0, wy0 = window.x, window.y
-    wx1, wy1 = wx0 + window.width, wy0 + window.height
 
     for reg in area.regions:
         if reg == window or reg.width <= 0 or reg.height <= 0:
             continue
 
         overlap = _region_overlap_window_local(window, reg)
-        rx0, ry0 = reg.x, reg.y
-        rx1, ry1 = rx0 + reg.width, ry0 + reg.height
-
-        if reg.type == "TOOLS":
-            if overlap is not None:
-                left = max(left, overlap[2])
-            elif rx0 <= wx0 + 1 and rx1 > wx0 + 1:
-                left = max(left, min(float(reg.width), float(window.width)))
+        if overlap is None:
             continue
 
-        if reg.type == "UI":
-            if overlap is not None:
-                right = max(right, window.width - overlap[0])
-            elif rx0 >= wx1 - 1 and rx0 < wx1 + reg.width:
-                right = max(right, max(0.0, window.width - max(0.0, rx0 - wx0)))
+        ox0, oy0, ox1, oy1 = overlap
+        edge_epsilon = 1.0
+
+        if reg.type in {"TOOLS", "UI"}:
+            # screen.region_flip can place either region on either side.
+            # Infer the occupied edge from its actual WINDOW overlap instead
+            # of assuming TOOLS=left and UI=right.
+            if ox0 <= edge_epsilon:
+                left = max(left, ox1)
+            if ox1 >= window.width - edge_epsilon:
+                right = max(right, window.width - ox0)
             continue
 
         if reg.type in {"HEADER", "TOOL_HEADER"}:
-            if overlap is not None:
-                top = max(top, window.height - overlap[1])
+            # Headers may likewise be flipped between the top and bottom.
+            if oy0 <= edge_epsilon:
+                bottom = max(bottom, oy1)
+            if oy1 >= window.height - edge_epsilon:
+                top = max(top, window.height - oy0)
             continue
 
         # Bottom timeline strip in the same area — user allows HUD flush to window bottom.
@@ -137,6 +137,20 @@ def get_hud_safe_bounds(context, scale=None):
     if y_max <= y_min:
         y_max = y_min + 1.0
     return x_min, y_min, x_max, y_max
+
+
+def clamp_popup_to_hud_safe_bounds(context, x, y, width, height, scale=None):
+    """Clamp a HUD popup rectangle to the same safe area as the toolbar."""
+    safe = get_hud_safe_bounds(context, scale)
+    if safe is None:
+        return x, y
+    x_min, y_min, x_max, y_max = safe
+    max_x = max(x_min, x_max - width)
+    max_y = max(y_min, y_max - height)
+    return (
+        max(x_min, min(float(x), max_x)),
+        max(y_min, min(float(y), max_y)),
+    )
 
 
 def default_toolbar_anchor(context, offset_px=12.0, scale=None):

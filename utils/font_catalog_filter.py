@@ -7,7 +7,7 @@ import bpy
 from .font_family import family_key_for_filepath, family_weight_counts, group_catalog_items
 from .font_display import display_name_for_catalog_item
 from .font_favorites import is_family_favorite
-from .font_recent import recent_family_rank_map
+from .font_recent import recent_family_rank_map, recent_generation
 from .font_search import catalog_item_passes_name
 from .font_glyph import font_has_full_coverage
 from .font_preview_text import get_font_coverage_text
@@ -15,7 +15,7 @@ from .font_variable import is_variable_font_filepath
 from .font_language import catalog_item_passes_language, get_language_filter
 from .addon_prefs import get_addon_prefs
 
-_GLYPH_REFINE_CHUNK = 40
+_GLYPH_REFINE_CHUNK = 64
 
 
 def catalog_glyph_filter_point_size(context) -> float:
@@ -75,6 +75,7 @@ def catalog_item_passes_filters(context, item, filters, *, weight_counts=None, s
 
 _FILTER_CACHE_KEY = None
 _FILTER_CACHE: dict[str, object] = {}
+_GLYPH_TIMER_REGISTERED = False
 _GLYPH_REFINE = {
     "key": None,
     "groups": [],
@@ -90,7 +91,15 @@ def glyph_filter_refining() -> bool:
     return bool(_GLYPH_REFINE.get("key"))
 
 
-def _cancel_glyph_refine() -> None:
+def _cancel_glyph_refine(*, unregister_timer=True) -> None:
+    global _GLYPH_TIMER_REGISTERED
+
+    if unregister_timer and _GLYPH_TIMER_REGISTERED:
+        try:
+            bpy.app.timers.unregister(_glyph_refine_step)
+        except ValueError:
+            pass
+    _GLYPH_TIMER_REGISTERED = False
     _GLYPH_REFINE["key"] = None
     _GLYPH_REFINE["groups"] = []
     _GLYPH_REFINE["index"] = 0
@@ -110,6 +119,7 @@ def _filter_cache_key(context, catalog) -> tuple:
     filters = font_catalog_filter_state(context)
     return (
         catalog_generation(),
+        recent_generation(),
         len(catalog),
         filters["filter_text"],
         filters["sort_mode"],
@@ -222,11 +232,11 @@ def _glyph_refine_step():
     wm = context.window_manager if context is not None else None
     catalog = getattr(getattr(wm, "th_state", None), "font_catalog", None)
     if catalog is None or len(catalog) != state.get("catalog_len", -1):
-        _cancel_glyph_refine()
+        _cancel_glyph_refine(unregister_timer=False)
         return None
 
     if _filter_cache_key(context, catalog) != key:
-        _cancel_glyph_refine()
+        _cancel_glyph_refine(unregister_timer=False)
         return None
 
     groups = state["groups"]
@@ -255,12 +265,12 @@ def _glyph_refine_step():
             pass
         from .font_preview import tag_ui_redraw
 
-        tag_ui_redraw(context)
-        return 0.001
+        tag_ui_redraw(context, all_windows=True)
+        return 0.01
 
     _sort_groups(kept, font_catalog_filter_state(context)["sort_mode"], context)
     _store_filter_cache(key, kept, glyph_complete=True)
-    _cancel_glyph_refine()
+    _cancel_glyph_refine(unregister_timer=False)
     try:
         from ..hud.draw import tag_redraw
 
@@ -269,11 +279,13 @@ def _glyph_refine_step():
         pass
     from .font_preview import tag_ui_redraw
 
-    tag_ui_redraw(context)
+    tag_ui_redraw(context, all_windows=True)
     return None
 
 
 def _schedule_glyph_refine(context, key, catalog, filters, groups) -> None:
+    global _GLYPH_TIMER_REGISTERED
+
     _cancel_glyph_refine()
     _GLYPH_REFINE["key"] = key
     _GLYPH_REFINE["groups"] = list(groups)
@@ -282,7 +294,8 @@ def _schedule_glyph_refine(context, key, catalog, filters, groups) -> None:
     _GLYPH_REFINE["preview"] = filters["preview"]
     _GLYPH_REFINE["point_size"] = filters["point_size"]
     _GLYPH_REFINE["catalog_len"] = len(catalog)
-    bpy.app.timers.register(_glyph_refine_step, first_interval=0.001)
+    bpy.app.timers.register(_glyph_refine_step, first_interval=0.01)
+    _GLYPH_TIMER_REGISTERED = True
 
 
 def _ensure_filter_cache(context):
@@ -296,8 +309,10 @@ def _ensure_filter_cache(context):
 
     key = _filter_cache_key(context, catalog)
     if _FILTER_CACHE_KEY == key and _FILTER_CACHE:
-        if _FILTER_CACHE.get("glyph_complete", True) or not glyph_filter_refining():
-            return _FILTER_CACHE
+        # The timer owns incremental glyph refinement.  Rebuilding the fast
+        # groups from every draw call made a cached picker nearly as expensive
+        # as a cold filter while refinement was active.
+        return _FILTER_CACHE
 
     filters = font_catalog_filter_state(context)
     needs_async_glyph = bool(filters["hide_unsupported"] and filters["preview"] and len(catalog) > 0)

@@ -44,6 +44,7 @@ from ..hud.weight_picker import (
     close_picker as close_weight_picker,
     handle_picker_click as handle_weight_picker_click,
     handle_picker_hover as handle_weight_picker_hover,
+    handle_picker_wheel as handle_weight_picker_wheel,
     hit_test_picker as hit_test_weight_picker,
     picker_open as weight_picker_open,
 )
@@ -77,6 +78,7 @@ from ..utils.undo import push_undo
 from ..utils.hud_offset import get_hud_offset, set_hud_offset
 
 _RUNNING = False
+_RUNTIME_EPOCH = 0
 
 
 def _is_hud_modal_operator(op) -> bool:
@@ -116,6 +118,20 @@ def sync_modal_running_state(context=None) -> bool:
 
 def modal_running(context=None) -> bool:
     return sync_modal_running_state(context)
+
+
+def request_modal_shutdown(window=None) -> int:
+    """Ask live HUD modals to exit on their next Blender event."""
+    global _RUNTIME_EPOCH
+
+    if window is None:
+        _RUNTIME_EPOCH += 1
+    for operator in _iter_hud_modal_operators(window):
+        try:
+            operator._th_stop_requested = True
+        except Exception:
+            pass
+    return _RUNTIME_EPOCH
 
 
 _DOUBLE_CLICK_SEC = 0.4
@@ -425,7 +441,25 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
     bl_description = "Run the viewport HUD modal handler for toolbar and pickers"
     bl_options = {"INTERNAL"}
 
+    @classmethod
+    def poll(cls, context):
+        if get_active_text(context) is None:
+            cls.poll_message_set(_("Select a text object first"))
+            return False
+        area, region = find_view3d_area_region(getattr(context, "window", None))
+        if area is None or region is None:
+            cls.poll_message_set(_("Open a 3D Viewport first"))
+            return False
+        return True
+
     def modal(self, context, event):
+        if (
+            getattr(self, "_th_stop_requested", False)
+            or getattr(self, "_th_runtime_epoch", -1) != _RUNTIME_EPOCH
+        ):
+            self.cancel(context)
+            return {"CANCELLED"}
+
         wm = context.window_manager
         state = _safe_state(wm)
         if state is None:
@@ -514,7 +548,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
             language_picker_active = language_picker_open(context)
             picker_active = font_picker_active or weight_picker_active or preset_picker_active or language_picker_active
             rects = get_hud_hit_rects(context, obj, text_data) if show_hud else []
-    
+
             if show_hud and slider_value_editing(context):
                 if getattr(event, "is_compose", False):
                     tag_redraw()
@@ -522,7 +556,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                 if handle_slider_value_key(context, event) or slider_value_blocks_keymap(event):
                     tag_redraw()
                     return {"RUNNING_MODAL"}
-    
+
             if picker_active:
                 search_focused = (
                     font_picker_active
@@ -532,19 +566,27 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                 if search_focused and getattr(event, "is_compose", False):
                     tag_redraw()
                     return {"PASS_THROUGH"}
-    
-                if font_picker_active and search_focused:
-                    if handle_picker_key(context, event) or picker_search_blocks_keymap(event):
+
+                if font_picker_active:
+                    if handle_picker_key(context, event) or (
+                        search_focused and picker_search_blocks_keymap(event)
+                    ):
                         tag_redraw()
                         return {"RUNNING_MODAL"}
-    
+
                 if font_picker_active and event.type in {"WHEELUPMOUSE", "WHEELDOWNMOUSE"} and event.value == "PRESS":
                     if not language_picker_active:
                         delta = 1 if event.type == "WHEELUPMOUSE" else -1
                         handle_picker_wheel(context, delta)
                     tag_redraw()
                     return {"RUNNING_MODAL"}
-    
+
+                if weight_picker_active and event.type in {"WHEELUPMOUSE", "WHEELDOWNMOUSE"} and event.value == "PRESS":
+                    delta = 1 if event.type == "WHEELUPMOUSE" else -1
+                    handle_weight_picker_wheel(context, delta)
+                    tag_redraw()
+                    return {"RUNNING_MODAL"}
+
                 if event.type == "MOUSEMOVE":
                     if (
                         font_picker_active
@@ -570,17 +612,17 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                             handle_font_picker_hover(context, mx, my)
                     tag_redraw()
                     return {"RUNNING_MODAL"}
-    
+
                 if event.type == "LEFTMOUSE" and event.value == "RELEASE":
                     if font_picker_active and handle_picker_release(context):
                         tag_redraw()
                         return {"RUNNING_MODAL"}
-    
+
                 if event.type == "ESC" and event.value == "PRESS":
                     _close_all_pickers(context)
                     tag_redraw()
                     return {"RUNNING_MODAL"}
-    
+
                 if event.type == "LEFTMOUSE" and event.value == "PRESS":
                     if language_picker_active:
                         language_hit = hit_test_language_picker(context, mx, my)
@@ -590,21 +632,21 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                             close_language_picker(context)
                         tag_redraw()
                         return {"RUNNING_MODAL"}
-    
+
                     if preset_picker_active:
                         preset_hit = hit_test_preset_picker(context, mx, my)
                         if preset_hit is not None:
                             handle_preset_picker_click(context, preset_hit)
                             tag_redraw()
                             return {"RUNNING_MODAL"}
-    
+
                     if weight_picker_active:
                         weight_hit = hit_test_weight_picker(context, mx, my)
                         if weight_hit is not None:
                             handle_weight_picker_click(context, weight_hit)
                             tag_redraw()
                             return {"RUNNING_MODAL"}
-    
+
                     if font_picker_active:
                         font_hit = hit_test_font_picker(context, mx, my)
                         if font_hit is not None:
@@ -612,7 +654,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                             flush_pending_report(self, state)
                             tag_redraw()
                             return {"RUNNING_MODAL"}
-    
+
                     toolbar_hit = hit_test(rects, mx, my) if rects else None
                     if toolbar_hit is not None:
                         _ensure_text_selected(context, obj)
@@ -621,11 +663,11 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                         result = _handle_hud_press(context, pointer_event, obj, text_data, state, rects)
                         tag_redraw()
                         return result or {"RUNNING_MODAL"}
-    
+
                     _close_all_pickers(context)
                     tag_redraw()
                     return {"PASS_THROUGH"}
-    
+
             if event.type == "MOUSEMOVE":
                 if show_hud and slider_value_editing(context) and getattr(state, "th_text_field_selecting", False):
                     handle_slider_value_mouse_move(context, mx, _hud_ui_scale(context))
@@ -642,7 +684,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                         dx = mx - state.th_hud_move_start_x
                         dy = my - state.th_hud_move_start_y
                         from ..utils.text_bounds import clamp_hud_drag_offset
-    
+
                         clamp_hud_drag_offset(
                             context,
                             obj,
@@ -662,7 +704,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                         _hud_apply_spacing(context, mode, val)
                     tag_redraw()
                 return {"PASS_THROUGH"}
-    
+
             if event.type == "LEFTMOUSE":
                 if event.value == "PRESS":
                     if show_hud and rects:
@@ -673,12 +715,12 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                             _ensure_text_selected(context, obj)
                             tag_redraw()
                             return {"RUNNING_MODAL"}
-    
+
                     if slider_value_editing(context):
                         commit_slider_value_edit(context, undo=True)
                         tag_redraw()
                         return {"RUNNING_MODAL"}
-    
+
                     if _click_outside_hud_and_text(rects, obj, context, mx, my, ptr_area, ptr_region):
                         return {"PASS_THROUGH"}
 
@@ -687,9 +729,9 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                         if enter_text_edit_mode(context, obj):
                             tag_redraw()
                         return {"RUNNING_MODAL"}
-    
+
                     return {"PASS_THROUGH"}
-    
+
                 if event.value == "RELEASE" and show_hud:
                     if slider_value_editing(context) and handle_slider_value_mouse_release(context):
                         tag_redraw()
@@ -700,7 +742,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                         state.th_hud_moving = False
                         tag_redraw()
                         return {"RUNNING_MODAL"}
-    
+
             if show_hud and event.type in {"ESC", "RIGHTMOUSE"} and (state.th_hud_dragging or state.th_hud_moving):
                 if state.th_hud_moving:
                     set_hud_offset(obj, state.th_hud_move_base_x, state.th_hud_move_base_y)
@@ -709,7 +751,7 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
                 state.th_hud_moving = False
                 tag_redraw()
                 return {"RUNNING_MODAL"}
-    
+
             return {"PASS_THROUGH"}
 
     def cancel(self, context):
@@ -734,6 +776,8 @@ class TH_OT_hud_modal(TextHelperOperatorMixin, Operator):
 
         self._modal_area = area
         self._modal_region = region
+        self._th_runtime_epoch = _RUNTIME_EPOCH
+        self._th_stop_requested = False
 
         with context.temp_override(
             window=context.window,
@@ -754,6 +798,17 @@ class TH_OT_hud_ensure_modal(TextHelperOperatorMixin, Operator):
     bl_label = "Ensure HUD Modal"
     bl_description = "Ensure the HUD modal operator is running"
     bl_options = {"INTERNAL"}
+
+    @classmethod
+    def poll(cls, context):
+        if get_active_text(context) is None:
+            cls.poll_message_set(_("Select a text object first"))
+            return False
+        area, region = find_view3d_area_region(getattr(context, "window", None))
+        if area is None or region is None:
+            cls.poll_message_set(_("Open a 3D Viewport first"))
+            return False
+        return True
 
     def execute(self, context):
         sync_modal_running_state(context)
@@ -809,6 +864,22 @@ class TH_OT_show_hud(ActiveFontPollMixin, Operator):
         return {"FINISHED"}
 
 
+class TH_OT_reset_hud_position(ActiveFontPollMixin, Operator):
+    bl_idname = "wm.texthelper_reset_hud_position"
+    bl_label = "Reset HUD Position"
+    bl_description = "Return this text object's floating toolbar to its default position"
+    bl_options = {"REGISTER", "UNDO"}
+
+    def execute(self, context):
+        obj = get_active_text(context)
+        if obj is None:
+            return {"CANCELLED"}
+        set_hud_offset(obj, 0.0, 0.0)
+        tag_view3d_redraw(context)
+        tag_redraw()
+        return {"FINISHED"}
+
+
 class TH_OT_toggle_floating_toolbar(TextHelperOperatorMixin, Operator):
     bl_idname = "wm.texthelper_toggle_toolbar"
     bl_label = "Toggle Floating Toolbar"
@@ -859,6 +930,7 @@ def register():
     bpy.utils.register_class(TH_OT_hud_ensure_modal)
     bpy.utils.register_class(TH_OT_hide_hud)
     bpy.utils.register_class(TH_OT_show_hud)
+    bpy.utils.register_class(TH_OT_reset_hud_position)
     bpy.utils.register_class(TH_OT_toggle_floating_toolbar)
 
 
@@ -867,6 +939,7 @@ def unregister():
     _RUNNING = False
     for cls in (
         TH_OT_toggle_floating_toolbar,
+        TH_OT_reset_hud_position,
         TH_OT_show_hud,
         TH_OT_hide_hud,
         TH_OT_hud_ensure_modal,

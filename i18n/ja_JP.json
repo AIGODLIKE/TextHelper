@@ -296,7 +296,7 @@
   },
   {
     "context": "*",
-    "msgid": "Header toolbar in the 3D viewport top bar",
+    "msgid": "Header toolbar in the 3D Viewport header",
     "ja_JP": "3D ビューポート上部ヘッダーの書式ツールバー"
   },
   {
@@ -2438,5 +2438,160 @@
     "context": "*",
     "msgid": "Search fonts (IME supported)",
     "ja_JP": "フォントを検索（IME 対応）"
+  },
+  {
+    "context": "*",
+    "msgid": "Open the font picker first",
+    "ja_JP": "先にフォントピッカーを開いてください"
+  },
+  {
+    "context": "*",
+    "msgid": "Open a 3D Viewport first",
+    "ja_JP": "先に3Dビューポートを開いてください"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Reset HUD Position",
+    "ja_JP": "HUD位置をリセット"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Return this text object's floating toolbar to its default position",
+    "ja_JP": "このテキストオブジェクトのフローティングツールバーを既定位置に戻します"
+  },
+  {
+    "context": "*",
+    "msgid": "HUD User Shown",
+    "ja_JP": "HUD はユーザーによって表示済み"
+  },
+  {
+    "context": "*",
+    "msgid": "How font names appear in lists, the font picker, HUD, and header toolbar",
+    "ja_JP": "リスト、フォントピッカー、HUD、ヘッダーツールバーでのフォント名の表示方法"
+  },
+  {
+    "context": "*",
+    "msgid": "JSON list of recently applied font family keys",
+    "ja_JP": "最近使用したフォントファミリーキーの JSON リスト"
+  },
+  {
+    "context": "*",
+    "msgid": "Keep the floating toolbar this many pixels away from the 3D viewport edges (N/T panels shrink the usable area automatically)",
+    "ja_JP": "フローティングツールバーを 3D ビューポート端から離すピクセル数（N/T パネルに応じて使用可能領域を自動調整）"
+  },
+  {
+    "context": "*",
+    "msgid": "Legacy HUD drag offset (migrated to the text object; not used for new data)",
+    "ja_JP": "旧 HUD のドラッグオフセット（テキストオブジェクトへ移行済み。新規データでは未使用）"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer A",
+    "ja_JP": "パネルバッファー A"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Active",
+    "ja_JP": "パネルバッファー有効"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer B",
+    "ja_JP": "パネルバッファー B"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Lines",
+    "ja_JP": "パネルバッファー行数"
+  },
+  {
+    "context": "*",
+    "msgid": "Panel Buffer Mode",
+    "ja_JP": "パネルバッファーモード"
+  },
+  {
+    "context": "*",
+    "msgid": "Recent Font Families",
+    "ja_JP": "最近使用したフォントファミリー"
+  },
+  {
+    "context": "*",
+    "msgid": "Show formatting controls in the 3D Viewport header when a text object is selected",
+    "ja_JP": "テキストオブジェクト選択時に 3D ビューポートのヘッダーへ書式コントロールを表示"
+  },
+  {
+    "context": "*",
+    "msgid": "User explicitly enabled the floating toolbar while auto-show is off",
+    "ja_JP": "自動表示がオフの状態でユーザーがフローティングツールバーを明示的に有効化"
+  },
+  {
+    "context": "*",
+    "msgid": "Font refresh complete — preview thumbnails are rebuilding",
+    "ja_JP": "フォントの更新が完了しました — プレビューサムネイルを再生成中"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font refresh complete — preview thumbnails are rebuilding",
+    "ja_JP": "フォントの更新が完了しました — プレビューサムネイルを再生成中"
+  },
+  {
+    "context": "*",
+    "msgid": "Indexing font names… {:d}/{:d}",
+    "ja_JP": "フォント名を索引化中… {:d}/{:d}"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the OpenType family name (default; prefers localized CJK names when available)",
+    "ja_JP": "OpenType ファミリー名を使用（既定。利用可能な場合はローカライズ済み CJK 名を優先）"
+  },
+  {
+    "context": "*",
+    "msgid": "Use the font file name",
+    "ja_JP": "フォントファイル名を使用"
+  },
+  {
+    "context": "*",
+    "msgid": "Word",
+    "ja_JP": "単語"
+  },
+  {
+    "context": "*",
+    "msgid": "Rebuild Font Search Index",
+    "ja_JP": "フォント検索インデックスを再構築"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Rebuild Font Search Index",
+    "ja_JP": "フォント検索インデックスを再構築"
+  },
+  {
+    "context": "*",
+    "msgid": "Clear persisted font-name metadata and rebuild it in the background",
+    "ja_JP": "保存済みのフォント名メタデータを消去し、バックグラウンドで再構築します"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Clear persisted font-name metadata and rebuild it in the background",
+    "ja_JP": "保存済みのフォント名メタデータを消去し、バックグラウンドで再構築します"
+  },
+  {
+    "context": "*",
+    "msgid": "Font search index cleared — rebuilding in background",
+    "ja_JP": "フォント検索インデックスを消去しました — バックグラウンドで再構築中"
+  },
+  {
+    "context": "Operator",
+    "msgid": "Font search index cleared — rebuilding in background",
+    "ja_JP": "フォント検索インデックスを消去しました — バックグラウンドで再構築中"
+  },
+  {
+    "context": "*",
+    "msgid": "Font search index: {:d} cached",
+    "ja_JP": "フォント検索インデックス：{:d} 件をキャッシュ"
+  },
+  {
+    "context": "*",
+    "msgid": "Rebuild Index",
+    "ja_JP": "インデックスを再構築"
   }
 ]
